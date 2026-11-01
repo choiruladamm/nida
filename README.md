@@ -29,7 +29,7 @@ Local builds use ad-hoc signing. These are personal development builds, not nota
 
 ## Scope
 
-The notch remains a feasibility prototype. Settings now supports manual city selection, real daily schedules, and validated current/next-month offline storage. Automatic location, next-prayer calculation, production reminders, and login launch are not implemented yet.
+The notch remains a feasibility prototype. Settings now supports manual city selection, real daily schedules, and validated current/next-month offline storage. Settings also shows the city-aware next prayer and a native countdown. Automatic location, production reminders, and login launch are not implemented yet.
 
 Product plan and implementation tracker: https://github.com/choiruladamm/nida/issues/1
 
@@ -64,3 +64,9 @@ Open **Pengaturan → Lokasi jadwal**, choose a city/regency, then inspect **Jad
 The menu bar/notch schedule and reminder buttons still show labeled preview fixtures until the next UI/scheduling issues. Real source attribution is **Kemenag via myQuran**. See [provider contract, time zones, and official comparisons](docs/prayer-data.md).
 
 `make data-smoke` uses live internet requests and a disposable cache, verifies offline restoration, and leaves the selected city unchanged. It is separate from the offline unit suite.
+
+## Timing foundation
+
+The Settings timetable includes **Berikutnya**, the city-local prayer time, and a system countdown. At each prayer boundary it advances to the next prayer; after Isha it shows tomorrow's Subuh only when tomorrow's schedule exists.
+
+The pure timing engine also produces stable entry/follow-up/snooze events with delay-change, expiry, collision, and recovery rules. It does not deliver reminders yet. See [timing contract](docs/prayer-timing.md).
