@@ -5,6 +5,7 @@ Native macOS prayer reminder: SwiftUI content, AppKit notch panel, menu bar acce
 ## Read when relevant
 
 - UI or motion changes: read `DESIGN.md` first. The latest frosted Liquid Glass reference supersedes the earlier dark mockups.
+- API/cache/date changes: read `docs/prayer-data.md` for the verified contract, time-zone mapping, and data/UI boundary.
 - Notch/window changes: read `docs/notch-prototype.md` for measured geometry and pending hardware checks.
 - Build/setup: see `README.md`; run `make help` for commands.
 
@@ -14,7 +15,7 @@ Native macOS prayer reminder: SwiftUI content, AppKit notch panel, menu bar acce
 - Fetch current Apple/API documentation through Context7: resolve the library, then query the relevant concept. Use official documentation when coverage is missing. Check availability against the project's compiler and deployment target.
 - Use `swiftui-expert-skill`, `write-swift`, and `emil-design-eng` when available and relevant. Translate animation principles to native APIs; browser-specific examples are not SwiftUI rules.
 - Derive camera clearance and placement from the selected screen. Preserve its physical silhouette while collapsed; automatic reminders must not take keyboard focus.
-- Keep prototype fixtures visibly labeled. Real schedules, location access, and reminder delivery belong to their own issues after the notch feasibility review. A follow-up reminder is not a mosque iqomah time.
+- Keep notch fixtures visibly labeled and separate from live Settings schedules. Automatic location and reminder delivery belong to later issues. A follow-up reminder is not a mosque iqomah time.
 - Add Swift source files to the appropriate target in `Nida.xcodeproj`; this project uses explicit file references.
 
 ## Verification and delivery

@@ -1,4 +1,5 @@
 import SwiftUI
+import Darwin
 
 @main
 struct NidaApp: App {
@@ -10,7 +11,7 @@ struct NidaApp: App {
         }
         .menuBarExtraStyle(.window)
         Settings {
-            PrototypeSettings(controller: delegate.controller)
+            PrototypeSettings(controller: delegate.controller, schedules: delegate.schedules)
         }
     }
 }
@@ -18,6 +19,7 @@ struct NidaApp: App {
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let controller = NotchPanelController()
+    let schedules = PrayerDataStore()
 
     func applicationWillFinishLaunching(_ notification: Notification) {
         NSApplication.shared.setActivationPolicy(.accessory)
@@ -28,6 +30,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let environment = ProcessInfo.processInfo.environment
         guard environment["XCTestConfigurationFilePath"] == nil,
               environment["XCTestBundlePath"] == nil else { return }
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--data-smoke") {
+            Task {
+                do {
+                    print(try await PrayerRepository.liveSmokeCheck())
+                    exit(EXIT_SUCCESS)
+                } catch {
+                    FileHandle.standardError.write(Data("Nida data smoke failed: \(error.localizedDescription)\n".utf8))
+                    exit(EXIT_FAILURE)
+                }
+            }
+            return
+        }
+        #endif
         controller.start()
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("--smoke-test") {
@@ -107,14 +123,16 @@ struct MenuContent: View {
 
 struct PrototypeSettings: View {
     let controller: NotchPanelController
+    let schedules: PrayerDataStore
 
     var body: some View {
         Form {
-            Section("Nida · Notch prototype") {
+            Section("Nida") {
                 Text("Ambil jeda, kembali tenang.").font(.headline)
-                Text("Semua jadwal adalah data contoh. Pengingat asli, lokasi, dan suara belum aktif.")
+                Text("Jadwal asli tersedia di bawah. Preview notch masih data contoh; pengingat otomatis dan deteksi lokasi belum aktif.")
                     .foregroundStyle(.secondary)
             }
+            PrayerDataSettings(store: schedules)
             Section("Coba tampilan notch") {
                 ForEach(PreviewState.allCases, id: \.self) { state in
                     Button(state.label) { controller.show(state) }
@@ -124,13 +142,13 @@ struct PrototypeSettings: View {
             }
             Section("Tentang prototipe") {
                 LabeledContent("Minimum macOS", value: "26.0")
-                LabeledContent("Data", value: "Contoh · Tidak dijadwalkan")
+                LabeledContent("Pengingat", value: "Preview · Tidak dijadwalkan")
                 Text("Preview tunda hanya menampilkan konfirmasi; tidak menjadwalkan pengingat.")
                     .font(.callout).foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)
-        .frame(width: 460, height: 510)
+        .frame(width: 480, height: 660)
         .tint(NidaStyle.text)
         .preferredColorScheme(.dark)
     }

@@ -1,5 +1,14 @@
 // !$*UTF8*$!
 { archiveVersion = 1; classes = {}; objectVersion = 56; objects = {
+A874BECABEDC7F828EEF4D0C = { isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Nida.entitlements; sourceTree = "<group>"; };
+8CCE69F71146E8188B5355B7 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrayerDataTests.swift; sourceTree = "<group>"; };
+766B47E154A4A16CE4BFEC42 = { isa = PBXBuildFile; fileRef = 8CCE69F71146E8188B5355B7; };
+48841D3A3AE35DE6160E2B8B = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrayerSettings.swift; sourceTree = "<group>"; };
+6A3C3264BB077ED0F6233C6B = { isa = PBXBuildFile; fileRef = 48841D3A3AE35DE6160E2B8B; };
+FA59D555F694B9204FB0999F = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrayerRepository.swift; sourceTree = "<group>"; };
+90807219B720883376BE864B = { isa = PBXBuildFile; fileRef = FA59D555F694B9204FB0999F; };
+78D1D73981E2E974E1E66C5B = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrayerSchedule.swift; sourceTree = "<group>"; };
+734C07F0B94716E230B3D038 = { isa = PBXBuildFile; fileRef = 78D1D73981E2E974E1E66C5B; };
 DB97962A25D358EFAFD5B6CB = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NidaApp.swift; sourceTree = "<group>"; };
 96C1C0C3A5E9C9CC8A448120 = { isa = PBXBuildFile; fileRef = DB97962A25D358EFAFD5B6CB; };
 4F90B48C509102C2E9B9E7ED = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrototypeModel.swift; sourceTree = "<group>"; };
@@ -12,18 +21,18 @@ DB97962A25D358EFAFD5B6CB = { isa = PBXFileReference; lastKnownFileType = sourcec
 E7A523764CC4C4A0AD1F8346 = { isa = PBXBuildFile; fileRef = 239973781A873CF1DC84E652; };
 2FC2449F84C4785B7BB1EA26 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NidaStyle.swift; sourceTree = "<group>"; };
 63989F6E41FDB891532C45D9 = { isa = PBXBuildFile; fileRef = 2FC2449F84C4785B7BB1EA26; };
-047F57C649775D6DD0FEC0B8 = { isa = PBXGroup; children = (DB97962A25D358EFAFD5B6CB,4F90B48C509102C2E9B9E7ED,48510BC0313D2E6A3466CAC1,6132D267212B45D108E68F1D,239973781A873CF1DC84E652,2FC2449F84C4785B7BB1EA26,); path = Nida; sourceTree = "<group>"; };
+047F57C649775D6DD0FEC0B8 = { isa = PBXGroup; children = (A874BECABEDC7F828EEF4D0C,48841D3A3AE35DE6160E2B8B,FA59D555F694B9204FB0999F,78D1D73981E2E974E1E66C5B,DB97962A25D358EFAFD5B6CB,4F90B48C509102C2E9B9E7ED,48510BC0313D2E6A3466CAC1,6132D267212B45D108E68F1D,239973781A873CF1DC84E652,2FC2449F84C4785B7BB1EA26,); path = Nida; sourceTree = "<group>"; };
 37C5A050399FEFE08A8F388B = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NidaTests.swift; sourceTree = "<group>"; };
 D0F4B6EA5F18BD6BEDF6D83D = { isa = PBXBuildFile; fileRef = 37C5A050399FEFE08A8F388B; };
-BDD851A1ECB8D434D9E6F934 = { isa = PBXGroup; children = (37C5A050399FEFE08A8F388B,); path = NidaTests; sourceTree = "<group>"; };
+BDD851A1ECB8D434D9E6F934 = { isa = PBXGroup; children = (8CCE69F71146E8188B5355B7,37C5A050399FEFE08A8F388B,); path = NidaTests; sourceTree = "<group>"; };
 8BCD5BC4CDFDF0918087C782 = { isa = PBXFileReference; explicitFileType = wrapper.application; path = Nida.app; sourceTree = BUILT_PRODUCTS_DIR; };
 F219C0274590DA45E4BEF1EA = { isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = NidaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 FBDC4F23F93125BBEEAE800C = { isa = PBXGroup; children = (8BCD5BC4CDFDF0918087C782,F219C0274590DA45E4BEF1EA,); name = Products; sourceTree = "<group>"; };
 DC76E9F0C0006E8F919E0C51 = { isa = PBXGroup; children = (047F57C649775D6DD0FEC0B8,BDD851A1ECB8D434D9E6F934,FBDC4F23F93125BBEEAE800C,); sourceTree = "<group>"; };
-971ED9D05B25DB6C4D7680D4 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (96C1C0C3A5E9C9CC8A448120,8A5072245D3EACD9FF95F9BE,3BC1E8BE2D329776EFC503AA,8EE665A7452E36E9BE79990F,E7A523764CC4C4A0AD1F8346,63989F6E41FDB891532C45D9,); runOnlyForDeploymentPostprocessing = 0; };
+971ED9D05B25DB6C4D7680D4 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (6A3C3264BB077ED0F6233C6B,90807219B720883376BE864B,734C07F0B94716E230B3D038,96C1C0C3A5E9C9CC8A448120,8A5072245D3EACD9FF95F9BE,3BC1E8BE2D329776EFC503AA,8EE665A7452E36E9BE79990F,E7A523764CC4C4A0AD1F8346,63989F6E41FDB891532C45D9,); runOnlyForDeploymentPostprocessing = 0; };
 78AE8C6BEB2A40A6D824CCEE = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 364863F9F2E558B0F50473FC = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
-6E431EB0650617AA1756B320 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (D0F4B6EA5F18BD6BEDF6D83D,); runOnlyForDeploymentPostprocessing = 0; };
+6E431EB0650617AA1756B320 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (766B47E154A4A16CE4BFEC42,D0F4B6EA5F18BD6BEDF6D83D,); runOnlyForDeploymentPostprocessing = 0; };
 1ABF84E55BD30AC2CEF8FC42 = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 7DED7670B79BEA8B7480B1FC = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 D799BAE6088A90139B415FCC = { isa = PBXContainerItemProxy; containerPortal = 98F54143AB4E86B28C3AFEE0; proxyType = 1; remoteGlobalIDString = 7D1043473D55BFA90E8530D3; remoteInfo = Nida; };
@@ -33,8 +42,8 @@ A94A8FE5CCB19BA61C4C0873 = { isa = PBXNativeTarget; buildConfigurationList = 72C
 89E1FD6268CC0F221A2BE178 = { isa = XCBuildConfiguration; buildSettings = {MACOSX_DEPLOYMENT_TARGET = 26.0; SDKROOT = macosx; SWIFT_VERSION = 6.0; CLANG_ENABLE_MODULES = YES; SWIFT_STRICT_CONCURRENCY = complete; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; DEBUG_INFORMATION_FORMAT = dwarf; ENABLE_TESTABILITY = YES; SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";}; name = Debug; };
 E6DE6C99132752C914FEF632 = { isa = XCBuildConfiguration; buildSettings = {MACOSX_DEPLOYMENT_TARGET = 26.0; SDKROOT = macosx; SWIFT_VERSION = 6.0; CLANG_ENABLE_MODULES = YES; SWIFT_STRICT_CONCURRENCY = complete; SWIFT_OPTIMIZATION_LEVEL = "-O"; DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym"; ENABLE_TESTABILITY = NO; SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";}; name = Release; };
 49EA05A46B1A86EA7E413B43 = { isa = XCConfigurationList; buildConfigurations = (89E1FD6268CC0F221A2BE178,E6DE6C99132752C914FEF632,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
-E9B2E96ABC5F6856F2BE79CF = { isa = XCBuildConfiguration; buildSettings = {PRODUCT_NAME = "$(TARGET_NAME)"; PRODUCT_BUNDLE_IDENTIFIER = dev.choiruladam.nida; GENERATE_INFOPLIST_FILE = YES; CODE_SIGN_STYLE = Manual; CODE_SIGN_IDENTITY = "-"; SWIFT_EMIT_LOC_STRINGS = YES; INFOPLIST_KEY_LSUIElement = YES; INFOPLIST_KEY_CFBundleDisplayName = Nida; MARKETING_VERSION = 0.1.0; CURRENT_PROJECT_VERSION = 1; ENABLE_APP_SANDBOX = YES;}; name = Debug; };
-5A8C91857F674E16E2724F47 = { isa = XCBuildConfiguration; buildSettings = {PRODUCT_NAME = "$(TARGET_NAME)"; PRODUCT_BUNDLE_IDENTIFIER = dev.choiruladam.nida; GENERATE_INFOPLIST_FILE = YES; CODE_SIGN_STYLE = Manual; CODE_SIGN_IDENTITY = "-"; SWIFT_EMIT_LOC_STRINGS = YES; INFOPLIST_KEY_LSUIElement = YES; INFOPLIST_KEY_CFBundleDisplayName = Nida; MARKETING_VERSION = 0.1.0; CURRENT_PROJECT_VERSION = 1; ENABLE_APP_SANDBOX = YES;}; name = Release; };
+E9B2E96ABC5F6856F2BE79CF = { isa = XCBuildConfiguration; buildSettings = {PRODUCT_NAME = "$(TARGET_NAME)"; PRODUCT_BUNDLE_IDENTIFIER = dev.choiruladam.nida; GENERATE_INFOPLIST_FILE = YES; CODE_SIGN_STYLE = Manual; CODE_SIGN_IDENTITY = "-"; SWIFT_EMIT_LOC_STRINGS = YES; CODE_SIGN_ENTITLEMENTS = Nida/Nida.entitlements; INFOPLIST_KEY_LSUIElement = YES; INFOPLIST_KEY_CFBundleDisplayName = Nida; MARKETING_VERSION = 0.1.0; CURRENT_PROJECT_VERSION = 1; ENABLE_APP_SANDBOX = YES;}; name = Debug; };
+5A8C91857F674E16E2724F47 = { isa = XCBuildConfiguration; buildSettings = {PRODUCT_NAME = "$(TARGET_NAME)"; PRODUCT_BUNDLE_IDENTIFIER = dev.choiruladam.nida; GENERATE_INFOPLIST_FILE = YES; CODE_SIGN_STYLE = Manual; CODE_SIGN_IDENTITY = "-"; SWIFT_EMIT_LOC_STRINGS = YES; CODE_SIGN_ENTITLEMENTS = Nida/Nida.entitlements; INFOPLIST_KEY_LSUIElement = YES; INFOPLIST_KEY_CFBundleDisplayName = Nida; MARKETING_VERSION = 0.1.0; CURRENT_PROJECT_VERSION = 1; ENABLE_APP_SANDBOX = YES;}; name = Release; };
 8A8642C6B28662881237D956 = { isa = XCConfigurationList; buildConfigurations = (E9B2E96ABC5F6856F2BE79CF,5A8C91857F674E16E2724F47,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
 FCB48D8F88BCDB0ED9FADFD7 = { isa = XCBuildConfiguration; buildSettings = {PRODUCT_NAME = "$(TARGET_NAME)"; PRODUCT_BUNDLE_IDENTIFIER = dev.choiruladam.nida.tests; GENERATE_INFOPLIST_FILE = YES; CODE_SIGN_STYLE = Manual; CODE_SIGN_IDENTITY = "-"; SWIFT_EMIT_LOC_STRINGS = YES; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Nida.app/Contents/MacOS/Nida"; BUNDLE_LOADER = "$(TEST_HOST)"; ENABLE_APP_SANDBOX = YES;}; name = Debug; };
 942EEBBACD6C88CAE7F29B29 = { isa = XCBuildConfiguration; buildSettings = {PRODUCT_NAME = "$(TARGET_NAME)"; PRODUCT_BUNDLE_IDENTIFIER = dev.choiruladam.nida.tests; GENERATE_INFOPLIST_FILE = YES; CODE_SIGN_STYLE = Manual; CODE_SIGN_IDENTITY = "-"; SWIFT_EMIT_LOC_STRINGS = YES; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Nida.app/Contents/MacOS/Nida"; BUNDLE_LOADER = "$(TEST_HOST)"; ENABLE_APP_SANDBOX = YES;}; name = Release; };
