@@ -7,7 +7,7 @@ Issues: [setup #2](https://github.com/choiruladamm/nida/issues/2), [prototype #3
 - SwiftUI menu bar panel, native Settings scene, and AppKit nonactivating panel hosting SwiftUI.
 - Four in-memory states: collapsed handle, prayer-time preview, follow-up preview, and sample timetable.
 - Camera space derived from NSScreen safe-area/auxiliary geometry; all content is below the camera.
-- A black camera surround, behind-window HUD material, native glass controls, and restrained spring animation.
+- A black camera surround, warm charcoal reading surface, behind-window HUD material, native glass controls, and restrained spring animation. Shared reference-derived tokens are documented in DESIGN.md.
 - Automatic previews do not become key windows. User-initiated schedule access or clicking the panel enables keyboard interaction. Escape collapses the key panel.
 - Pointer events outside the current panel bounds pass through the otherwise transparent host window; outside clicks collapse it. No global keyboard monitor or accessibility permission is used.
 - Fullscreen auxiliary/all-Spaces window behavior is configured with public APIs. Geometry is recalculated on screen, Space, and wake changes.

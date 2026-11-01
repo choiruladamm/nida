@@ -7,8 +7,6 @@ struct NotchView: View {
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
 
-    private let sage = Color(red: 0.75, green: 0.82, blue: 0.67)
-
     var body: some View {
         let size = model.geometry.size(for: model.state)
         VStack(spacing: 0) {
@@ -19,7 +17,7 @@ struct NotchView: View {
                     } label: {
                         VStack(spacing: 0) {
                             Color.clear.frame(height: model.geometry.cameraHeight)
-                            Capsule().fill(sage.opacity(model.isHovering ? 1 : 0.55))
+                            Capsule().fill(NidaStyle.text.opacity(model.isHovering ? 0.9 : 0.45))
                                 .frame(width: 22, height: 3)
                                 .frame(height: 12)
                         }
@@ -31,13 +29,13 @@ struct NotchView: View {
                     .help("Buka jadwal contoh")
                 } else {
                     VStack(spacing: 0) {
-                        Color.clear.frame(height: model.geometry.cameraHeight + 14)
+                        Color.clear.frame(height: model.geometry.cameraHeight)
                         if model.state == .schedule {
                             ScheduleView(onClose: { controller.show(.collapsed) })
-                                .padding(.horizontal, 24)
                         } else {
                             reminder
-                                .padding(.horizontal, 24)
+                                .padding(.horizontal, NidaStyle.panelInset)
+                                .padding(.top, 16)
                         }
                         Spacer(minLength: 0)
                     }
@@ -47,75 +45,90 @@ struct NotchView: View {
         }
         .frame(width: size.width, height: size.height, alignment: .top)
         .background { surface }
-        .clipShape(.rect(topLeadingRadius: 10, bottomLeadingRadius: 28,
-                         bottomTrailingRadius: 28, topTrailingRadius: 10))
+        .clipShape(NidaStyle.panelShape)
+        .overlay {
+            if model.state != .collapsed {
+                NidaStyle.panelShape.strokeBorder(NidaStyle.hairline, lineWidth: 0.5)
+                    .allowsHitTesting(false)
+            }
+        }
         .overlay(alignment: .top) {
             if model.geometry.cameraHeight > 0 {
                 Color.black.frame(height: model.geometry.cameraHeight)
                     .allowsHitTesting(false)
             }
         }
+        .shadow(color: .black.opacity(0.18), radius: 16, x: 0, y: 8)
         .onHover { controller.setHovering($0) }
         .animation(reduceMotion ? .easeOut(duration: 0.12) : .spring(duration: 0.28, bounce: 0.12),
                    value: model.state)
         .frame(width: NotchGeometry.canvasSize.width, height: NotchGeometry.canvasSize.height,
                alignment: .top)
         .preferredColorScheme(.dark)
-        .tint(sage)
+        .foregroundStyle(NidaStyle.text)
+        .tint(NidaStyle.text)
     }
 
     @ViewBuilder private var surface: some View {
-        if reduceTransparency || contrast == .increased || model.state == .collapsed {
+        if model.state == .collapsed {
             Color.black
+        } else if reduceTransparency || contrast == .increased {
+            NidaStyle.surface
         } else {
-            Rectangle()
-                .fill(.black.opacity(0.25))
+            NidaStyle.surface.opacity(0.8)
                 .background { DesktopMaterial() }
-                .glassEffect(.regular.tint(.black.opacity(0.45)),
-                             in: .rect(topLeadingRadius: 10, bottomLeadingRadius: 28,
-                                       bottomTrailingRadius: 28, topTrailingRadius: 10))
         }
     }
 
     private var reminder: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            HStack(spacing: 14) {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: NidaStyle.groupGap) {
                 Image(systemName: "moon.stars.fill")
-                    .font(.system(size: 26, weight: .medium))
-                    .foregroundStyle(sage)
+                    .font(.system(size: 22, weight: .regular))
+                    .foregroundStyle(NidaStyle.text)
+                    .frame(width: 40, height: 40)
+                    .background(NidaStyle.chrome, in: .circle)
+                    .overlay { Circle().strokeBorder(NidaStyle.hairline, lineWidth: 0.5) }
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 5) {
                     Text(model.state == .prayer ? "Waktunya Ashar" : "Yuk, sholat dulu")
-                        .font(.system(size: 19, weight: .semibold))
+                        .font(.system(size: 18, weight: .medium))
                     Text(model.state == .prayer
                          ? "15.12 · Saatnya ambil jeda"
                          : "10 menit sejak masuk waktu Ashar")
                         .font(.system(size: 12))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(NidaStyle.secondaryText)
                 }
                 Spacer(minLength: 0)
                 Button { controller.show(.schedule, interactive: true) } label: {
                     Image(systemName: "chevron.down").font(.system(size: 11, weight: .semibold))
-                        .frame(width: 24, height: 24)
+                        .frame(width: 20, height: 20)
                 }
-                .buttonStyle(.plain)
-                .foregroundStyle(.secondary)
+                .buttonStyle(.glass)
+                .buttonBorderShape(.circle)
+                .foregroundStyle(NidaStyle.secondaryText)
                 .accessibilityLabel("Lihat jadwal contoh")
             }
             if model.state == .followUp {
-                HStack(spacing: 10) {
-                    Button("Tutup") { controller.show(.collapsed) }
-                        .buttonStyle(.glass)
-                    Button("Ingatkan 5 menit lagi") { controller.previewSnooze() }
-                        .buttonStyle(.glassProminent)
+                HStack(spacing: NidaStyle.groupGap) {
+                    Button { controller.show(.collapsed) } label: {
+                        Text("Tutup").frame(maxWidth: .infinity, minHeight: NidaStyle.controlHeight)
+                    }
+                    .buttonStyle(.glass)
+                    Button { controller.previewSnooze() } label: {
+                        Text("Ingatkan 5 menit lagi")
+                            .foregroundStyle(NidaStyle.surface)
+                            .frame(maxWidth: .infinity, minHeight: NidaStyle.controlHeight)
+                    }
+                    .buttonStyle(.glassProminent)
                 }
-                .controlSize(.large)
-                .buttonSizing(.flexible)
+                .controlSize(.regular)
+                .buttonBorderShape(.capsule)
+                .font(.system(size: 12, weight: .medium))
             }
-            Text(model.notice ?? "PREVIEW · DATA CONTOH")
-                .font(.system(size: 9, weight: .medium))
-                .tracking(model.notice == nil ? 1.3 : 0)
-                .foregroundStyle(.secondary)
+            Text(model.notice ?? "Preview · Data contoh")
+                .font(.system(size: 10))
+                .foregroundStyle(NidaStyle.secondaryText)
                 .accessibilityLabel(model.notice ?? "Preview dengan data contoh, bukan jadwal sebenarnya")
         }
     }

@@ -23,10 +23,14 @@ Project setup and notch feasibility prototype only. No live timetable, location 
 
 Product plan and implementation tracker: https://github.com/choiruladamm/nida/issues/1
 
+## Visual direction
+
+The owner’s supplied charcoal/glass reference is the visual authority. Shared palette, spacing, and radii live in `Nida/NidaStyle.swift`; see [DESIGN.md](DESIGN.md).
+
 ## Try the notch prototype
 
 1. Launch the app. A moon-and-stars menu bar item and a small handle below the camera appear.
-2. Click the handle to open the sample schedule, or open the menu bar panel and select **Buka di notch**.
+2. Click the handle to open the sample schedule, or open the menu bar panel and click the circular **arrow-up-right** button.
 3. Select **Masuk waktu** or **Pengingat kedua** to preview the two reminder states.
 4. Click the panel before using Escape; clicking outside also collapses it. An automatic reminder does not take keyboard focus.
 5. Open **Pengaturan** for all four preview states. Quit with **Keluar** in the menu bar panel.

@@ -44,34 +44,49 @@ struct MenuContent: View {
     @Environment(\.openSettings) private var openSettings
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(spacing: 0) {
             ScheduleView()
-            Divider()
-            Text("NOTCH PREVIEW").font(.system(size: 9, weight: .medium))
-                .tracking(1.5).foregroundStyle(.secondary)
-            HStack {
-                Button("Masuk waktu") { preview(.prayer) }
-                Button("Pengingat kedua") { preview(.followUp) }
-            }
-            .buttonStyle(.glass)
-            .controlSize(.large)
-            Button("Buka di notch", systemImage: "rectangle.topthird.inset.filled") {
-                preview(.schedule)
-            }
-            HStack {
-                Button("Pengaturan", systemImage: "gearshape") {
-                    NSApplication.shared.activate()
-                    openSettings()
+            NidaStyle.hairline.frame(height: 0.5)
+            VStack(alignment: .leading, spacing: 16) {
+                HStack {
+                    Text("Coba pengingat")
+                        .font(.system(size: 12, weight: .medium))
+                    Spacer()
+                    Button { preview(.schedule) } label: {
+                        Image(systemName: "arrow.up.right")
+                            .frame(width: 20, height: 20)
+                    }
+                    .buttonStyle(.glass)
+                    .buttonBorderShape(.circle)
+                    .accessibilityLabel("Buka jadwal di notch")
                 }
-                Spacer()
-                Button("Keluar") { NSApplication.shared.terminate(nil) }
+                HStack(spacing: NidaStyle.groupGap) {
+                    Button("Masuk waktu") { preview(.prayer) }
+                    Button("Pengingat kedua") { preview(.followUp) }
+                }
+                .buttonStyle(.glass)
+                .buttonBorderShape(.capsule)
+                .controlSize(.large)
+                .font(.system(size: 12))
+                HStack {
+                    Button("Pengaturan", systemImage: "gearshape") {
+                        NSApplication.shared.activate()
+                        openSettings()
+                    }
+                    Spacer()
+                    Button("Keluar") { NSApplication.shared.terminate(nil) }
+                }
+                .font(.system(size: 12))
+                .buttonStyle(.plain)
+                .foregroundStyle(NidaStyle.secondaryText)
             }
-            .font(.system(size: 11))
-            .buttonStyle(.plain)
-            .foregroundStyle(.secondary)
+            .padding(NidaStyle.panelInset)
         }
-        .padding(24)
         .frame(width: 368)
+        .background(NidaStyle.surface)
+        .foregroundStyle(NidaStyle.text)
+        .tint(NidaStyle.text)
+        .preferredColorScheme(.dark)
     }
 
     private func preview(_ state: PreviewState) {
@@ -106,5 +121,7 @@ struct PrototypeSettings: View {
         }
         .formStyle(.grouped)
         .frame(width: 460, height: 510)
+        .tint(NidaStyle.text)
+        .preferredColorScheme(.dark)
     }
 }

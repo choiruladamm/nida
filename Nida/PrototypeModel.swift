@@ -41,7 +41,7 @@ struct NotchGeometry: Equatable {
         case .collapsed: CGSize(width: max(cameraWidth + 28, 164), height: cameraHeight + 12)
         case .prayer: CGSize(width: 392, height: cameraHeight + 112)
         case .followUp: CGSize(width: 440, height: cameraHeight + 170)
-        case .schedule: CGSize(width: 400, height: cameraHeight + 394)
+        case .schedule: CGSize(width: 400, height: cameraHeight + 414)
         }
     }
 

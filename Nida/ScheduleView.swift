@@ -1,6 +1,6 @@
 import SwiftUI
 
-// Fixed fixtures make it impossible to mistake a live calculation for a validated schedule.
+// Fixtures only: the next-prayer state is intentionally not a live calculation.
 struct ScheduleView: View {
     var onClose: (() -> Void)?
     private let prayers: [(name: String, time: String, symbol: String)] = [
@@ -10,62 +10,85 @@ struct ScheduleView: View {
         ("Maghrib", "17.48", "sunset"),
         ("Isya", "19.00", "moon.stars")
     ]
-    private let sage = Color(red: 0.75, green: 0.82, blue: 0.67)
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Nida").font(.system(size: 17, weight: .semibold))
-                    Text("Jakarta · Minggu, 1 November")
-                        .font(.system(size: 11)).foregroundStyle(.secondary)
-                }
+        VStack(spacing: 0) {
+            HStack(spacing: NidaStyle.groupGap) {
+                Image(systemName: "moon.stars")
+                    .font(.system(size: 15, weight: .medium))
+                    .accessibilityHidden(true)
+                Text("Nida").font(.system(size: 15, weight: .semibold))
                 Spacer()
                 if let onClose {
                     Button(action: onClose) {
-                        Image(systemName: "xmark").frame(width: 24, height: 24)
+                        Image(systemName: "xmark")
+                            .font(.system(size: 11, weight: .medium))
+                            .frame(width: 20, height: 20)
                     }
                     .buttonStyle(.glass)
+                    .buttonBorderShape(.circle)
                     .accessibilityLabel("Tutup jadwal")
+                } else {
+                    Text("Preview")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(NidaStyle.secondaryText)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(NidaStyle.raised, in: .capsule)
                 }
             }
-            HStack(alignment: .firstTextBaseline) {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("SHOLAT BERIKUTNYA").font(.system(size: 9, weight: .medium)).tracking(1.5)
-                        .foregroundStyle(.secondary)
-                    Text("Ashar").font(.system(size: 27, weight: .semibold))
-                }
-                Spacer()
-                Text("15.12").font(.system(size: 31, weight: .light, design: .rounded))
-                    .monospacedDigit().foregroundStyle(sage)
-            }
-            Divider()
-            VStack(spacing: 3) {
-                ForEach(prayers, id: \.name) { prayer in
-                    HStack(spacing: 12) {
-                        Image(systemName: prayer.symbol).frame(width: 18)
-                            .accessibilityHidden(true)
-                        Text(prayer.name)
-                        Spacer()
-                        Text(prayer.time).monospacedDigit()
-                        if prayer.name == "Ashar" {
-                            Circle().fill(sage).frame(width: 4, height: 4)
-                                .accessibilityHidden(true)
-                        } else {
-                            Color.clear.frame(width: 4, height: 4)
-                        }
+            .frame(height: 28)
+            .padding(.horizontal, NidaStyle.panelInset)
+            .padding(.vertical, 12)
+            .background(NidaStyle.chrome.opacity(0.8))
+
+            NidaStyle.hairline.frame(height: 0.5)
+
+            VStack(alignment: .leading, spacing: NidaStyle.sectionGap) {
+                HStack(alignment: .center) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Ashar").font(.system(size: 26, weight: .semibold))
+                        Text("Berikutnya · Jakarta")
+                            .font(.system(size: 12))
+                            .foregroundStyle(NidaStyle.secondaryText)
                     }
-                    .font(.system(size: 12, weight: prayer.name == "Ashar" ? .semibold : .regular))
-                    .foregroundStyle(prayer.name == "Ashar" ? sage : .white.opacity(0.75))
-                    .padding(.horizontal, 10)
-                    .frame(height: 31)
-                    .background(prayer.name == "Ashar" ? sage.opacity(0.1) : .clear,
-                                in: .rect(cornerRadius: 8))
-                    .accessibilityElement(children: .combine)
+                    Spacer()
+                    Text("15.12").font(.system(size: 30, weight: .light))
+                        .monospacedDigit()
                 }
+
+                VStack(spacing: 4) {
+                    ForEach(prayers, id: \.name) { prayer in
+                        HStack(spacing: NidaStyle.groupGap) {
+                            Image(systemName: prayer.symbol).frame(width: 18)
+                                .foregroundStyle(NidaStyle.secondaryText)
+                                .accessibilityHidden(true)
+                            Text(prayer.name)
+                            Spacer()
+                            Text(prayer.time).monospacedDigit()
+                            Circle()
+                                .fill(prayer.name == "Ashar" ? NidaStyle.accent : .clear)
+                                .frame(width: 4, height: 4)
+                                .accessibilityHidden(true)
+                        }
+                        .font(.system(size: 13, weight: prayer.name == "Ashar" ? .medium : .regular))
+                        .padding(.horizontal, 12)
+                        .frame(height: 34)
+                        .background(prayer.name == "Ashar" ? NidaStyle.raised.opacity(0.65) : .clear,
+                                    in: .rect(cornerRadius: NidaStyle.rowRadius))
+                        .accessibilityElement(children: .combine)
+                    }
+                }
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Minggu, 1 November · Data contoh")
+                    Text("Belum terhubung ke jadwal asli.")
+                }
+                .font(.system(size: 11))
+                .foregroundStyle(NidaStyle.secondaryText)
             }
-            Label("Data contoh · Belum terhubung ke jadwal asli", systemImage: "info.circle")
-                .font(.system(size: 10)).foregroundStyle(.secondary)
+            .padding(NidaStyle.panelInset)
         }
+        .foregroundStyle(NidaStyle.text)
     }
 }
