@@ -15,6 +15,7 @@ make build     # Build the app
 make test      # Run tests
 make run       # Build and open Nida
 make smoke     # Cycle native previews and exit
+make data-smoke # Check live API + offline storage (uses internet)
 make project   # Open Xcode
 make doctor    # Show local toolchain versions
 make clean     # Clean build products
@@ -28,7 +29,7 @@ Local builds use ad-hoc signing. These are personal development builds, not nota
 
 ## Scope
 
-Project setup and notch feasibility prototype only. No live timetable, location access, production reminder scheduling, or login launch yet.
+The notch remains a feasibility prototype. Settings now supports manual city selection, real daily schedules, and validated current/next-month offline storage. Automatic location, next-prayer calculation, production reminders, and login launch are not implemented yet.
 
 Product plan and implementation tracker: https://github.com/choiruladamm/nida/issues/1
 
@@ -55,3 +56,11 @@ make smoke
 ```
 
 This cycles the four states and prints detected geometry, visibility, and focus observations. It does not simulate mouse/keyboard input or prove fullscreen behavior. See [prototype verification](docs/notch-prototype.md) for measured results and pending manual checks.
+
+## Real prayer schedules
+
+Open **Pengaturan → Lokasi jadwal**, choose a city/regency, then inspect **Jadwal hari ini**. The search runs locally against the provider's cached catalog. The app fetches the selected city's current and next month and reuses cached dates offline. Refresh failures preserve usable data and show a message; unavailable dates are never replaced with yesterday's timetable.
+
+The menu bar/notch schedule and reminder buttons still show labeled preview fixtures until the next UI/scheduling issues. Real source attribution is **Kemenag via myQuran**. See [provider contract, time zones, and official comparisons](docs/prayer-data.md).
+
+`make data-smoke` uses live internet requests and a disposable cache, verifies offline restoration, and leaves the selected city unchanged. It is separate from the offline unit suite.

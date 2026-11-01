@@ -6,10 +6,10 @@ DESTINATION ?= platform=macOS,arch=$(shell uname -m)
 APP := $(BUILD_DIR)/Build/Products/$(CONFIGURATION)/Nida.app
 XCODEBUILD := xcodebuild -project Nida.xcodeproj -scheme Nida -configuration "$(CONFIGURATION)" -destination "$(DESTINATION)" -derivedDataPath "$(BUILD_DIR)"
 
-.PHONY: help build test run smoke clean project doctor
+.PHONY: help build test run smoke data-smoke clean project doctor
 
 help: ## Show available commands.
-	@awk 'BEGIN {FS = ":.*## "} /^[a-z]+:.*## / {printf "  make %-10s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*## "} /^[a-z][a-z-]*:.*## / {printf "  make %-10s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 build: ## Build a locally signed app.
 	$(XCODEBUILD) build CODE_SIGN_IDENTITY=-
@@ -23,6 +23,10 @@ run: build ## Build and open Nida (does not restart an already running instance)
 smoke: ## Build Debug and cycle native preview states, then exit.
 	$(MAKE) build CONFIGURATION=Debug
 	"$(BUILD_DIR)/Build/Products/Debug/Nida.app/Contents/MacOS/Nida" --smoke-test
+
+data-smoke: ## Check live API and offline cache in a temporary directory (uses internet).
+	$(MAKE) build CONFIGURATION=Debug
+	"$(BUILD_DIR)/Build/Products/Debug/Nida.app/Contents/MacOS/Nida" --data-smoke
 
 clean: ## Clean this project's build products using Xcode.
 	$(XCODEBUILD) clean

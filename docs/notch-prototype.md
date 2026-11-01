@@ -39,7 +39,7 @@ These observations establish startup, geometry and window-focus behavior, not th
 | Accessibility | Pending | VoiceOver labels, Tab focus, Reduce Motion/Transparency, Increase Contrast |
 | Multiple display scales | Pending | Correct positioning after scaling changes |
 
-Do not close #3 or expand into live schedule integration until the notch feasibility gate is reviewed. Window-level/collection settings do not guarantee visibility over every system-managed fullscreen surface. No lock-screen overlay is promised.
+Keep #3 open until its remaining hardware checks are recorded. After PR #12 merged, the owner authorized the live data foundation in #4; its implementation does not claim those visual checks are complete. Window-level/collection settings do not guarantee visibility over every system-managed fullscreen surface. No lock-screen overlay is promised.
 
 ## Deliberate prototype limits
 
