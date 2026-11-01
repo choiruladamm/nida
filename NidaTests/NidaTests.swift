@@ -1,4 +1,6 @@
+import AppKit
 import Foundation
+import SwiftUI
 import Testing
 @testable import Nida
 
@@ -15,22 +17,38 @@ struct NotchGeometryTests {
         #expect(frame.height > geometry.cameraHeight)
     }
 
-    @Test func collapsedTriggerHasReachableAreaBelowAndBesideCamera() {
+    @Test func collapsedTriggerDoesNotWidenThePhysicalNotch() {
         let frame = geometry.interactiveFrame(for: .collapsed)
-        #expect(frame.width > geometry.cameraWidth)
-        #expect(frame.height - geometry.cameraHeight >= 12)
+        #expect(frame.width == geometry.cameraWidth)
+        #expect(frame.height - geometry.cameraHeight == 8)
         #expect(!frame.contains(CGPoint(x: geometry.screenFrame.minX + 10, y: 500)))
     }
 
-    @Test func unnotchedDisplayKeepsAVisibleTrigger() {
+    @Test func expandedShouldersFlareIntoTheScreenEdge() {
+        let path = NotchSilhouette().path(in: CGRect(x: 0, y: 0, width: 360, height: 358))
+        #expect(path.contains(CGPoint(x: 8, y: 1)))
+        #expect(!path.contains(CGPoint(x: 5, y: 20)))
+        #expect(path.contains(CGPoint(x: 180, y: 357)))
+        #expect(!path.contains(CGPoint(x: 11, y: 357)))
+    }
+
+    @Test func unnotchedDisplayKeepsAReachableTrigger() {
         let fallback = NotchGeometry(screenFrame: CGRect(x: 0, y: 0, width: 1920, height: 1080),
                                      cameraWidth: 0, cameraHeight: 0)
-        #expect(fallback.size(for: .collapsed) == CGSize(width: 164, height: 12))
+        #expect(fallback.size(for: .collapsed) == CGSize(width: 164, height: 8))
         #expect(fallback.canvasFrame.contains(fallback.interactiveFrame(for: .schedule)))
     }
 }
 
 @MainActor struct PrototypeTests {
+    @Test func compactScheduleFitsBelowTheCamera() {
+        let geometry = NotchGeometry(screenFrame: CGRect(x: 0, y: 0, width: 1470, height: 956),
+                                     cameraWidth: 179, cameraHeight: 32)
+        let size = geometry.size(for: .schedule)
+        let host = NSHostingView(rootView: ScheduleView(onClose: {}).frame(width: size.width))
+        #expect(host.fittingSize.height <= size.height - geometry.cameraHeight)
+    }
+
     @Test func previewSnoozeDoesNotCreateAnotherReminder() {
         let controller = NotchPanelController()
         controller.model.state = .followUp

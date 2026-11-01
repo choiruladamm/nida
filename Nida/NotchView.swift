@@ -17,9 +17,9 @@ struct NotchView: View {
                     } label: {
                         VStack(spacing: 0) {
                             Color.clear.frame(height: model.geometry.cameraHeight)
-                            Capsule().fill(NidaStyle.text.opacity(model.isHovering ? 0.9 : 0.45))
-                                .frame(width: 22, height: 3)
-                                .frame(height: 12)
+                            Capsule().fill(NidaStyle.text.opacity(model.isHovering ? 0.65 : 0))
+                                .frame(width: 20, height: 2)
+                                .frame(height: 8)
                         }
                         .frame(maxWidth: .infinity)
                         .contentShape(.rect)
@@ -34,7 +34,7 @@ struct NotchView: View {
                             ScheduleView(onClose: { controller.show(.collapsed) })
                         } else {
                             reminder
-                                .padding(.horizontal, NidaStyle.panelInset)
+                                .padding(.horizontal, NidaStyle.panelInset + 10)
                                 .padding(.top, 16)
                         }
                         Spacer(minLength: 0)
@@ -45,20 +45,8 @@ struct NotchView: View {
         }
         .frame(width: size.width, height: size.height, alignment: .top)
         .background { surface }
-        .clipShape(NidaStyle.panelShape)
-        .overlay {
-            if model.state != .collapsed {
-                NidaStyle.panelShape.strokeBorder(NidaStyle.hairline, lineWidth: 0.5)
-                    .allowsHitTesting(false)
-            }
-        }
-        .overlay(alignment: .top) {
-            if model.geometry.cameraHeight > 0 {
-                Color.black.frame(height: model.geometry.cameraHeight)
-                    .allowsHitTesting(false)
-            }
-        }
-        .shadow(color: .black.opacity(0.18), radius: 16, x: 0, y: 8)
+        .clipShape(NotchSilhouette())
+        .shadow(color: .black.opacity(model.state == .collapsed ? 0 : 0.14), radius: 16, x: 0, y: 8)
         .onHover { controller.setHovering($0) }
         .animation(reduceMotion ? .easeOut(duration: 0.12) : .spring(duration: 0.28, bounce: 0.12),
                    value: model.state)
@@ -71,12 +59,13 @@ struct NotchView: View {
 
     @ViewBuilder private var surface: some View {
         if model.state == .collapsed {
-            Color.black
+            Color.clear
         } else if reduceTransparency || contrast == .increased {
-            NidaStyle.surface
+            NidaStyle.opaqueGlass
         } else {
-            NidaStyle.surface.opacity(0.8)
+            Color.white.opacity(0.08)
                 .background { DesktopMaterial() }
+                .glassEffect(.regular.tint(.white.opacity(0.08)), in: NotchSilhouette())
         }
     }
 
@@ -87,7 +76,7 @@ struct NotchView: View {
                     .font(.system(size: 22, weight: .regular))
                     .foregroundStyle(NidaStyle.text)
                     .frame(width: 40, height: 40)
-                    .background(NidaStyle.chrome, in: .circle)
+                    .background(.white.opacity(0.08), in: .circle)
                     .overlay { Circle().strokeBorder(NidaStyle.hairline, lineWidth: 0.5) }
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 5) {
@@ -106,6 +95,7 @@ struct NotchView: View {
                 }
                 .buttonStyle(.glass)
                 .buttonBorderShape(.circle)
+                .tint(.clear)
                 .foregroundStyle(NidaStyle.secondaryText)
                 .accessibilityLabel("Lihat jadwal contoh")
             }
@@ -115,6 +105,7 @@ struct NotchView: View {
                         Text("Tutup").frame(maxWidth: .infinity, minHeight: NidaStyle.controlHeight)
                     }
                     .buttonStyle(.glass)
+                    .tint(.clear)
                     Button { controller.previewSnooze() } label: {
                         Text("Ingatkan 5 menit lagi")
                             .foregroundStyle(NidaStyle.surface)
@@ -135,10 +126,10 @@ struct NotchView: View {
 }
 
 // SwiftUI glass samples the view hierarchy; this material also blurs the desktop behind our window.
-private struct DesktopMaterial: NSViewRepresentable {
+struct DesktopMaterial: NSViewRepresentable {
     func makeNSView(context: Context) -> NSVisualEffectView {
         let view = NSVisualEffectView()
-        view.material = .hudWindow
+        view.material = .popover
         view.blendingMode = .behindWindow
         view.state = .active
         view.appearance = NSAppearance(named: .darkAqua)

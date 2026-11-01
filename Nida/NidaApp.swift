@@ -42,6 +42,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 struct MenuContent: View {
     let controller: NotchPanelController
     @Environment(\.openSettings) private var openSettings
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
 
     var body: some View {
         VStack(spacing: 0) {
@@ -58,6 +60,7 @@ struct MenuContent: View {
                     }
                     .buttonStyle(.glass)
                     .buttonBorderShape(.circle)
+                    .tint(.clear)
                     .accessibilityLabel("Buka jadwal di notch")
                 }
                 HStack(spacing: NidaStyle.groupGap) {
@@ -66,6 +69,7 @@ struct MenuContent: View {
                 }
                 .buttonStyle(.glass)
                 .buttonBorderShape(.capsule)
+                .tint(.clear)
                 .controlSize(.large)
                 .font(.system(size: 12))
                 HStack {
@@ -83,7 +87,13 @@ struct MenuContent: View {
             .padding(NidaStyle.panelInset)
         }
         .frame(width: 368)
-        .background(NidaStyle.surface)
+        .background {
+            if reduceTransparency || contrast == .increased {
+                NidaStyle.opaqueGlass
+            } else {
+                Color.white.opacity(0.08).background { DesktopMaterial() }
+            }
+        }
         .foregroundStyle(NidaStyle.text)
         .tint(NidaStyle.text)
         .preferredColorScheme(.dark)
