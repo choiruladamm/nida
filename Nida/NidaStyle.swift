@@ -11,6 +11,7 @@ enum NidaStyle {
     static let hairline = Color.white.opacity(0.12)
 
     static let panelInset: CGFloat = 24
+    static let notchHorizontalInset: CGFloat = 38
     static let sectionGap: CGFloat = 20
     static let groupGap: CGFloat = 12
     static let iconControlSize: CGFloat = 28
@@ -23,8 +24,8 @@ enum NidaStyle {
 // Concave shoulders meet the screen edge; convex lower corners finish the expanded panel.
 struct NotchSilhouette: Shape {
     func path(in rect: CGRect) -> Path {
-        let shoulder: CGFloat = min(10, rect.width / 4, rect.height / 4)
-        let bottom: CGFloat = min(26, (rect.height - shoulder) / 2)
+        let shoulder: CGFloat = min(18, rect.width / 4, rect.height / 4)
+        let bottom: CGFloat = min(36, (rect.height - shoulder) / 2)
         var path = Path()
         path.move(to: CGPoint(x: rect.minX, y: rect.minY))
         path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
@@ -47,6 +48,7 @@ struct NotchSilhouette: Shape {
 // Explicit colors stay legible even when the nonactivating panel isn't key.
 struct NidaButtonStyle: ButtonStyle {
     var prominent = false
+    var flat = false
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
     @Environment(\.isEnabled) private var isEnabled
@@ -61,6 +63,8 @@ struct NidaButtonStyle: ButtonStyle {
                     Capsule().fill(NidaStyle.text)
                 } else if reduceTransparency || contrast == .increased {
                     Capsule().fill(NidaStyle.opaqueGlass)
+                } else if flat {
+                    Capsule().fill(.white.opacity(0.10))
                 } else {
                     Capsule().fill(.white.opacity(0.10))
                         .glassEffect(.regular.interactive(), in: .capsule)

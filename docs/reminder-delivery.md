@@ -2,6 +2,10 @@
 
 Issue: #8. `ReminderDelivery` bridges the existing pure timeline, atomic local ledger, and single AppKit notch panel. The app starts it after test/smoke guards, without requesting notification permission or sending ordinary banners.
 
+## Accepted panel presentation
+
+Prayer-time and personal follow-up panels follow [DESIGN.md](../DESIGN.md). The shared headline shows prayer name and original prayer-start time; the follow-up subtitle describes elapsed time or snooze. Close is secondary, the explicit five-minute snooze is primary, and preview/personal-reminder disclosures remain visible. Both panels fit content and use the same camera wings, lower glass and rounded silhouette as today's schedule. This presentation change does not alter ledger identity, event timing or snooze semantics.
+
 ## Delivery contract
 
 - Entry at the validated prayer instant; personal follow-up at the configured delay (`followUpDelayMinutes`, validated 1–60, default 10). Native preference controls are provided by #9. Started occurrences preserve their existing pending follow-up when the setting changes.

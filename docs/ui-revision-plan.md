@@ -1,4 +1,34 @@
-# Glass and layout revision
+# UI revision history and skill provenance
+
+
+## Accepted three-panel notch revamp — 2026-11-02
+
+Tracked in [#25](https://github.com/choiruladamm/nida/issues/25). The owner iterated on real running previews and supplied screenshots, then explicitly accepted the result after the final shoulder and horizontal-padding adjustments. The accepted scope is prayer time, personal follow-up and today's notch schedule. [DESIGN.md](../DESIGN.md) is the current visual specification; earlier contracts below describe prior iterations.
+
+The final direction joins black camera wings to a naturally fitted body, uses more rounded shoulders/lower curves and adds a subtle native-glass gradient and lower edge. Reminders share a prayer-name/start-time headline; schedule uses a horizontal five-prayer strip. Hover replaces the schedule close button. Menu/Settings remain native frosted surfaces. No new dependency or design skill was installed for this revamp.
+
+### Skills actually used
+
+| Skill | Role in this revision | Source / installed reference |
+| --- | --- | --- |
+| `find-skills` | Search the skill directory and verify relevant existing skills | [vercel-labs/skills](https://skills.sh/vercel-labs/skills/find-skills) |
+| `macos-design-guidelines` | Native controls, compact pointer targets, keyboard/focus and Settings conventions | [ehmo/platform-design-skills](https://skills.sh/ehmo/platform-design-skills/macos-design-guidelines) |
+| `emil-design-eng` | Hierarchy, restrained motion, stable alignment and interaction polish; translated to native APIs | [emilkowalski/skills](https://skills.sh/emilkowalski/skills/emil-design-eng) |
+| `swiftui-expert-skill` | SwiftUI composition, layout, observable state and accessibility | Installed `~/.agents/skills/swiftui-expert-skill/SKILL.md` |
+| `write-swift` | Swift modeling, concurrency and separation of scheduling from presentation | Installed `~/.codex/skills/write-swift/SKILL.md` |
+| `ponytail` | Small reversible edits and short owner-run experiment cycles | Installed `~/.agents/skills/ponytail/SKILL.md` |
+| `writing-for-agents` | Consolidate the current design contract and keep historical evidence separate | Installed `~/.agents/skills/writing-for-agents/SKILL.md` |
+| `pr` | Structure the final change description and verification evidence | Installed `~/.agents/skills/pr/SKILL.md` |
+
+`swiftui-liquid-glass` was recorded during the earlier frosted revision below; it is historical provenance, not an additional skill newly invoked for this three-panel revamp. Context7 and Apple's documentation supplied API checks; they are documentation tools/sources rather than extra design skills.
+
+### Documentation structure
+
+DESIGN.md describes the visual language, semantic roles, component anatomy, spacing and interaction rules. Revision chronology, skill provenance and validation belong here and in the verification docs. This structure follows the separation of design decisions/components in [Google Labs' DESIGN.md workflow](https://github.com/google-labs-code/stitch-skills/blob/main/plugins/stitch-utilities/skills/design-md/README.md) and reusable semantic decisions in [Adobe Spectrum's design-token guidance](https://spectrum.adobe.com/foundations/design-data). These references informed documentation structure only; no Stitch workflow or skill was installed or run.
+
+Owner acceptance establishes the appearance reviewed in this session. It does not establish fullscreen/display, VoiceOver, accessibility-toggle, real-reminder delivery or login acceptance. Final PR verification is recorded in [mvp-verification.md](mvp-verification.md).
+
+## Earlier frosted revision
 
 Owner feedback after PR #19: Settings is consistent but insufficiently glass-like; notch hierarchy, typography, spacing, and material need a substantive revision.
 
@@ -9,7 +39,7 @@ Owner feedback after PR #19: Settings is consistent but insufficiently glass-lik
 
 These are independent guidelines, not Apple-authored specifications. Verify native macOS APIs against current Apple documentation/installed SDK. Existing SwiftUI Expert, Write Swift, and Emil guidance remain applicable. Broad multi-window/document-app recommendations do not apply to this single-purpose menu bar utility.
 
-## Revision contract
+## Historical frosted revision contract
 
 - Keep the selected frosted neutral reference, system typography, restrained off-white controls, and lime next-prayer indicator.
 - Replace stacked popover blur/gray fills with native AppKit NSGlassEffectView. The window must still sample the desktop; no CSS imitation or painted specular gradients.

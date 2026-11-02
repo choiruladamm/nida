@@ -39,17 +39,26 @@ struct NotchGeometry: Equatable {
     func size(for state: PreviewState, scheduleStatusHeight: CGFloat = 0) -> CGSize {
         switch state {
         case .collapsed: CGSize(width: cameraWidth > 0 ? cameraWidth : 164, height: cameraHeight + 8)
-        case .prayer: CGSize(width: 368, height: cameraHeight + 112)
-        case .followUp: CGSize(width: 400, height: cameraHeight + 170)
-        case .schedule: CGSize(width: 384, height: cameraHeight + 364 + scheduleStatusHeight)
+        case .prayer: CGSize(width: 368, height: expandedHeaderHeight(panelWidth: 368) + 112)
+        case .followUp: CGSize(width: 400, height: expandedHeaderHeight(panelWidth: 400) + 170)
+        case .schedule: CGSize(width: 384, height: expandedHeaderHeight(panelWidth: 384) + 364 + scheduleStatusHeight)
         }
     }
 
+    func expandedHeaderHeight(panelWidth: CGFloat) -> CGFloat {
+        hasCameraWings(panelWidth: panelWidth) ? max(36, cameraHeight) : cameraHeight + 28
+    }
+
+    func hasCameraWings(panelWidth: CGFloat) -> Bool {
+        (panelWidth - cameraWidth) / 2 - NidaStyle.notchHorizontalInset >= NidaStyle.iconControlSize
+    }
+
     // Global AppKit coordinates, also used to let clicks outside the panel pass through.
-    func interactiveFrame(for state: PreviewState, scheduleStatusHeight: CGFloat = 0) -> CGRect {
+    func interactiveFrame(for state: PreviewState, scheduleStatusHeight: CGFloat = 0, contentHeight: CGFloat? = nil) -> CGRect {
         let size = size(for: state, scheduleStatusHeight: scheduleStatusHeight)
-        return CGRect(x: screenFrame.midX - size.width / 2, y: screenFrame.maxY - size.height,
-                      width: size.width, height: size.height)
+        let height = state == .collapsed ? size.height : (contentHeight ?? size.height)
+        return CGRect(x: screenFrame.midX - size.width / 2, y: screenFrame.maxY - height,
+                      width: size.width, height: height)
     }
 
     @MainActor static func current() -> NotchGeometry? {
@@ -71,6 +80,7 @@ final class PrototypeModel {
     var state: PreviewState = .collapsed
     var geometry = NotchGeometry(screenFrame: CGRect(x: 0, y: 0, width: 1280, height: 832),
                                  cameraWidth: 180, cameraHeight: 32)
+    var expandedHeight: CGFloat?
     var isHovering = false
     var notice: LocalizedStringResource?
     var reminder: PrayerEvent?

@@ -27,6 +27,8 @@ The first catalog-coverage test attempted to read repository source from the san
 
 ### Owner-requested schedule inset alignment — build 4
 
+The following build-4 layout evidence is historical; [DESIGN.md](../DESIGN.md) defines the owner-accepted three-panel notch revamp and [ui-revision-plan.md](ui-revision-plan.md) records its provenance.
+
 After baseline comparison established that the differing schedule/reminder insets predated localization, the owner requested matching them. Schedule and menu-footer insets are now 30 pt horizontal / 20 pt vertical, matching the reminder's horizontal/top insets. The notch schedule aligns content to the top and uses a 364 pt body, removing surplus centering space while retaining all five rows and a separate 52 pt refresh-status allowance. With the measured 32 pt camera, its panel is 396 pt high normally and 448 pt with a status; the camera silhouette remains unchanged.
 
 All 86 tests in 14 suites, Debug/Release builds and native smoke passed after this change. The full schedule/error fit check passed in both languages. A compositor capture of the English schedule was inspected for full rows, footer clearance and aligned insets; it remains local at `build/layout-comparison/schedule-insets-build4.png`. Build 0.2.0 (4) was installed, signature verified and opened from `/Applications/Nida.app`; the candidate ZIP is `build/issue-22-evidence/Nida-0.2.0-build4.zip`. The owner has not yet accepted the revised layout; this observation does not complete the checks below.

@@ -2,6 +2,26 @@
 
 Release gate: [issue #11](https://github.com/choiruladamm/nida/issues/11), following merged PR #19. Hardware acceptance remains open.
 
+## Three-panel notch revamp — 2026-11-02
+
+Tracked in [#25](https://github.com/choiruladamm/nida/issues/25). The owner accepted prayer-time, personal follow-up and today's schedule visuals after iterative screenshots and local runs, including the final rounded shoulders, lower glass boundary and wider insets. The current visual contract is [DESIGN.md](../DESIGN.md); [ui-revision-plan.md](ui-revision-plan.md) records design decisions, documentation references and skills actually used. This source revision is not included in the published 0.2.0 (4) archive.
+
+Final branch checks:
+
+| Check | Result |
+| --- | --- |
+| `make test` | Passed: 89 tests in 14 suites |
+| `make build` | Passed: Debug |
+| `make smoke` with normal app stopped | Passed: 1470 × 956 pt screen, 179 × 32 pt camera, panel visible, frontmost preserved, panel non-key, delivery session available |
+| `make -n run` | Confirmed build → force-close exact Nida process name → open new app instance |
+| `git diff --check` | Passed |
+
+The first final test run exposed an obsolete assertion against the old fixed reminder-height budget. The corrected check bounds naturally fitted content to the actual hosting canvas and still verifies that silhouette height equals content height. The full suite then passed. Geometry coverage includes measured, unnotched and wide-camera inputs, both app languages, complete schedules and refresh errors. Alias tests preserve provider identity and unique choice IDs; persistence tests preserve display names across refresh/relaunch and reset them on manual provider selection.
+
+Owner visual acceptance does not complete the full hardware sheet below. Real scheduled delivery/snooze, all keyboard and VoiceOver paths, OS accessibility toggles, fullscreen/Spaces, external displays/scaling, sleep/lock/login and arbitrary-background contrast remain unverified for this revision. Native smoke checks visibility/focus, not visual quality. Release build, installation/version bump and publication were not requested for this PR. The existing 520 × 480 pt hosting canvas still bounds supported content.
+
+Logs: `/tmp/nida-final-test.log`, `/tmp/nida-final-build.log`, `/tmp/nida-final-smoke.log`; xcresult remains under ignored `build/Logs/Test/`. Screenshots provided during iteration remain local and are not included in the PR. After smoke, the Debug app was reopened for the owner.
+
 ## Recorded automated evidence
 
 Run on 2026-11-02 from clean tracked checkout `092a464a84a816196ae20436fb657489b7084714`, with a new derived-data directory (`build/issue-11-clean`). No product source changes were needed.

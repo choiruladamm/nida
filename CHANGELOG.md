@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Revamp prayer-time, follow-up and today's notch schedule with camera wings, natural content height, a horizontal five-prayer strip, rounded black/glass surfaces and delayed hover access.
+- Refine menu spacing, Settings transitions/system accent/scroll backing, and the rounded native-glass city picker.
+- Apply explicitly requested current location without another confirmation; persist concise Jakarta district display names while preserving provider API/cache IDs.
+- Make `make run` build, force-close existing Nida instances and open the new build.
+- Record the owner-accepted design and skill provenance; broader hardware acceptance remains pending.
+
 ## 0.2.0 (4) — 2026-11-02
 
 - Align schedule/menu insets with prayer reminders: 30 pt horizontally and 20 pt vertically.

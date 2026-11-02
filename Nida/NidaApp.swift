@@ -156,6 +156,8 @@ struct MenuContent: View {
                     Spacer(minLength: 0)
                     HStack(spacing: 8) {
                         Button {
+                            NSApplication.shared.keyWindow?.close()
+                            controller.dismissReminder()
                             NSApplication.shared.activate()
                             openSettings()
                         } label: {
@@ -184,7 +186,7 @@ struct MenuContent: View {
                     .font(.system(size: 12)).buttonStyle(NidaButtonStyle())
                 }
             }
-            .padding(.horizontal, 30).padding(.vertical, 20)
+            .padding(20)
         }
         .frame(width: 384)
         .background { NidaGlassBackground(shape: Rectangle(), cornerRadius: 0) }
@@ -203,6 +205,7 @@ struct NidaSettings: View {
     let controller: NotchPanelController
     let schedules: PrayerDataStore
     @Environment(\.locale) private var locale
+    @State private var isScrolled = false
 
     var body: some View {
         @Bindable var preferences = controller.preferences
@@ -237,12 +240,17 @@ struct NidaSettings: View {
             }
         }
         .formStyle(.grouped)
+        .onScrollGeometryChange(for: Bool.self) { geometry in
+            geometry.contentOffset.y + geometry.contentInsets.top > 1
+        } action: { _, scrolled in
+            isScrolled = scrolled
+        }
         .scrollContentBackground(.hidden)
         .frame(width: 520, height: 660)
         .background { NidaGlassBackground(shape: Rectangle(), cornerRadius: 0).ignoresSafeArea() }
-        .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+        .toolbarBackground(.black.opacity(0.25), for: .windowToolbar)
+        .toolbarBackgroundVisibility(isScrolled ? .visible : .hidden, for: .windowToolbar)
         .containerBackground(.clear, for: .window)
-        .tint(NidaStyle.text)
         .preferredColorScheme(.dark)
     }
 }
