@@ -13,6 +13,28 @@ private let bandungRegency = PrayerCity(id: String(repeating: "b", count: 32), n
                                        cities: [denpasarCity]) == denpasarCity)
     }
 
+    @Test(arguments: ["Pusat", "Selatan", "Utara", "Barat", "Timur"])
+    func jakartaAdministrativeCitiesUseProviderJakarta(name: String) throws {
+        let jakarta = PrayerCity(id: "58a2fc6ed39fd083f55d4182bf88826d", name: "KOTA JAKARTA")
+        let detected = DetectedArea(city: "Kota Administrasi Jakarta " + name, countryCode: "ID")
+        #expect(try DetectedArea.match([detected], cities: [jakarta, denpasarCity]) == jakarta)
+    }
+
+    @Test func jakartaMappingDoesNotAbsorbOtherAdministrativeAreas() throws {
+        let jakarta = PrayerCity(id: "58a2fc6ed39fd083f55d4182bf88826d", name: "KOTA JAKARTA")
+        let islands = PrayerCity(id: "cfecdb276f634854f3ef915e2e980c31", name: "KAB. KEPULAUAN SERIBU")
+        #expect(try DetectedArea.match([DetectedArea(city: "Kabupaten Kepulauan Seribu", countryCode: "ID")],
+                                       cities: [jakarta, islands]) == islands)
+        #expect(throws: LocationSetupError.unsupported) {
+            try DetectedArea.match([DetectedArea(city: "Kota Administrasi Jakarta Lain", countryCode: "ID")],
+                                  cities: [jakarta, islands])
+        }
+        #expect(throws: LocationSetupError.unsupported) {
+            try DetectedArea.match([DetectedArea(city: "Kota Administrasi Jakarta Pusat", countryCode: "MY")],
+                                  cities: [jakarta])
+        }
+    }
+
     @Test func distinguishesCityAndRegency() throws {
         let catalog = [bandungCity, bandungRegency]
         #expect(try DetectedArea.match([DetectedArea(city: "Kabupaten Bandung", countryCode: "ID")],

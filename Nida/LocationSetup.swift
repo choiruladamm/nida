@@ -10,9 +10,16 @@ struct DetectedArea: Equatable, Sendable {
         guard !areas.isEmpty, areas.allSatisfy({ $0.countryCode == "ID" }) else {
             throw LocationSetupError.unsupported
         }
+        // The provider groups these five administrative cities under KOTA JAKARTA.
+        let jakartaAreas: Set<String> = [
+            "kota administrasi jakarta pusat", "kota administrasi jakarta selatan",
+            "kota administrasi jakarta utara", "kota administrasi jakarta barat",
+            "kota administrasi jakarta timur"
+        ]
         func normalized(_ name: String) -> String {
             let value = name.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: Locale(identifier: "id_ID"))
                 .split(whereSeparator: { !$0.isLetter && !$0.isNumber }).joined(separator: " ")
+            if jakartaAreas.contains(value) { return "kota jakarta" }
             return value.hasPrefix("kab ") ? "kabupaten " + value.dropFirst(4) : value
         }
         func base(_ name: String) -> String {
