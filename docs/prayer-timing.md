@@ -16,7 +16,7 @@ Issue: [#5](https://github.com/choiruladamm/nida/issues/5).
 
 `PrayerOccurrence.ID` consists of city ID, city-local ISO date, and prayer kind. `PrayerEvent.ID` adds its stage: entry, follow-up, or snooze with the explicit request timestamp.
 
-Entry/follow-up identity does not change when delay settings change. Each new explicit snooze request has a distinct identity so handling an earlier snooze does not suppress a later request. IDs/events are Codable for the later delivery layer; this task does not persist delivery state or start timers.
+Entry/follow-up identity does not change when delay settings change. Each new explicit snooze request has a distinct identity so handling an earlier snooze does not suppress a later request. IDs/events are Codable for the later delivery layer; delivery persistence and timers are implemented separately in [reminder-delivery.md](reminder-delivery.md).
 
 `events(at:delay:pending:handled:)` rebuilds the relevant yesterday/today/tomorrow window from available data:
 
@@ -36,7 +36,7 @@ The caller owns durable handling history and pending requests. Retain records ou
 - `snooze(for:requestedAt:)` creates only an explicit five-minute request after the occurrence started and strictly before expiry. It never starts a repeating chain.
 - `dueEvent(in:at:excluding:)` selects at most one event: the newest prayer occurrence, then latest eligible fire time; ties prefer explicit snooze, follow-up, then entry.
 - Recovery grace is inclusive through five minutes after the event. Expired or older events are ignored. Handling a later stage suppresses earlier ones instead of replaying a missed stack; a newly requested later snooze remains eligible.
-- The selector returns a value only. Showing the notch, marking delivery/dismissal, pausing on lock/sleep, rescheduling on lifecycle events, and durable state belong to #8.
+- The selector returns a value only. Showing the notch, marking delivery/dismissal, pausing on lock/sleep, rescheduling on lifecycle events, and durable state are implemented in #8; see [delivery contract](reminder-delivery.md).
 
 ## Current UI boundary
 

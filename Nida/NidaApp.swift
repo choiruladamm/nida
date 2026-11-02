@@ -20,6 +20,7 @@ struct NidaApp: App {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let controller = NotchPanelController()
     var schedules: PrayerDataStore { controller.schedules }
+    private lazy var delivery = ReminderDelivery(controller: controller)
     private var setupWindow: NSWindow?
 
     func applicationWillFinishLaunching(_ notification: Notification) {
@@ -52,6 +53,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
         #endif
+        delivery.start()
         if !schedules.onboardingComplete { showLocationSetup() }
     }
 
@@ -69,7 +71,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApplication.shared.activate()
     }
 
-    func applicationWillTerminate(_ notification: Notification) { controller.stop() }
+    func applicationWillTerminate(_ notification: Notification) { delivery.stop(); controller.stop() }
 }
 
 struct MenuContent: View {
@@ -146,7 +148,7 @@ struct PrototypeSettings: View {
         Form {
             Section("Nida") {
                 Text("Ambil jeda, kembali tenang.").font(.headline)
-                Text("Jadwal asli tersedia di menu bar dan notch. Pengingat otomatis belum aktif; tombol coba pengingat masih memakai data contoh.")
+                Text("Jadwal asli tersedia di menu bar dan notch. Pengingat otomatis aktif saat Nida berjalan dan Mac terjaga. Tombol coba pengingat memakai data contoh.")
                     .foregroundStyle(.secondary)
             }
             PrayerDataSettings(store: schedules)
@@ -159,7 +161,7 @@ struct PrototypeSettings: View {
             }
             Section("Tentang prototipe") {
                 LabeledContent("Minimum macOS", value: "26.0")
-                LabeledContent("Pengingat", value: "Preview · Tidak dijadwalkan")
+                LabeledContent("Pengingat", value: "Aktif · Jeda awal 10 menit")
                 Text("Preview tunda hanya menampilkan konfirmasi; tidak menjadwalkan pengingat.")
                     .font(.callout).foregroundStyle(.secondary)
             }

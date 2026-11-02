@@ -26,7 +26,7 @@ Permission denial/restriction explains how to enable location in System Settings
 
 A generation guard prevents obsolete provider fetches from replacing a newer confirmed selection. A manual selection cancels pending detection, and merely receiving a detected candidate never changes `PrayerDataStore.location` or persists it.
 
-There are no production pending reminders to cancel yet. Issue #8 must connect confirmed location changes to cancellation/replanning of old-city events and verify that integration. The pure timeline already rejects other-city months and event identities. Menu/notch schedules share the live store in #7; reminder previews remain labeled demo.
+Issue #8 observes confirmed city changes, hides an old-city reminder, and rebuilds pending events with the new city timeline, dropping old-city snoozes. Hardware interaction still requires verification. The pure timeline already rejects other-city months and event identities. Menu/notch schedules share the live store in #7; reminder previews remain labeled demo.
 
 ## Verification
 
