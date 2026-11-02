@@ -69,6 +69,20 @@ struct NotchView: View {
         }
     }
 
+    private var reminderSubtitle: String {
+        guard let event = model.reminder else {
+            return model.state == .prayer ? "15.12 · Saatnya ambil jeda" : "10 menit sejak masuk waktu Ashar"
+        }
+        if event.id.stage == .entry {
+            let format = Date.FormatStyle(date: .omitted, time: .shortened,
+                locale: Locale(identifier: "id_ID"), timeZone: controller.schedules.location?.zone.timeZone ?? .gmt)
+            return event.prayerStartsAt.formatted(format) + " · Saatnya ambil jeda"
+        }
+        if case .snooze = event.id.stage { return "Pengingat tunda · \(event.id.occurrence.prayer.label)" }
+        let minutes = Int(event.firesAt.timeIntervalSince(event.prayerStartsAt) / 60)
+        return "\(minutes) menit sejak masuk waktu \(event.id.occurrence.prayer.label)"
+    }
+
     private var reminder: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: NidaStyle.groupGap) {
@@ -80,11 +94,9 @@ struct NotchView: View {
                     .overlay { Circle().strokeBorder(NidaStyle.hairline, lineWidth: 0.5) }
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 5) {
-                    Text(model.state == .prayer ? "Waktunya Ashar" : "Yuk, sholat dulu")
+                    Text(model.state == .prayer ? "Waktunya \(model.reminder?.id.occurrence.prayer.label ?? "Ashar")" : "Yuk, sholat dulu")
                         .font(.system(size: 18, weight: .medium))
-                    Text(model.state == .prayer
-                         ? "15.12 · Saatnya ambil jeda"
-                         : "10 menit sejak masuk waktu Ashar")
+                    Text(reminderSubtitle)
                         .font(.system(size: 12))
                         .foregroundStyle(NidaStyle.secondaryText)
                 }
@@ -101,26 +113,30 @@ struct NotchView: View {
             }
             if model.state == .followUp {
                 HStack(spacing: NidaStyle.groupGap) {
-                    Button { controller.show(.collapsed) } label: {
-                        Text("Tutup").frame(maxWidth: .infinity, minHeight: NidaStyle.controlHeight)
+                    Button { controller.dismissReminder() } label: {
+                        Text("Tutup")
+                            .foregroundStyle(NidaStyle.text)
+                            .frame(maxWidth: .infinity, minHeight: NidaStyle.controlHeight)
+                            .background(.white.opacity(0.10), in: .capsule)
+                            .glassEffect(.regular.interactive(), in: .capsule)
                     }
-                    .buttonStyle(.glass)
-                    .tint(.clear)
-                    Button { controller.previewSnooze() } label: {
+                    .buttonStyle(.plain)
+                    Button { controller.snoozeReminder() } label: {
                         Text("Ingatkan 5 menit lagi")
                             .foregroundStyle(NidaStyle.surface)
                             .frame(maxWidth: .infinity, minHeight: NidaStyle.controlHeight)
+                            .background(NidaStyle.text, in: .capsule)
                     }
-                    .buttonStyle(.glassProminent)
+                    .buttonStyle(.plain)
                 }
                 .controlSize(.regular)
                 .buttonBorderShape(.capsule)
                 .font(.system(size: 12, weight: .medium))
             }
-            Text(model.notice ?? "Preview · Data contoh")
+            Text(model.notice ?? (model.reminder == nil ? "Preview · Data contoh" : "Pengingat pribadi · Bukan jadwal iqomah masjid"))
                 .font(.system(size: 10))
                 .foregroundStyle(NidaStyle.secondaryText)
-                .accessibilityLabel(model.notice ?? "Preview dengan data contoh, bukan jadwal sebenarnya")
+                .accessibilityLabel(model.notice ?? (model.reminder == nil ? "Preview dengan data contoh, bukan jadwal sebenarnya" : "Pengingat pribadi"))
         }
     }
 }

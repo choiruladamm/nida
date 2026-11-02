@@ -13,6 +13,8 @@ final class NotchPanel: NSPanel {
 final class NotchPanelController: NSObject {
     let model = PrototypeModel()
     let schedules: PrayerDataStore
+    var onDismissReminder: ((PrayerEvent) -> Void)?
+    var onSnoozeReminder: ((PrayerEvent) -> Void)?
 
     init(schedules: PrayerDataStore = PrayerDataStore()) {
         self.schedules = schedules
@@ -38,7 +40,7 @@ final class NotchPanelController: NSObject {
         panel.level = .statusBar
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary]
         panel.animationBehavior = .none
-        panel.onEscape = { [weak self] in self?.show(.collapsed) }
+        panel.onEscape = { [weak self] in self?.dismissReminder() }
         panel.contentView = NSHostingView(rootView: NotchView(model: model, controller: self))
         self.panel = panel
         updatePointerPassthrough()
@@ -52,7 +54,7 @@ final class NotchPanelController: NSObject {
         localMonitor = NSEvent.addLocalMonitorForEvents(matching: events.union(.keyDown)) { [weak self] event in
             let handled = MainActor.assumeIsolated {
                 if event.type == .keyDown, event.keyCode == 53, self?.panel?.isKeyWindow == true {
-                    self?.show(.collapsed)
+                    self?.dismissReminder()
                     return true
                 }
                 self?.handlePointer(event)
@@ -72,6 +74,7 @@ final class NotchPanelController: NSObject {
         start()
         dismissal?.cancel()
         model.notice = nil
+        model.reminder = nil
         model.state = state
         panel?.allowsKeyboardFocus = interactive && state != .collapsed
         if interactive && state != .collapsed {
@@ -83,6 +86,26 @@ final class NotchPanelController: NSObject {
         armDismissal()
     }
 
+    func present(_ event: PrayerEvent) {
+        show(event.id.stage == .entry ? .prayer : .followUp)
+        model.reminder = event
+    }
+
+    func hideDeliveredReminder() {
+        guard model.reminder != nil else { return }
+        show(.collapsed)
+    }
+
+    func dismissReminder() {
+        if let event = model.reminder { onDismissReminder?(event) }
+        show(.collapsed)
+    }
+
+    func snoozeReminder() {
+        if let event = model.reminder { onSnoozeReminder?(event) }
+        else { previewSnooze() }
+    }
+
     func setHovering(_ hovering: Bool) {
         model.isHovering = hovering
         if hovering { dismissal?.cancel() } else { armDismissal() }
@@ -91,7 +114,7 @@ final class NotchPanelController: NSObject {
     func previewSnooze() {
         dismissal?.cancel()
         model.notice = "Preview saja · Tidak ada pengingat dijadwalkan."
-        // shortcut: preview actions never schedule events; real snooze belongs to issue #8.
+        // Preview actions stay isolated from the delivery ledger.
     }
 
     private func armDismissal() {
@@ -100,7 +123,7 @@ final class NotchPanelController: NSObject {
         dismissal = Task { [weak self] in
             do { try await Task.sleep(for: .seconds(seconds)) } catch { return }
             guard let self else { return }
-            self.show(.collapsed)
+            self.dismissReminder()
         }
     }
 
@@ -109,7 +132,7 @@ final class NotchPanelController: NSObject {
         updatePointerPassthrough()
         if event.type == .leftMouseDown || event.type == .rightMouseDown {
             if !model.geometry.interactiveFrame(for: model.state).contains(NSEvent.mouseLocation) {
-                show(.collapsed)
+                dismissReminder()
             } else if model.state != .collapsed {
                 panel?.allowsKeyboardFocus = true
                 panel?.makeKey()
@@ -149,7 +172,7 @@ final class NotchPanelController: NSObject {
         Task { @MainActor in
             try? await Task.sleep(for: .seconds(1))
             let report = """
-            Nida smoke: screen=\(model.geometry.screenFrame), camera=\(model.geometry.cameraWidth)x\(model.geometry.cameraHeight), panelVisible=\(panel?.isVisible == true), preservedFrontmost=\(frontmost == NSWorkspace.shared.frontmostApplication?.processIdentifier), panelIsKey=\(panel?.isKeyWindow == true)
+            Nida smoke: screen=\(model.geometry.screenFrame), camera=\(model.geometry.cameraWidth)x\(model.geometry.cameraHeight), panelVisible=\(panel?.isVisible == true), preservedFrontmost=\(frontmost == NSWorkspace.shared.frontmostApplication?.processIdentifier), panelIsKey=\(panel?.isKeyWindow == true), deliverySessionAvailable=\(ReminderDelivery.sessionAllowsDelivery(CGSessionCopyCurrentDictionary() as? [String: Any], suspended: false))
             """
             print(report)
             show(.followUp)

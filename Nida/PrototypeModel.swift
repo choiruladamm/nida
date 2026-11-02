@@ -73,4 +73,5 @@ final class PrototypeModel {
                                  cameraWidth: 180, cameraHeight: 32)
     var isHovering = false
     var notice: String?
+    var reminder: PrayerEvent?
 }

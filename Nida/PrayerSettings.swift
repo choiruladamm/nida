@@ -4,6 +4,7 @@ import Observation
 @MainActor @Observable
 final class PrayerDataStore {
     var cities: [PrayerCity] = []
+    var deliveryMessage: String?
     let detection: LocationDetection
     private(set) var onboardingComplete = false
     private(set) var location: PrayerLocation?
@@ -124,6 +125,9 @@ struct PrayerDataSettings: View {
     @State private var choosingCity = false
 
     var body: some View {
+        if let message = store.deliveryMessage {
+            Section("Pengingat") { Text(message).foregroundStyle(.secondary) }
+        }
         Section("Lokasi jadwal") {
             Button {
                 store.detection.cancel()

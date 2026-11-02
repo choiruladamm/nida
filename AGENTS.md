@@ -17,7 +17,7 @@ Native macOS prayer reminder: SwiftUI content, AppKit notch panel, menu bar acce
 - Fetch current Apple/API documentation through Context7: resolve the library, then query the relevant concept. Use official documentation when coverage is missing. Check availability against the project's compiler and deployment target.
 - Use `swiftui-expert-skill`, `write-swift`, and `emil-design-eng` when available and relevant. Translate animation principles to native APIs; browser-specific examples are not SwiftUI rules.
 - Derive camera clearance and placement from the selected screen. Preserve its physical silhouette while collapsed; automatic reminders must not take keyboard focus.
-- Keep reminder previews visibly labeled; menu bar, notch, and Settings schedules share the live store. Request location only on explicit action; production reminder delivery remains a later issue. A follow-up reminder is not a mosque iqomah time.
+- Keep reminder previews visibly labeled; menu bar, notch, and Settings schedules share the live store. Request location only on explicit action; delivery state must persist before showing real reminders; previews never mutate its ledger. A follow-up reminder is not a mosque iqomah time.
 - Add Swift source files to the appropriate target in `Nida.xcodeproj`; this project uses explicit file references.
 
 ## Verification and delivery
