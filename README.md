@@ -2,11 +2,11 @@
 
 A native macOS prayer reminder with a frosted Liquid Glass notch panel and menu bar access. Indonesian city schedules are **Kemenag via myQuran**, with validated current/next-month offline storage, two-stage reminders, explicit five-minute snooze, optional short sound, and launch at login.
 
-**Source: 0.2.0 (4) · prerelease. Latest published: 0.1.0 (2).** Hardware acceptance remains pending in [parent #1](https://github.com/choiruladamm/nida/issues/1); see [verification evidence and remaining checks](docs/mvp-verification.md). Requires **macOS 26+**. Local builds are ad-hoc signed, not notarized for public distribution.
+**[0.2.0 (4) · published prerelease](https://github.com/choiruladamm/nida/releases/tag/v0.2.0).** Hardware acceptance remains pending in [parent #1](https://github.com/choiruladamm/nida/issues/1); see [verification evidence and remaining checks](docs/mvp-verification.md). Requires **macOS 26+**. Local builds are ad-hoc signed, not notarized for public distribution.
 
 ## Install and use
 
-1. Download `Nida-0.1.0-build2.zip` from [Releases](https://github.com/choiruladamm/nida/releases), extract it, and move **Nida.app** to `/Applications`. Quit any existing instance through the menu bar's power icon (**Keluar**) before replacing it.
+1. Download `Nida-0.2.0-build4.zip` from [Releases](https://github.com/choiruladamm/nida/releases), extract it, and move **Nida.app** to `/Applications`. Quit any existing instance through the menu bar's power icon (**Keluar**) before replacing it.
 2. Open the installed app. It lives in the menu bar, without a Dock icon. Choose a city manually or explicitly request location and confirm the suggested city.
 3. Open today's schedule from the menu bar or the hover handle immediately below the camera. The arrow button opens the notch; Escape/outside click dismisses an interactive panel.
 4. Open the gear icon (**Pengaturan**) to change city, follow-up delay (1–60 minutes; default ten), sound, or login launch. Check the running version in **Tentang Nida → Versi**. Keep the installed path stable before enabling login launch; macOS may require approval.

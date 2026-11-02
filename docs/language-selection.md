@@ -37,3 +37,7 @@ All 86 tests in 14 suites, Debug/Release builds and native smoke passed after th
 - Exercise keyboard and VoiceOver labels/values/tooltips in both languages. Verify real reminder/snooze and ledger behavior on hardware alongside the outstanding MVP acceptance matrix.
 
 These checks are pending, not passed by tests or changing the app's language in isolation. No claim of completed MVP hardware acceptance is made.
+
+## Published prerelease
+
+The owner authorized publication after PR #23 merged. [v0.2.0 — build 4](https://github.com/choiruladamm/nida/releases/tag/v0.2.0) is published at merge commit `ed76d0a`, with `Nida-0.2.0-build4.zip` and SHA256SUMS.txt. The merge tree matches the tested build-4 head. The existing ZIP was extracted and its signature and version/build reverified before upload; no app source or artifact was changed for publication. SHA-256: `e282583c901da3f60ce819ea53a8675a7fa9106e7e7d7525b78fddc33003836f`. Earlier candidate/build-3 statements above describe historical runs; the published artifact is build 4. All remaining manual checks stay pending.
