@@ -241,16 +241,57 @@ private func temporaryDirectory() throws -> URL {
         await stub.set(path(), body: try payload())
         await stub.set(path(jakarta, november.next), body: try payload(month: november.next))
         let repo = PrayerRepository(api: PrayerAPI(load: { try await stub.response($0) }), cache: PrayerCache(directory: folder))
-        let first = PrayerDataStore(repository: repo, defaults: defaults)
+        let detection = LocationDetection(lookup: { [DetectedArea(city: "Jakarta", countryCode: "ID")] })
+        let first = PrayerDataStore(repository: repo, defaults: defaults, detection: detection)
+        #expect(!first.onboardingComplete)
+        await detection.start { [jakarta] }.value
+        #expect(detection.state == .found(jakarta))
+        #expect(first.location == nil)
+        #expect(defaults.data(forKey: "prayerLocation") == nil)
+        #expect(!defaults.bool(forKey: "locationOnboardingComplete"))
         await first.select(jakarta, now: referenceDate)
+        #expect(first.onboardingComplete)
+        #expect(defaults.bool(forKey: "locationOnboardingComplete"))
+        #expect(detection.state == .idle)
         #expect(first.months.count == 2)
         #expect(first.today(at: referenceDate)?.isya == "19:00")
         await stub.setOffline()
         let restored = PrayerDataStore(repository: repo, defaults: defaults)
         await restored.restoreAndRefresh(now: referenceDate.addingTimeInterval(60))
+        #expect(restored.onboardingComplete)
         #expect(restored.location?.city == jakarta)
         #expect(restored.today(at: referenceDate) == first.today(at: referenceDate))
         #expect(await stub.requests.count == 2)
+    }
+
+    @Test func failedSetupDoesNotPersistCompletionOrReplaceConfirmedCity() async throws {
+        let folder = try temporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let suite = "nida-test-" + UUID().uuidString
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let stub = TransportStub()
+        await stub.setOffline()
+        let repo = PrayerRepository(api: PrayerAPI(load: { try await stub.response($0) }), cache: PrayerCache(directory: folder))
+        let store = PrayerDataStore(repository: repo, defaults: defaults)
+        await store.select(jakarta, now: referenceDate)
+        #expect(!store.onboardingComplete)
+        #expect(store.location == nil)
+        #expect(defaults.data(forKey: "prayerLocation") == nil)
+        #expect(!defaults.bool(forKey: "locationOnboardingComplete"))
+        #expect(store.message != nil)
+
+        let saved = PrayerLocation(city: jakarta, province: "DKI JAKARTA", zone: .west)
+        defaults.set(try JSONEncoder().encode(saved), forKey: "prayerLocation")
+        let restored = PrayerDataStore(repository: repo, defaults: defaults)
+        #expect(restored.onboardingComplete) // Existing users migrate without another prompt.
+        await restored.select(denpasar, now: referenceDate)
+        #expect(restored.location == saved)
+        #expect(restored.onboardingComplete)
+        #expect(try JSONDecoder().decode(PrayerLocation.self, from: #require(defaults.data(forKey: "prayerLocation"))) == saved)
+
+        defaults.set(Data("invalid".utf8), forKey: "prayerLocation")
+        #expect(!PrayerDataStore(repository: repo, defaults: defaults).onboardingComplete)
     }
 
     @Test(.timeLimit(.minutes(1))) func lateCityResponseCannotReplaceNewerSelection() async throws {

@@ -4,6 +4,8 @@ import Observation
 @MainActor @Observable
 final class PrayerDataStore {
     var cities: [PrayerCity] = []
+    let detection: LocationDetection
+    private(set) var onboardingComplete = false
     private(set) var location: PrayerLocation?
     private(set) var months: [ScheduleMonth: PrayerMonth] = [:]
     private(set) var pendingCity: PrayerCity?
@@ -15,12 +17,18 @@ final class PrayerDataStore {
     private let defaults: UserDefaults
     private var requestID = UUID()
 
-    init(repository: PrayerRepository = PrayerRepository(), defaults: UserDefaults = .standard) {
+    init(repository: PrayerRepository = PrayerRepository(), defaults: UserDefaults = .standard,
+         detection: LocationDetection = LocationDetection()) {
+        self.detection = detection
         self.repository = repository
         self.defaults = defaults
         if let data = defaults.data(forKey: "prayerLocation"),
            let saved = try? JSONDecoder().decode(PrayerLocation.self, from: data),
-           (try? saved.validate()) != nil { location = saved }
+           (try? saved.validate()) != nil {
+            location = saved
+            onboardingComplete = true
+            defaults.set(true, forKey: "locationOnboardingComplete")
+        }
     }
 
     func today(at date: Date = Date()) -> PrayerDay? {
@@ -48,6 +56,7 @@ final class PrayerDataStore {
     }
 
     func select(_ city: PrayerCity, now: Date = Date()) async {
+        detection.cancel()
         await load(city: city, hint: location?.city == city ? location : nil, force: false, now: now)
     }
 
@@ -68,7 +77,7 @@ final class PrayerDataStore {
 
         // Cached metadata supplies the zone on relaunch; new cities resolve it from provider province.
         let anchor = ScheduleMonth(containing: now, in: hint?.zone ?? .west)
-        if let hint {
+        if hint != nil {
             for period in [anchor, anchor.next] {
                 if let cached = try? await repository.cached(city: city, period: period), requestID == id {
                     location = cached.location
@@ -85,6 +94,8 @@ final class PrayerDataStore {
             if let issue = first.issue { message = issue.localizedDescription }
             let selection = try JSONEncoder().encode(first.month.location)
             defaults.set(selection, forKey: "prayerLocation")
+            onboardingComplete = true
+            defaults.set(true, forKey: "locationOnboardingComplete")
 
             let current = ScheduleMonth(containing: now, in: first.month.location.zone)
             for period in [current, current.next] where period != anchor {
@@ -115,6 +126,7 @@ struct PrayerDataSettings: View {
     var body: some View {
         Section("Lokasi jadwal") {
             Button {
+                store.detection.cancel()
                 choosingCity = true
             } label: {
                 HStack {
@@ -124,6 +136,7 @@ struct PrayerDataSettings: View {
                 }
             }
             .sheet(isPresented: $choosingCity) { CitySelectionView(store: store) }
+            LocationDetectionControls(store: store) { choosingCity = true }
             if let pending = store.pendingCity {
                 HStack { ProgressView().controlSize(.small); Text("Memuat \(pending.name.localizedCapitalized)…") }
             }
@@ -155,10 +168,11 @@ struct PrayerDataSettings: View {
             }
         }
         .task { await store.restoreAndRefresh() }
+        .onDisappear { store.detection.cancel() }
     }
 }
 
-private struct CitySelectionView: View {
+struct CitySelectionView: View {
     let store: PrayerDataStore
     @State private var query = ""
     @Environment(\.dismiss) private var dismiss
@@ -166,14 +180,21 @@ private struct CitySelectionView: View {
     var body: some View {
         NavigationStack {
             List {
+                if let message = store.message { Text(message).foregroundStyle(.secondary) }
+                if let pending = store.pendingCity {
+                    ProgressView("Memuat \(pending.name.localizedCapitalized)…")
+                }
                 if let error = store.cityError {
                     Text(error).foregroundStyle(.secondary)
                     Button("Coba lagi") { Task { await store.loadCities() } }
                 }
                 ForEach(store.cities.filter { query.isEmpty || $0.name.localizedStandardContains(query) }) { city in
                     Button {
-                        dismiss()
-                        Task { await store.select(city) }
+                        store.detection.cancel()
+                        Task {
+                            await store.select(city)
+                            if store.location?.city == city { dismiss() }
+                        }
                     } label: {
                         HStack {
                             Text(city.name.localizedCapitalized)
@@ -192,6 +213,7 @@ private struct CitySelectionView: View {
                     ContentUnavailableView.search(text: query)
                 }
             }
+            .disabled(store.isRefreshing)
             .searchable(text: $query, prompt: "Cari kota atau kabupaten")
             .navigationTitle("Pilih wilayah")
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Tutup") { dismiss() } } }
@@ -228,5 +250,92 @@ private struct NextPrayerSummary: View {
         } else if snapshot.hasToday {
             Text("Jadwal besok belum tersedia.").foregroundStyle(.secondary)
         }
+    }
+}
+
+struct LocationDetectionControls: View {
+    let store: PrayerDataStore
+    let chooseManually: () -> Void
+
+    var body: some View {
+        Group {
+            switch store.detection.state {
+            case .idle:
+                Button("Gunakan lokasi saat ini", systemImage: "location") {
+                    detect()
+                }
+            case .locating:
+                HStack {
+                    ProgressView().controlSize(.small)
+                    Text("Mencari kota…")
+                    Spacer()
+                    Button("Batal") { store.detection.cancel() }
+                }
+            case .found(let city):
+                Text("Kota terdeteksi").font(.caption).foregroundStyle(.secondary)
+                Text(city.name.localizedCapitalized).font(.headline)
+                Text("Pastikan wilayah ini benar sebelum menggunakan jadwalnya.")
+                    .font(.callout).foregroundStyle(.secondary)
+                HStack {
+                    Button("Gunakan kota ini") { Task { await store.select(city) } }
+                    Button("Pilih kota lain") {
+                        store.detection.cancel()
+                        chooseManually()
+                    }
+                }
+            case .failed(let message):
+                Text(message).font(.callout).foregroundStyle(.secondary)
+                Button("Coba lokasi lagi") { detect() }
+            }
+            if let error = store.cityError { Text(error).font(.callout).foregroundStyle(.secondary) }
+            Text("Lokasi hanya diambil saat diminta. Koordinat tidak disimpan; Apple memproses lokasi untuk mencari nama kota.")
+                .font(.caption).foregroundStyle(.secondary)
+        }
+        .disabled(store.isRefreshing || store.isLoadingCities)
+    }
+
+    private func detect() {
+        store.detection.start {
+            if store.cities.isEmpty { await store.loadCities() }
+            guard !store.cities.isEmpty else { throw LocationSetupError.unavailable }
+            return store.cities
+        }
+    }
+}
+
+struct LocationOnboardingView: View {
+    let store: PrayerDataStore
+    let finish: () -> Void
+    @State private var choosingCity = false
+
+    var body: some View {
+        Form {
+            Section {
+                Label("Waktunya ambil jeda.", systemImage: "moon.stars").font(.title2.weight(.semibold))
+                Text("Pilih kota untuk jadwal sholat yang sesuai. Kamu bisa menggantinya kapan saja di Pengaturan.")
+                    .foregroundStyle(.secondary)
+            }
+            Section("Lokasi jadwal") {
+                LocationDetectionControls(store: store) { choosingCity = true }
+                Button("Pilih kota manual", systemImage: "magnifyingglass") {
+                    store.detection.cancel()
+                    choosingCity = true
+                }
+                .disabled(store.isRefreshing)
+                if let pending = store.pendingCity {
+                    ProgressView("Memuat \(pending.name.localizedCapitalized)…")
+                }
+                if let message = store.message { Text(message).foregroundStyle(.secondary) }
+            }
+        }
+        .formStyle(.grouped)
+        .frame(width: 480, height: 440)
+        .sheet(isPresented: $choosingCity, onDismiss: {
+            if store.onboardingComplete { finish() }
+        }) { CitySelectionView(store: store) }
+        .onChange(of: store.onboardingComplete) { _, complete in
+            if complete && !choosingCity { finish() }
+        }
+        .onDisappear { store.detection.cancel() }
     }
 }
