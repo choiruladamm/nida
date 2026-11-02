@@ -13,7 +13,9 @@ enum NidaStyle {
     static let panelInset: CGFloat = 24
     static let sectionGap: CGFloat = 20
     static let groupGap: CGFloat = 12
+    static let iconControlSize: CGFloat = 28
     static let controlHeight: CGFloat = 34
+    static let scheduleStatusHeight: CGFloat = 52
     static let rowRadius: CGFloat = 14
     static let opaqueGlass = Color(red: 0.34, green: 0.35, blue: 0.32)
 }
@@ -39,5 +41,35 @@ struct NotchSilhouette: Shape {
                           control: CGPoint(x: rect.minX + shoulder, y: rect.minY))
         path.closeSubpath()
         return path
+    }
+}
+
+// Explicit colors stay legible even when the nonactivating panel isn't key.
+struct NidaButtonStyle: ButtonStyle {
+    var prominent = false
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(prominent ? NidaStyle.surface : NidaStyle.text)
+            .contentShape(.capsule)
+            .focusEffectDisabled(false)
+            .background {
+                if prominent {
+                    Capsule().fill(NidaStyle.text)
+                } else if reduceTransparency || contrast == .increased {
+                    Capsule().fill(NidaStyle.opaqueGlass)
+                } else {
+                    Capsule().fill(.white.opacity(0.10))
+                        .glassEffect(.regular.interactive(), in: .capsule)
+                }
+            }
+            .overlay {
+                Capsule().strokeBorder(contrast == .increased
+                    ? (prominent ? NidaStyle.surface : NidaStyle.text) : .clear, lineWidth: 1)
+            }
+            .opacity(isEnabled ? (configuration.isPressed ? 0.82 : 1) : 0.45)
     }
 }

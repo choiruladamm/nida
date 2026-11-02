@@ -14,6 +14,7 @@ final class NotchPanelController: NSObject {
     let model = PrototypeModel()
     let preferences: ReminderPreferences
     let schedules: PrayerDataStore
+    var scheduleStatusHeight: CGFloat { schedules.message == nil ? 0 : NidaStyle.scheduleStatusHeight }
     var onDismissReminder: ((PrayerEvent) -> Void)?
     var onSnoozeReminder: ((PrayerEvent) -> Void)?
 
@@ -55,9 +56,12 @@ final class NotchPanelController: NSObject {
         }
         localMonitor = NSEvent.addLocalMonitorForEvents(matching: events.union(.keyDown)) { [weak self] event in
             let handled = MainActor.assumeIsolated {
-                if event.type == .keyDown, event.keyCode == 53, self?.panel?.isKeyWindow == true {
-                    self?.dismissReminder()
-                    return true
+                if event.type == .keyDown, self?.panel?.isKeyWindow == true {
+                    if event.keyCode == 53 {
+                        self?.dismissReminder()
+                        return true
+                    }
+                    self?.armDismissal()
                 }
                 self?.handlePointer(event)
                 return false
@@ -134,7 +138,7 @@ final class NotchPanelController: NSObject {
         guard event.type != .keyDown else { return }
         updatePointerPassthrough()
         if event.type == .leftMouseDown || event.type == .rightMouseDown {
-            if !model.geometry.interactiveFrame(for: model.state).contains(NSEvent.mouseLocation) {
+            if !model.geometry.interactiveFrame(for: model.state, scheduleStatusHeight: scheduleStatusHeight).contains(NSEvent.mouseLocation) {
                 dismissReminder()
             } else if model.state != .collapsed {
                 panel?.allowsKeyboardFocus = true
@@ -144,7 +148,7 @@ final class NotchPanelController: NSObject {
     }
 
     private func updatePointerPassthrough() {
-        let rect = model.geometry.interactiveFrame(for: model.state)
+        let rect = model.geometry.interactiveFrame(for: model.state, scheduleStatusHeight: scheduleStatusHeight)
         panel?.ignoresMouseEvents = !rect.contains(NSEvent.mouseLocation)
     }
 

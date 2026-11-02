@@ -13,6 +13,9 @@ struct NidaApp: App {
         Settings {
             NidaSettings(controller: delegate.controller, schedules: delegate.schedules)
         }
+        .windowStyle(.hiddenTitleBar)
+        .windowToolbarStyle(.unified)
+
     }
 }
 
@@ -53,9 +56,57 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
         #endif
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--review-settings") {
+            showReviewWindow(NSHostingView(rootView: NidaSettings(controller: controller, schedules: schedules)), titled: true)
+            return
+        }
+        if ProcessInfo.processInfo.arguments.contains("--review-menu") {
+            showReviewWindow(NSHostingView(rootView: MenuContent(controller: controller)), titled: false)
+            return
+        }
+        if ProcessInfo.processInfo.arguments.contains("--review-refresh-error") {
+            controller.show(.schedule, interactive: true)
+            Task {
+                await schedules.restoreAndRefresh()
+                schedules.showRefreshFailureForReview()
+            }
+            return
+        }
+        if ProcessInfo.processInfo.arguments.contains("--review-notch") {
+            controller.show(.schedule, interactive: true)
+            return
+        }
+        if ProcessInfo.processInfo.arguments.contains("--review-follow-up") {
+            controller.show(.followUp, interactive: true)
+            return
+        }
+        #endif
         delivery.start()
         if !schedules.onboardingComplete { showLocationSetup() }
     }
+
+    #if DEBUG
+    private func showReviewWindow(_ host: NSView, titled: Bool) {
+        let window = NSWindow(contentRect: NSRect(origin: .zero, size: host.fittingSize),
+            styleMask: titled ? [.titled, .closable] : [.borderless], backing: .buffered, defer: false)
+        window.title = "Nida · Design review"
+        if titled {
+            window.titlebarAppearsTransparent = true
+            window.titleVisibility = .hidden
+            window.styleMask.insert(.fullSizeContentView)
+            window.toolbarStyle = .unified
+        }
+        window.backgroundColor = .clear
+        window.isOpaque = false
+        window.isReleasedWhenClosed = false
+        window.contentView = host
+        setupWindow = window
+        window.center()
+        window.makeKeyAndOrderFront(nil)
+        NSApplication.shared.activate()
+    }
+    #endif
 
     private func showLocationSetup() {
         let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 480, height: 440),
@@ -77,36 +128,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 struct MenuContent: View {
     let controller: NotchPanelController
     @Environment(\.openSettings) private var openSettings
-    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
-    @Environment(\.colorSchemeContrast) private var contrast
+    @State private var previewExpanded = false
 
     var body: some View {
         VStack(spacing: 0) {
-            ScheduleView(store: controller.schedules).frame(height: 350)
+            ScheduleView(store: controller.schedules, onOpenNotch: { preview(.schedule) })
+                .frame(height: 344 + controller.scheduleStatusHeight)
             NidaStyle.hairline.frame(height: 0.5)
-            VStack(alignment: .leading, spacing: 16) {
-                HStack {
-                    Text("Coba pengingat")
-                        .font(.system(size: 12, weight: .medium))
-                    Spacer()
-                    Button { preview(.schedule) } label: {
-                        Image(systemName: "arrow.up.right")
-                            .frame(width: 20, height: 20)
+            VStack(alignment: .leading, spacing: 14) {
+                DisclosureGroup("Coba pengingat", isExpanded: $previewExpanded) {
+                    GlassEffectContainer(spacing: 12) {
+                        HStack(spacing: 12) {
+                            Button("Masuk waktu") { preview(.prayer) }
+                            Button("Pengingat kedua") { preview(.followUp) }
+                        }
+                        .buttonStyle(.glass).buttonBorderShape(.capsule)
+                        .controlSize(.regular).tint(.clear)
+                        .padding(.top, 8)
                     }
-                    .buttonStyle(.glass)
-                    .buttonBorderShape(.circle)
-                    .tint(.clear)
-                    .accessibilityLabel("Buka jadwal di notch")
                 }
-                HStack(spacing: NidaStyle.groupGap) {
-                    Button("Masuk waktu") { preview(.prayer) }
-                    Button("Pengingat kedua") { preview(.followUp) }
-                }
-                .buttonStyle(.glass)
-                .buttonBorderShape(.capsule)
-                .tint(.clear)
-                .controlSize(.large)
-                .font(.system(size: 12))
+                .font(.system(size: 11)).foregroundStyle(NidaStyle.secondaryText)
                 HStack {
                     Button("Pengaturan", systemImage: "gearshape") {
                         NSApplication.shared.activate()
@@ -115,20 +156,13 @@ struct MenuContent: View {
                     Spacer()
                     Button("Keluar") { NSApplication.shared.terminate(nil) }
                 }
-                .font(.system(size: 12))
-                .buttonStyle(.plain)
+                .font(.system(size: 12)).buttonStyle(.plain)
                 .foregroundStyle(NidaStyle.secondaryText)
             }
-            .padding(NidaStyle.panelInset)
+            .padding(.horizontal, 30).padding(.vertical, 16)
         }
-        .frame(width: 368)
-        .background {
-            if reduceTransparency || contrast == .increased {
-                NidaStyle.opaqueGlass
-            } else {
-                Color.white.opacity(0.08).background { DesktopMaterial() }
-            }
-        }
+        .frame(width: 384)
+        .background { NidaGlassBackground(shape: Rectangle(), cornerRadius: 0) }
         .foregroundStyle(NidaStyle.text)
         .tint(NidaStyle.text)
         .preferredColorScheme(.dark)
@@ -168,7 +202,11 @@ struct NidaSettings: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 480, height: 660)
+        .scrollContentBackground(.hidden)
+        .frame(width: 520, height: 660)
+        .background { NidaGlassBackground(shape: Rectangle(), cornerRadius: 0).ignoresSafeArea() }
+        .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+        .containerBackground(.clear, for: .window)
         .tint(NidaStyle.text)
         .preferredColorScheme(.dark)
     }

@@ -76,3 +76,13 @@ The pure timing engine also produces stable entry/follow-up/snooze events with d
 Open **Pengaturan** to choose the follow-up delay, enable the short sound, or register Nida to open at login. Invalid delay input leaves the last saved value unchanged. Started follow-ups and explicit snoozes keep their original times; new prayer occurrences use the new delay.
 
 Login registration reflects macOS status and can require approval in System Settings. Keep the app at a stable installed path before enabling it. Preview buttons remain visual-only and do not affect real delivery; **Coba suara** auditions audio only when sound is enabled. See [settings contract and manual checks](docs/reminder-preferences.md).
+
+## Accessibility and motion
+
+Notch controls share explicit contrasting primary/secondary colors, native glass feedback, larger icon targets, and an opaque fallback for Reduce Transparency/Increase Contrast. Increase Contrast also outlines the next prayer; elapsed rows retain readable text. Reduce Motion disables panel size animation. Keyboard activity refreshes the reminder timeout, and Escape/outside-click dismissal is retained. Visual, keyboard, VoiceOver, and wallpaper checks remain part of the final hardware gate in #11.
+
+## Native design review (Debug)
+
+The latest material/layout revision uses AppKit Liquid Glass and unified native Settings chrome. See [revision plan and review findings](docs/ui-revision-plan.md). With the normal app stopped, Debug builds accept `--review-menu`, `--review-settings`, `--review-notch`, or `--review-follow-up` to inspect the production views without starting real delivery. Menu/Settings use native review hosts; the notch uses its actual panel. Screen capture requires the user's OS permission and an unlocked session.
+
+Debug `--review-refresh-error` shows a simulated rate-limit status on the real notch panel after normal cached restoration; it never forces requests or starts reminder delivery. This reproduces error layout without spamming the live provider.

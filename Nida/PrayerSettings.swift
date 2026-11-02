@@ -32,6 +32,12 @@ final class PrayerDataStore {
         }
     }
 
+    #if DEBUG
+    func showRefreshFailureForReview() {
+        message = PrayerDataError.rateLimited(Date().addingTimeInterval(120)).localizedDescription
+    }
+    #endif
+
     func today(at date: Date = Date()) -> PrayerDay? {
         guard let location else { return nil }
         return months[ScheduleMonth(containing: date, in: location.zone)]?.day(at: date)

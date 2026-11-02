@@ -4,11 +4,9 @@ struct NotchView: View {
     let model: PrototypeModel
     let controller: NotchPanelController
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
-    @Environment(\.colorSchemeContrast) private var contrast
 
     var body: some View {
-        let size = model.geometry.size(for: model.state)
+        let size = model.geometry.size(for: model.state, scheduleStatusHeight: controller.scheduleStatusHeight)
         VStack(spacing: 0) {
             Group {
                 if model.state == .collapsed {
@@ -27,6 +25,7 @@ struct NotchView: View {
                     .buttonStyle(.plain)
                     .accessibilityLabel("Buka jadwal Nida")
                     .help("Buka jadwal")
+                    .accessibilityHint("Membuka jadwal sholat hari ini di bawah kamera")
                 } else {
                     VStack(spacing: 0) {
                         Color.clear.frame(height: model.geometry.cameraHeight)
@@ -34,8 +33,8 @@ struct NotchView: View {
                             ScheduleView(store: controller.schedules, onClose: { controller.show(.collapsed) })
                         } else {
                             reminder
-                                .padding(.horizontal, NidaStyle.panelInset + 10)
-                                .padding(.top, 16)
+                                .padding(.horizontal, 30)
+                                .padding(.top, 20)
                         }
                         Spacer(minLength: 0)
                     }
@@ -48,7 +47,7 @@ struct NotchView: View {
         .clipShape(NotchSilhouette())
         .shadow(color: .black.opacity(model.state == .collapsed ? 0 : 0.14), radius: 16, x: 0, y: 8)
         .onHover { controller.setHovering($0) }
-        .animation(reduceMotion ? .easeOut(duration: 0.12) : .spring(duration: 0.28, bounce: 0.12),
+        .animation(reduceMotion ? nil : .spring(duration: 0.26, bounce: 0.08),
                    value: model.state)
         .frame(width: NotchGeometry.canvasSize.width, height: NotchGeometry.canvasSize.height,
                alignment: .top)
@@ -58,15 +57,8 @@ struct NotchView: View {
     }
 
     @ViewBuilder private var surface: some View {
-        if model.state == .collapsed {
-            Color.clear
-        } else if reduceTransparency || contrast == .increased {
-            NidaStyle.opaqueGlass
-        } else {
-            Color.white.opacity(0.08)
-                .background { DesktopMaterial() }
-                .glassEffect(.regular.tint(.white.opacity(0.08)), in: NotchSilhouette())
-        }
+        if model.state == .collapsed { Color.clear }
+        else { NidaGlassBackground(shape: NotchSilhouette(), cornerRadius: 0) }
     }
 
     private var reminderSubtitle: String {
@@ -87,70 +79,84 @@ struct NotchView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: NidaStyle.groupGap) {
                 Image(systemName: "moon.stars.fill")
-                    .font(.system(size: 22, weight: .regular))
+                    .font(.system(size: 20, weight: .regular))
                     .foregroundStyle(NidaStyle.text)
-                    .frame(width: 40, height: 40)
+                    .frame(width: 36, height: 36)
                     .background(.white.opacity(0.08), in: .circle)
                     .overlay { Circle().strokeBorder(NidaStyle.hairline, lineWidth: 0.5) }
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 5) {
                     Text(model.state == .prayer ? "Waktunya \(model.reminder?.id.occurrence.prayer.label ?? "Ashar")" : "Yuk, sholat dulu")
-                        .font(.system(size: 18, weight: .medium))
+                        .font(.system(size: 18, weight: .semibold))
                     Text(reminderSubtitle)
                         .font(.system(size: 12))
                         .foregroundStyle(NidaStyle.secondaryText)
                 }
+                .accessibilityElement(children: .combine)
                 Spacer(minLength: 0)
                 Button { controller.show(.schedule, interactive: true) } label: {
                     Image(systemName: "chevron.down").font(.system(size: 11, weight: .semibold))
-                        .frame(width: 20, height: 20)
+                        .frame(width: NidaStyle.iconControlSize, height: NidaStyle.iconControlSize)
                 }
-                .buttonStyle(.glass)
-                .buttonBorderShape(.circle)
-                .tint(.clear)
-                .foregroundStyle(NidaStyle.secondaryText)
+                .buttonStyle(NidaButtonStyle())
+                .help("Lihat jadwal")
                 .accessibilityLabel("Lihat jadwal")
             }
             if model.state == .followUp {
                 HStack(spacing: NidaStyle.groupGap) {
                     Button { controller.dismissReminder() } label: {
                         Text("Tutup")
-                            .foregroundStyle(NidaStyle.text)
                             .frame(maxWidth: .infinity, minHeight: NidaStyle.controlHeight)
-                            .background(.white.opacity(0.10), in: .capsule)
-                            .glassEffect(.regular.interactive(), in: .capsule)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(NidaButtonStyle())
+                    .help("Tutup pengingat ini")
                     Button { controller.snoozeReminder() } label: {
                         Text("Ingatkan 5 menit lagi")
-                            .foregroundStyle(NidaStyle.surface)
                             .frame(maxWidth: .infinity, minHeight: NidaStyle.controlHeight)
-                            .background(NidaStyle.text, in: .capsule)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(NidaButtonStyle(prominent: true))
+                    .help("Ingatkan satu kali lagi setelah 5 menit")
                 }
                 .controlSize(.regular)
                 .buttonBorderShape(.capsule)
                 .font(.system(size: 12, weight: .medium))
             }
             Text(model.notice ?? (model.reminder == nil ? "Preview · Data contoh" : "Pengingat pribadi · Bukan jadwal iqomah masjid"))
-                .font(.system(size: 10))
+                .font(.system(size: 11))
                 .foregroundStyle(NidaStyle.secondaryText)
                 .accessibilityLabel(model.notice ?? (model.reminder == nil ? "Preview dengan data contoh, bukan jadwal sebenarnya" : "Pengingat pribadi"))
         }
     }
 }
 
-// SwiftUI glass samples the view hierarchy; this material also blurs the desktop behind our window.
-struct DesktopMaterial: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let view = NSVisualEffectView()
-        view.material = .popover
-        view.blendingMode = .behindWindow
-        view.state = .active
+// AppKit's glass view samples the desktop directly, without stacking a popover blur beneath it.
+struct DesktopGlass: NSViewRepresentable {
+    var cornerRadius: CGFloat = 26
+    func makeNSView(context: Context) -> NSGlassEffectView {
+        let view = NSGlassEffectView()
+        view.style = .regular
+        view.cornerRadius = cornerRadius
+        view.tintColor = NSColor.white.withAlphaComponent(0.08)
+        view.contentView = NSView()
         view.appearance = NSAppearance(named: .darkAqua)
         return view
     }
 
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
+    func updateNSView(_ nsView: NSGlassEffectView, context: Context) { nsView.cornerRadius = cornerRadius }
+}
+
+struct NidaGlassBackground<S: Shape>: View {
+    let shape: S
+    var cornerRadius: CGFloat = 26
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
+
+    var body: some View {
+        if reduceTransparency || contrast == .increased {
+            shape.fill(NidaStyle.opaqueGlass).allowsHitTesting(false).accessibilityHidden(true)
+        } else {
+            DesktopGlass(cornerRadius: cornerRadius).clipShape(shape)
+                .allowsHitTesting(false).accessibilityHidden(true)
+        }
+    }
 }
