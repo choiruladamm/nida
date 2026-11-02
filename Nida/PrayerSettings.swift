@@ -271,9 +271,12 @@ struct LocationDetectionControls: View {
                     Spacer()
                     Button("Batal") { store.detection.cancel() }
                 }
-            case .found(let city):
-                Text("Kota terdeteksi").font(.caption).foregroundStyle(.secondary)
-                Text(city.name.localizedCapitalized).font(.headline)
+            case .found(let city, let detectedNames):
+                LabeledContent("Lokasi terdeteksi") {
+                    Text(detectedNames.joined(separator: ", "))
+                        .multilineTextAlignment(.trailing)
+                }
+                LabeledContent("Jadwal yang digunakan", value: city.name.localizedCapitalized)
                 Text("Pastikan wilayah ini benar sebelum menggunakan jadwalnya.")
                     .font(.callout).foregroundStyle(.secondary)
                 HStack {

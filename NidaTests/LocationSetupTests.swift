@@ -114,7 +114,18 @@ private let bandungRegency = PrayerCity(id: String(repeating: "b", count: 32), n
         #expect(lookups == 0)
         await detection.start { [denpasarCity] }.value
         #expect(lookups == 1)
-        #expect(detection.state == .found(denpasarCity))
+        #expect(detection.state == .found(city: denpasarCity, detectedNames: ["Denpasar"]))
+    }
+
+    @Test(arguments: ["Pusat", "Selatan", "Utara", "Barat", "Timur"])
+    func preservesDetectedAreaSeparatelyFromScheduleCity(name: String) async {
+        let jakarta = PrayerCity(id: "58a2fc6ed39fd083f55d4182bf88826d", name: "KOTA JAKARTA")
+        let area = "Kota Administrasi Jakarta " + name
+        let detection = LocationDetection(lookup: {
+            [DetectedArea(city: area, countryCode: "ID"), DetectedArea(city: area, countryCode: "ID")]
+        })
+        await detection.start { [jakarta] }.value
+        #expect(detection.state == .found(city: jakarta, detectedNames: [area]))
     }
 
     @Test(arguments: [LocationSetupError.denied, .unavailable, .unsupported, .ambiguous])
@@ -156,7 +167,7 @@ private let bandungRegency = PrayerCity(id: String(repeating: "b", count: 32), n
         await detection.start { [bandungCity] }.value
         held.finish()
         await older.value
-        #expect(detection.state == .found(bandungCity))
+        #expect(detection.state == .found(city: bandungCity, detectedNames: ["Kota Bandung"]))
     }
 
     @Test(.timeLimit(.minutes(1))) func cancellationWhileLoadingCatalogNeverRequestsLocation() async {

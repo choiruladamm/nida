@@ -245,7 +245,7 @@ private func temporaryDirectory() throws -> URL {
         let first = PrayerDataStore(repository: repo, defaults: defaults, detection: detection)
         #expect(!first.onboardingComplete)
         await detection.start { [jakarta] }.value
-        #expect(detection.state == .found(jakarta))
+        #expect(detection.state == .found(city: jakarta, detectedNames: ["Jakarta"]))
         #expect(first.location == nil)
         #expect(defaults.data(forKey: "prayerLocation") == nil)
         #expect(!defaults.bool(forKey: "locationOnboardingComplete"))

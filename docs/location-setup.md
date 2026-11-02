@@ -6,7 +6,7 @@ Issue: [#6](https://github.com/choiruladamm/nida/issues/6).
 
 First launch opens a small native setup window when there is no valid saved city. The user can use the current location or search the cached provider catalog manually. Closing setup leaves the menu bar app available; setup is offered again on relaunch until a city is successfully selected. Settings exposes both choices at any time.
 
-Automatic detection first loads the provider catalog, then requests location authorization in response to the button. A single Core Location `requestLocation()` result is reverse geocoded through `MKReverseGeocodingRequest` (macOS 26+). The detected city is only a candidate: the existing schedule remains active until **Gunakan kota ini** is selected and the provider month validates. Manual selection uses the same validated selection path.
+Automatic detection first loads the provider catalog, then requests location authorization in response to the button. A single Core Location `requestLocation()` result is reverse geocoded through `MKReverseGeocodingRequest` (macOS 26+). Confirmation displays **Lokasi terdeteksi** using Apple’s original administrative name and **Jadwal yang digunakan** using the matched provider city. For example, `Kota Administrasi Jakarta Selatan` maps to `Kota Jakarta`. Detected names remain only in the current confirmation state and are not persisted. The detected city is only a candidate: the existing schedule remains active until **Gunakan kota ini** is selected and the provider month validates. Manual selection uses the same validated selection path.
 
 Both the selected location and completion flag are saved after validation. Existing valid saved cities migrate without showing setup again. A flag without a valid city does not suppress setup. A failed replacement preserves the previous confirmed location and schedules.
 
@@ -30,7 +30,7 @@ There are no production pending reminders to cancel yet. Issue #8 must connect c
 
 ## Verification
 
-`make build` and `make smoke` pass; the panel still preserves frontmost focus with a measured 179 × 32 pt camera. `make test` passes 55 tests in 9 suites and covers catalog matching, city/regency ambiguity, foreign/missing/conflicting data, no lookup before explicit start, denial/failure recovery, cancellation during catalog or geocoder work, confirmation before persistence, failed selection, migration/relaunch, and stale city-response protection. Tests inject location results and never request real location permission.
+`make build` and `make smoke` pass; the panel still preserves frontmost focus with a measured 179 × 32 pt camera. `make test` passes 56 tests in 9 suites and covers catalog matching, city/regency ambiguity, foreign/missing/conflicting data, no lookup before explicit start, denial/failure recovery, cancellation during catalog or geocoder work, confirmation before persistence, failed selection, migration/relaunch, and stale city-response protection. Tests inject location results and never request real location permission.
 
 A native MapKit sample lookup at public Denpasar coordinates returned `cityName = Kota Denpasar`, `region.identifier = ID`. This checks the new address fields against the live geocoder; it does not validate device positioning or the sandbox permission flow.
 

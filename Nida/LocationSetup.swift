@@ -60,7 +60,8 @@ enum LocationSetupError: Error, LocalizedError, Equatable {
 @MainActor @Observable
 final class LocationDetection {
     enum State: Equatable {
-        case idle, locating, found(PrayerCity), failed(String)
+        case idle, locating, failed(String)
+        case found(city: PrayerCity, detectedNames: [String])
     }
     private(set) var state: State = .idle
     private var task: Task<Void, Never>?
@@ -84,7 +85,7 @@ final class LocationDetection {
                 try Task.checkCancellation()
                 let city = try DetectedArea.match(areas, cities: catalog)
                 guard requestID == id else { return }
-                state = .found(city)
+                state = .found(city: city, detectedNames: Array(Set(areas.map(\.city))).sorted())
             } catch {
                 guard requestID == id, !Task.isCancelled else { return }
                 state = .failed((error as? LocationSetupError ?? .unavailable).localizedDescription)
