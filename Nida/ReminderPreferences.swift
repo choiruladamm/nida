@@ -8,14 +8,18 @@ import Observation
 final class ReminderPreferences {
     private let defaults: UserDefaults
     private(set) var delayMinutes: Int
+    var language: AppLanguage {
+        didSet { defaults.set(language.rawValue, forKey: "appLanguage") }
+    }
     var soundEnabled: Bool {
         didSet { defaults.set(soundEnabled, forKey: "reminderSoundEnabled") }
     }
-    private(set) var delayError: String?
-    private(set) var soundError: String?
+    private(set) var delayError: LocalizedStringResource?
+    private(set) var soundError: LocalizedStringResource?
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
+        language = AppLanguage(rawValue: defaults.string(forKey: "appLanguage") ?? "") ?? .indonesian
         let saved = defaults.object(forKey: "followUpDelayMinutes")
         let minutes = defaults.integer(forKey: "followUpDelayMinutes")
         if saved == nil { delayMinutes = FollowUpDelay.standard.minutes }
@@ -45,7 +49,7 @@ final class ReminderPreferences {
 
     func playSound(using play: () -> Bool = { NSSound(named: NSSound.Name("Glass"))?.play() ?? false }) {
         guard soundEnabled else { return }
-        soundError = play() ? nil : "Suara pengingat belum bisa diputar. Coba lagi atau matikan suara."
+        soundError = play() ? nil : LocalizedStringResource("Suara pengingat belum bisa diputar. Coba lagi atau matikan suara.")
     }
 }
 
@@ -53,7 +57,7 @@ final class ReminderPreferences {
 final class LoginLaunch {
     private(set) var status: SMAppService.Status
     private(set) var isUpdating = false
-    private(set) var error: String?
+    private(set) var error: LocalizedStringResource?
     private let readStatus: () -> SMAppService.Status
     private let update: (Bool) async throws -> Void
 
@@ -69,7 +73,7 @@ final class LoginLaunch {
 
     var isRegistered: Bool { status == .enabled || status == .requiresApproval }
 
-    var statusText: String {
+    var statusText: LocalizedStringResource {
         switch status {
         case .enabled: "Aktif"
         case .notRegistered: "Nonaktif"
@@ -95,13 +99,14 @@ final class LoginLaunch {
 
 struct ReminderPreferencesView: View {
     let controller: NotchPanelController
+    @Environment(\.locale) private var locale
     @State private var customDelay = ""
     @State private var login = LoginLaunch()
 
     var body: some View {
         @Bindable var preferences = controller.preferences
         Section("Pengingat kedua") {
-            LabeledContent("Jeda aktif", value: "\(preferences.delayMinutes) menit")
+            LabeledContent("Jeda aktif") { Text("\(preferences.delayMinutes) menit") }
             HStack {
                 ForEach(FollowUpDelay.presets, id: \.minutes) { delay in
                     Button("\(delay.minutes) menit") {
@@ -114,7 +119,7 @@ struct ReminderPreferencesView: View {
                     .onSubmit { saveDelay() }
                 Button("Simpan") { saveDelay() }
             }
-            if let error = preferences.delayError { Text(error).foregroundStyle(.secondary).font(.callout) }
+            if let error = preferences.delayError { Text(error.localized(in: locale)).foregroundStyle(.secondary).font(.callout) }
             Text("Berlaku untuk waktu sholat berikutnya. Jeda yang sudah dimulai dan snooze tetap mengikuti jadwalnya.")
                 .font(.caption).foregroundStyle(.secondary)
         }
@@ -122,7 +127,7 @@ struct ReminderPreferencesView: View {
         Section("Suara") {
             Toggle("Suara pendek saat pengingat muncul", isOn: $preferences.soundEnabled)
             Button("Coba suara") { preferences.playSound() }.disabled(!preferences.soundEnabled)
-            if let error = preferences.soundError { Text(error).font(.callout).foregroundStyle(.secondary) }
+            if let error = preferences.soundError { Text(error.localized(in: locale)).font(.callout).foregroundStyle(.secondary) }
             Text("Suara sistem Glass · Default mati. Mengikuti volume dan keluaran audio Mac.")
                 .font(.caption).foregroundStyle(.secondary)
         }
@@ -131,9 +136,9 @@ struct ReminderPreferencesView: View {
                 Task { await login.setEnabled(enabled) }
             }))
             .disabled(login.isUpdating)
-            LabeledContent("Status", value: login.statusText)
+            LabeledContent("Status", value: login.statusText.localized(in: locale))
             if login.isUpdating { ProgressView().controlSize(.small) }
-            if let error = login.error { Text(error).font(.callout).foregroundStyle(.secondary) }
+            if let error = login.error { Text(error.localized(in: locale)).font(.callout).foregroundStyle(.secondary) }
             if login.status == .requiresApproval {
                 Button("Buka Pengaturan Sistem") { SMAppService.openSystemSettingsLoginItems() }
             }

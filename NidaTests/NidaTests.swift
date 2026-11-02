@@ -54,7 +54,8 @@ struct NotchGeometryTests {
 }
 
 @MainActor struct PrototypeTests {
-    @Test func fullScheduleAndRefreshErrorFitWithoutScrolling() async throws {
+    @Test(arguments: AppLanguage.allCases)
+    func fullScheduleAndRefreshErrorFitWithoutScrolling(language: AppLanguage) async throws {
         let folder = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: folder) }
         let suite = "nida-full-fit-" + UUID().uuidString
@@ -80,13 +81,15 @@ struct NotchGeometryTests {
         let geometry = NotchGeometry(screenFrame: CGRect(x: 0, y: 0, width: 1470, height: 956),
                                      cameraWidth: 179, cameraHeight: 32)
         let host = NSHostingView(rootView: ScheduleView(store: store, onOpenNotch: {})
-            .fixedSize(horizontal: false, vertical: true).frame(width: 384))
+            .fixedSize(horizontal: false, vertical: true).frame(width: 384)
+            .environment(\.locale, language.locale))
         let normalHeight = host.fittingSize.height
         #expect(normalHeight > 300)
         #expect(normalHeight <= geometry.size(for: .schedule).height - geometry.cameraHeight)
         store.showRefreshFailureForReview()
         let errorHost = NSHostingView(rootView: ScheduleView(store: store, onOpenNotch: {})
-            .fixedSize(horizontal: false, vertical: true).frame(width: 384))
+            .fixedSize(horizontal: false, vertical: true).frame(width: 384)
+            .environment(\.locale, language.locale))
         #expect(errorHost.fittingSize.height > normalHeight)
         #expect(errorHost.fittingSize.height <= geometry.size(for: .schedule,
             scheduleStatusHeight: NidaStyle.scheduleStatusHeight).height - geometry.cameraHeight)

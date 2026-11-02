@@ -132,7 +132,7 @@ private let bandungRegency = PrayerCity(id: String(repeating: "b", count: 32), n
     func exposesRecoverableErrors(error: LocationSetupError) async {
         let detection = LocationDetection(lookup: { throw error })
         await detection.start { [denpasarCity] }.value
-        #expect(detection.state == .failed(error.localizedDescription))
+        #expect(detection.state == .failed(error))
     }
 
     @Test func catalogFailureNeverRequestsPermission() async {
@@ -140,7 +140,7 @@ private let bandungRegency = PrayerCity(id: String(repeating: "b", count: 32), n
         let detection = LocationDetection(lookup: { lookups += 1; return [] })
         await detection.start { throw LocationSetupError.unavailable }.value
         #expect(lookups == 0)
-        #expect(detection.state == .failed(LocationSetupError.unavailable.localizedDescription))
+        #expect(detection.state == .failed(.unavailable))
     }
 
     @Test(.timeLimit(.minutes(1))) func manualSelectionOrDismissalInvalidatesLateDetection() async {

@@ -13,6 +13,7 @@ struct ScheduleView: View {
     let store: PrayerDataStore
     var onClose: (() -> Void)?
     var onOpenNotch: (() -> Void)?
+    @Environment(\.locale) private var locale
     @Environment(\.colorSchemeContrast) private var contrast
     private var isNotch: Bool { onClose != nil }
 
@@ -28,7 +29,7 @@ struct ScheduleView: View {
                 }
             }
         }
-        .frame(height: isNotch ? 380 + (store.message == nil ? 0 : NidaStyle.scheduleStatusHeight) : nil)
+        .frame(height: isNotch ? 364 + (store.message == nil ? 0 : NidaStyle.scheduleStatusHeight) : nil, alignment: .top)
         .foregroundStyle(NidaStyle.text)
         .onReceive(NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.didWakeNotification)) { _ in
             Task { await store.restoreAndRefresh() }
@@ -44,7 +45,7 @@ struct ScheduleView: View {
                     .font(.system(size: 12, weight: .medium))
                     .lineLimit(1).layoutPriority(1)
                 Spacer(minLength: 4)
-                Text(date.formatted(Date.FormatStyle(locale: Locale(identifier: "id_ID"), timeZone: zone.timeZone)
+                Text(date.formatted(Date.FormatStyle(locale: locale, timeZone: zone.timeZone)
                     .day().month(.abbreviated)))
                     .font(.system(size: 11, weight: .regular))
                     .foregroundStyle(NidaStyle.secondaryText).fixedSize()
@@ -63,7 +64,7 @@ struct ScheduleView: View {
                             .foregroundStyle(NidaStyle.secondaryText)
                         HStack(alignment: .firstTextBaseline) {
                             let tomorrow = next.id.dateKey != ScheduleMonth.dateKey(date, in: zone)
-                            Text(next.id.prayer.label + (tomorrow ? " · besok" : ""))
+                            Text((tomorrow ? LocalizedStringResource("\(next.id.prayer.label.localized(in: locale)) · besok") : next.id.prayer.label).localized(in: locale))
                                 .font(.system(size: 24, weight: .semibold))
                             Spacer()
                             Text(next.wallTime).monospacedDigit()
@@ -86,7 +87,7 @@ struct ScheduleView: View {
                         ForEach(snapshot.today) { prayer in
                             let selected = snapshot.next?.id == prayer.id
                             HStack {
-                                Text(prayer.id.prayer.label)
+                                Text(prayer.id.prayer.label.localized(in: locale))
                                 Spacer()
                                 Text(prayer.wallTime).monospacedDigit()
                             }
@@ -109,24 +110,24 @@ struct ScheduleView: View {
                                     .accessibilityHidden(true)
                             }
                             .accessibilityElement(children: .combine)
-                            .accessibilityValue(selected ? "Berikutnya" : prayer.hasStarted(at: date) ? "Sudah lewat" : "")
+                            .accessibilityValue(Text(selected ? LocalizedStringKey("Berikutnya") : prayer.hasStarted(at: date) ? LocalizedStringKey("Sudah lewat") : LocalizedStringKey("")))
                         }
                     }
                 } else if store.isRefreshing {
                     ProgressView("Memuat jadwal…").controlSize(.small)
                 } else {
-                    Text(store.location == nil ? "Pilih kota di Pengaturan untuk mulai." : "Jadwal tanggal ini belum tersedia. Coba perbarui.")
+                    Text(store.location == nil ? LocalizedStringKey("Pilih kota di Pengaturan untuk mulai.") : LocalizedStringKey("Jadwal tanggal ini belum tersedia. Coba perbarui."))
                         .font(.callout).foregroundStyle(NidaStyle.secondaryText)
                 }
 
             }
             .fixedSize(horizontal: false, vertical: true)
             if let message = store.message {
-                Text((snapshot?.hasToday == true ? "Jadwal tetap ditampilkan · " : "") + message)
+                Text((snapshot?.hasToday == true ? LocalizedStringResource("Jadwal tetap ditampilkan · \(message.localized(in: locale))") : message).localized(in: locale))
                     .font(.system(size: 11)).foregroundStyle(NidaStyle.secondaryText)
                     .lineLimit(3).fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .help(message)
+                    .help(message.localized(in: locale))
             }
             HStack {
                 Button { Task { await store.refresh() } } label: {
@@ -137,7 +138,7 @@ struct ScheduleView: View {
                     .frame(width: NidaStyle.iconControlSize, height: NidaStyle.iconControlSize)
                 }
                 .disabled(store.location == nil || store.isRefreshing)
-                .accessibilityLabel(store.isRefreshing ? "Memperbarui jadwal" : "Perbarui jadwal")
+                .accessibilityLabel(Text(store.isRefreshing ? LocalizedStringKey("Memperbarui jadwal") : LocalizedStringKey("Perbarui jadwal")))
                 .help("Perbarui jadwal")
                 Spacer(minLength: 8)
                 Text(PrayerMonth.attribution + " · " + zone.label)
@@ -153,7 +154,7 @@ struct ScheduleView: View {
             .font(.system(size: 12))
         }
         .buttonStyle(NidaButtonStyle()).tint(.clear)
-        .padding(.horizontal, NidaStyle.panelInset).padding(.vertical, 12)
+        .padding(.horizontal, 30).padding(.vertical, 20)
         .task(id: ScheduleMonth.dateKey(date, in: zone)) { await store.restoreAndRefresh() }
     }
 }

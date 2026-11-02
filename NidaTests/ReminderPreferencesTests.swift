@@ -2,6 +2,8 @@ import AppKit
 import Foundation
 import ServiceManagement
 import Testing
+import Observation
+import os
 @testable import Nida
 
 @MainActor @Suite struct ReminderPreferencesTests {
@@ -95,7 +97,7 @@ import Testing
         await login.setEnabled(true)
         #expect(login.status == .requiresApproval)
         #expect(login.isRegistered)
-        #expect(login.statusText.contains("Menunggu"))
+        #expect(login.statusText.localized(in: AppLanguage.indonesian.locale).contains("Menunggu"))
         status = .enabled
         login.refresh()
         #expect(login.status == .enabled)
@@ -119,6 +121,82 @@ import Testing
         status = .notFound
         login.refresh()
         #expect(!login.isRegistered)
-        #expect(login.statusText.contains("belum tersedia"))
+        #expect(login.statusText.localized(in: AppLanguage.indonesian.locale).contains("belum tersedia"))
+    }
+}
+
+@MainActor @Suite struct AppLanguageTests {
+    @Test func defaultsFallbackPersistenceAndOtherPreferencesArePreserved() throws {
+        let suite = "nida-language-" + UUID().uuidString
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        for value: Any in ["", "fr", 7, true] {
+            defaults.set(value, forKey: "appLanguage")
+            #expect(ReminderPreferences(defaults: defaults).language == .indonesian)
+        }
+        defaults.removeObject(forKey: "appLanguage")
+        let preferences = ReminderPreferences(defaults: defaults)
+        #expect(preferences.language == .indonesian)
+        #expect(preferences.setDelay("5"))
+        preferences.soundEnabled = true
+        let saved = defaults.dictionaryRepresentation().filter { $0.key != "appLanguage" }
+        preferences.language = .english
+        #expect(ReminderPreferences(defaults: defaults).language == .english)
+        #expect(defaults.dictionaryRepresentation().filter { $0.key != "appLanguage" } as NSDictionary == saved as NSDictionary)
+    }
+
+    @Test func retainedMessagesResolveAgainWithoutRecreatingTheirSource() throws {
+        let suite = "nida-language-message-" + UUID().uuidString
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let preferences = ReminderPreferences(defaults: defaults)
+        #expect(!preferences.setDelay("0"))
+        let message = try #require(preferences.delayError)
+        #expect(message.localized(in: preferences.language.locale) == "Masukkan bilangan bulat antara 1 dan 60 menit.")
+        let invalidated = OSAllocatedUnfairLock(initialState: false)
+        withObservationTracking {
+            _ = message.localized(in: preferences.language.locale)
+        } onChange: { invalidated.withLock { $0 = true } }
+        preferences.language = .english
+        #expect(invalidated.withLock { $0 })
+        #expect(message.localized(in: preferences.language.locale) == "Enter a whole number from 1 to 60 minutes.")
+        #expect(PrayerDataError.network.message.localized(in: preferences.language.locale)
+            == "Cannot reach the schedule service. Check your internet connection.")
+        #expect(LocationSetupError.denied.message.localized(in: preferences.language.locale).hasPrefix("Location access is denied."))
+    }
+
+    @Test func prayerNamesAndPluralsUseTheSelectedLocale() {
+        let english = AppLanguage.english.locale
+        #expect(PrayerKind.allCases.map { $0.label.localized(in: english) } == ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"])
+        #expect(PrayerKind.allCases.map { $0.label.localized(in: AppLanguage.indonesian.locale) } == ["Subuh", "Dzuhur", "Ashar", "Maghrib", "Isya"])
+        for count in [1, 5] {
+            let minutes: LocalizedStringResource = "\(count) menit"
+            let days: LocalizedStringResource = "\(count) hari tersimpan untuk offline."
+            let followUp: LocalizedStringResource = "\(count) menit sejak masuk waktu \(PrayerKind.ashar.label.localized(in: english))"
+            #expect(minutes.localized(in: english) == (count == 1 ? "1 minute" : "5 minutes"))
+            #expect(days.localized(in: english) == (count == 1 ? "1 day saved for offline use." : "5 days saved for offline use."))
+            #expect(followUp.localized(in: english) == (count == 1 ? "1 minute since Asr began" : "5 minutes since Asr began"))
+            #expect(minutes.localized(in: AppLanguage.indonesian.locale) == "\(count) menit")
+        }
+    }
+
+    @Test func bothLanguagesShipTheSameCatalogKeys() throws {
+        let resources = try #require(Bundle.main.resourceURL)
+        for table in ["Localizable", "InfoPlist"] {
+            var languageKeys: [Set<String>] = []
+            for language in AppLanguage.allCases {
+                var keys: Set<String> = []
+                for ext in ["strings", "stringsdict"] {
+                    let file = resources.appending(path: "\(language.rawValue).lproj/\(table).\(ext)")
+                    guard FileManager.default.fileExists(atPath: file.path) else { continue }
+                    let data = try Data(contentsOf: file)
+                    let entries = try #require(PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any])
+                    keys.formUnion(entries.keys)
+                }
+                #expect(!keys.isEmpty, "Missing \(language) \(table)")
+                languageKeys.append(keys)
+            }
+            #expect(languageKeys[0] == languageKeys[1], "Language coverage differs in \(table)")
+        }
     }
 }

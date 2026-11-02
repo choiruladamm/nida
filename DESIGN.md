@@ -48,7 +48,7 @@ Use the default system font and SF Symbols. Keep dates, attribution, disclosures
 | Reminder actions | 12 pt medium |
 | Status / source / preview disclosure | 11 pt regular |
 
-Schedule insets are 24 pt horizontal and 12 pt vertical. Main groups use 12 pt spacing, the hero-to-list gap is 14 pt, and hero text uses 4 pt spacing. Each prayer row is 30 pt high with 2 pt between rows. The selection fill extends 10 pt into the side gutters; the 4 pt next-prayer dot sits outside the time column.
+Schedule insets are 30 pt horizontal and 20 pt vertical, matching the reminder's 30 pt horizontal / 20 pt top inset. The fixed notch schedule aligns content to the top rather than centering it into extra vertical space. Main groups use 12 pt spacing, the hero-to-list gap is 14 pt, and hero text uses 4 pt spacing. Each prayer row is 30 pt high with 2 pt between rows. The selection fill extends 10 pt into the side gutters; the 4 pt next-prayer dot sits outside the time column.
 
 Reminder content uses 30 pt horizontal and 20 pt top inset, 16 pt between groups, and 12 pt between symbol/copy or actions. Its symbol is 20 pt inside a 36 pt circle. Shared icon targets are 28 × 28 pt; reminder actions are 34 pt high.
 
@@ -61,12 +61,12 @@ Keep the hierarchy consistent in menu and notch:
 3. All five prayer rows in the same name/time grid.
 4. Optional refresh status, followed by refresh/source actions.
 
-Elapsed rows use the supporting text color without multiplying opacity again. Selected rows keep their time aligned with every other row. The notch footer includes Settings; the menu has Settings and Quit icon actions with tooltips in its compact bottom row. The row keeps the same 24 pt horizontal inset and uses 12 pt vertical padding. The “Coba pengingat” toggle shares the control row; when expanded, its two equal-width preview buttons sit side by side below it, spanning the full content width without a disclosure indent.
+Elapsed rows use the supporting text color without multiplying opacity again. Selected rows keep their time aligned with every other row. The notch footer includes Settings; the menu has Settings and Quit icon actions with tooltips in its compact bottom row. The row keeps the same 30 pt horizontal / 20 pt vertical insets as the schedule. The “Coba pengingat” toggle shares the control row; when expanded, its two equal-width preview buttons sit side by side below it, spanning the full content width without a disclosure indent.
 
 | Surface | Width | Content height |
 | --- | --- | --- |
 | Menu schedule region | 384 pt | Fits full content, plus status space |
-| Notch schedule | 384 pt | 380 pt, plus camera clearance and status space |
+| Notch schedule | 384 pt | 364 pt, plus camera clearance and status space |
 | Prayer reminder | 368 pt | 112 pt, plus camera clearance |
 | Follow-up reminder | 400 pt | 170 pt, plus camera clearance |
 | Settings form | 520 pt | 660 pt; native window chrome is separate |
@@ -77,7 +77,7 @@ While refreshing, replace the refresh symbol with a mini spinner inside the same
 
 ## Notch behavior and Settings
 
-Derive camera width, clearance, and placement from the selected display. The current development Mac measures 179 × 32 pt; these are observations, not hardcoded device dimensions. The schedule is therefore 384 × 412 pt normally and 384 × 464 pt with a status. The transparent hosting canvas is 520 × 480 pt.
+Derive camera width, clearance, and placement from the selected display. The current development Mac measures 179 × 32 pt; these are observations, not hardcoded device dimensions. The schedule is therefore 384 × 396 pt normally and 384 × 448 pt with a status. The transparent hosting canvas is 520 × 480 pt.
 
 At rest, draw no black extension, background, border, or shadow. The hit region matches the measured camera width and extends 8 pt below it; a 20 × 2 pt handle appears only on hover. On an unnotched display, the current fallback trigger is 164 × 8 pt. Expanded content starts below camera clearance, without a separate branding/titlebar strip.
 
@@ -88,6 +88,8 @@ Settings uses the native grouped Form and real macOS window controls. Hidden tit
 Preview copy explicitly says “Preview · Data contoh”; real follow-ups explain that they are personal reminders, not a mosque's iqomah schedule. Preview actions stay isolated from real delivery state.
 
 ## Motion, controls, and accessibility
+
+Settings begins with a native app-language picker offering self-named Bahasa Indonesia / English choices. Indonesian is the default; all SwiftUI scenes and AppKit hosting roots share the same observable preference. Language changes update copy without resetting views or reminder services. Both catalogs retain the existing type hierarchy and compact insets; five prayer rows stay visible without a scroll container. City names, source identity, zones and 24-hour prayer times remain provider/domain data. See [language selection](docs/language-selection.md) for OS-owned dialog limits and verification.
 
 State changes use an interruptible spring with 0.26 second duration and 0.08 bounce. Reduce Motion disables that explicit state animation. Avoid decorative stagger, perpetual motion, text scaling on press, and extra glow.
 

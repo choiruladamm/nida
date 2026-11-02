@@ -2,7 +2,7 @@
 
 A native macOS prayer reminder with a frosted Liquid Glass notch panel and menu bar access. Indonesian city schedules are **Kemenag via myQuran**, with validated current/next-month offline storage, two-stage reminders, explicit five-minute snooze, optional short sound, and launch at login.
 
-**0.1.0 (2) · MVP prerelease.** Hardware acceptance remains open in [#11](https://github.com/choiruladamm/nida/issues/11); see [verification evidence and remaining checks](docs/mvp-verification.md). Requires **macOS 26+**. Local builds are ad-hoc signed, not notarized for public distribution.
+**Source: 0.2.0 (4) · prerelease. Latest published: 0.1.0 (2).** Hardware acceptance remains pending in [parent #1](https://github.com/choiruladamm/nida/issues/1); see [verification evidence and remaining checks](docs/mvp-verification.md). Requires **macOS 26+**. Local builds are ad-hoc signed, not notarized for public distribution.
 
 ## Install and use
 
@@ -11,6 +11,8 @@ A native macOS prayer reminder with a frosted Liquid Glass notch panel and menu 
 3. Open today's schedule from the menu bar or the hover handle immediately below the camera. The arrow button opens the notch; Escape/outside click dismisses an interactive panel.
 4. Open the gear icon (**Pengaturan**) to change city, follow-up delay (1–60 minutes; default ten), sound, or login launch. Check the running version in **Tentang Nida → Versi**. Keep the installed path stable before enabling login launch; macOS may require approval.
 5. **Coba pengingat** shows labeled **Data contoh** previews. Preview snooze does not schedule real reminders or alter delivery history.
+
+In source builds 0.2.0 (3) and later, **Pengaturan → Bahasa → Bahasa aplikasi** offers **Bahasa Indonesia** (default) and **English**. The saved choice updates open app surfaces immediately. Schedules, city names, time zones and reminder history are unchanged; macOS-owned dialogs follow OS language behavior. See [language behavior and verification](docs/language-selection.md).
 
 Reminders require Nida running and the Mac awake/unlocked. Recovery shows only the latest eligible event within five minutes; stale events are skipped. Cached dates work offline; missing dates never reuse yesterday's schedule. A personal follow-up is not a mosque iqomah time. Real sleep/lock recovery, login launch, fullscreen/display behavior, keyboard/VoiceOver, and visual accessibility acceptance are still pending. See the [installation and hardware checklist](docs/mvp-verification.md).
 
@@ -33,7 +35,7 @@ Debug-only review modes: `--review-menu`, `--review-settings`, `--review-notch`,
 
 ## Versioning
 
-Use `major.minor.patch` plus an increasing integer build: **0.1.0 (2)**. Stay on `0.1.0` during MVP verification; `1.0.0` follows passed #11 acceptance. After stable release, use patch for fixes, minor for features, major for incompatible changes.
+Use `major.minor.patch` plus an increasing integer build: **0.2.0 (4)**. Language selection advances the feature version; it remains a prerelease while MVP hardware acceptance is pending. `1.0.0` follows observed acceptance, not issue closure alone. After stable release, use patch for fixes, minor for features, major for incompatible changes.
 
 Set `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in both Debug/Release app configurations in `Nida.xcodeproj/project.pbxproj`. Increment the build for every changed artifact installed for testing or shared, across all release versions; reinstalling the identical artifact retains its number. Do not bump on every compile. Update [CHANGELOG.md](CHANGELOG.md), tag the committed release source `vX.Y.Z`, and never move a published tag. Keep unverified releases marked prerelease. [Apple's build settings reference](https://developer.apple.com/documentation/xcode/build-settings-reference) describes the generated bundle keys.
 
