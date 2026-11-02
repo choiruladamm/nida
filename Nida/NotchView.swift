@@ -114,16 +114,20 @@ struct NotchView: View {
             if model.state == .followUp {
                 HStack(spacing: NidaStyle.groupGap) {
                     Button { controller.dismissReminder() } label: {
-                        Text("Tutup").frame(maxWidth: .infinity, minHeight: NidaStyle.controlHeight)
+                        Text("Tutup")
+                            .foregroundStyle(NidaStyle.text)
+                            .frame(maxWidth: .infinity, minHeight: NidaStyle.controlHeight)
+                            .background(.white.opacity(0.10), in: .capsule)
+                            .glassEffect(.regular.interactive(), in: .capsule)
                     }
-                    .buttonStyle(.glass)
-                    .tint(.clear)
+                    .buttonStyle(.plain)
                     Button { controller.snoozeReminder() } label: {
                         Text("Ingatkan 5 menit lagi")
                             .foregroundStyle(NidaStyle.surface)
                             .frame(maxWidth: .infinity, minHeight: NidaStyle.controlHeight)
+                            .background(NidaStyle.text, in: .capsule)
                     }
-                    .buttonStyle(.glassProminent)
+                    .buttonStyle(.plain)
                 }
                 .controlSize(.regular)
                 .buttonBorderShape(.capsule)
