@@ -36,18 +36,18 @@ struct NotchGeometry: Equatable {
                width: Self.canvasSize.width, height: Self.canvasSize.height)
     }
 
-    func size(for state: PreviewState) -> CGSize {
+    func size(for state: PreviewState, scheduleStatusHeight: CGFloat = 0) -> CGSize {
         switch state {
         case .collapsed: CGSize(width: cameraWidth > 0 ? cameraWidth : 164, height: cameraHeight + 8)
         case .prayer: CGSize(width: 368, height: cameraHeight + 112)
         case .followUp: CGSize(width: 400, height: cameraHeight + 170)
-        case .schedule: CGSize(width: 384, height: cameraHeight + 360)
+        case .schedule: CGSize(width: 384, height: cameraHeight + 360 + scheduleStatusHeight)
         }
     }
 
     // Global AppKit coordinates, also used to let clicks outside the panel pass through.
-    func interactiveFrame(for state: PreviewState) -> CGRect {
-        let size = size(for: state)
+    func interactiveFrame(for state: PreviewState, scheduleStatusHeight: CGFloat = 0) -> CGRect {
+        let size = size(for: state, scheduleStatusHeight: scheduleStatusHeight)
         return CGRect(x: screenFrame.midX - size.width / 2, y: screenFrame.maxY - size.height,
                       width: size.width, height: size.height)
     }

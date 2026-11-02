@@ -17,6 +17,19 @@ struct NotchGeometryTests {
         #expect(frame.height > geometry.cameraHeight)
     }
 
+    @Test func scheduleStatusAddsSpaceWithoutChangingOtherStates() {
+        let extra = NidaStyle.scheduleStatusHeight
+        let normal = geometry.interactiveFrame(for: .schedule)
+        let expanded = geometry.interactiveFrame(for: .schedule, scheduleStatusHeight: extra)
+        #expect(expanded.height == normal.height + extra)
+        #expect(expanded.maxY == normal.maxY)
+        #expect(geometry.canvasFrame.contains(expanded))
+        #expect(expanded.contains(CGPoint(x: expanded.midX, y: expanded.minY + 14)))
+        for state in [PreviewState.collapsed, .prayer, .followUp] {
+            #expect(geometry.size(for: state, scheduleStatusHeight: extra) == geometry.size(for: state))
+        }
+    }
+
     @Test func collapsedTriggerDoesNotWidenThePhysicalNotch() {
         let frame = geometry.interactiveFrame(for: .collapsed)
         #expect(frame.width == geometry.cameraWidth)

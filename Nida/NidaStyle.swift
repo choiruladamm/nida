@@ -15,6 +15,7 @@ enum NidaStyle {
     static let groupGap: CGFloat = 12
     static let iconControlSize: CGFloat = 28
     static let controlHeight: CGFloat = 34
+    static let scheduleStatusHeight: CGFloat = 52
     static let rowRadius: CGFloat = 14
     static let opaqueGlass = Color(red: 0.34, green: 0.35, blue: 0.32)
 }

@@ -132,7 +132,8 @@ struct MenuContent: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ScheduleView(store: controller.schedules, onOpenNotch: { preview(.schedule) }).frame(height: 344)
+            ScheduleView(store: controller.schedules, onOpenNotch: { preview(.schedule) })
+                .frame(height: 344 + controller.scheduleStatusHeight)
             NidaStyle.hairline.frame(height: 0.5)
             VStack(alignment: .leading, spacing: 14) {
                 DisclosureGroup("Coba pengingat", isExpanded: $previewExpanded) {

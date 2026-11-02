@@ -70,3 +70,5 @@ The earlier polish was rejected as insufficiently glass-like and too loose in la
 - Native compositor captures were inspected after enabling screen capture and unlocking the Mac. Menu/Settings captures use debug review hosts with the production content; they do not prove all MenuBarExtra/Settings scene interactions. Fullscreen, VoiceOver, OS-wide accessibility toggles, and lifecycle/login checks still belong to #11.
 
 Window-backed menu/Settings surfaces use an edge-to-edge rectangular glass background with zero glass corner radius. The native macOS window owns the outer rounding; adding a second 26 pt glass contour produced a doubled rim and was removed after owner feedback.
+
+A refresh status adds 52 pt to the schedule surface without taking space from the timetable. Menu height, notch silhouette, and notch hit region expand together; the normal dimensions remain unchanged.

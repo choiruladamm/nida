@@ -28,7 +28,7 @@ struct ScheduleView: View {
                 }
             }
         }
-        .frame(height: isNotch ? 360 : nil)
+        .frame(height: isNotch ? 360 + (store.message == nil ? 0 : NidaStyle.scheduleStatusHeight) : nil)
         .foregroundStyle(NidaStyle.text)
         .onReceive(NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.didWakeNotification)) { _ in
             Task { await store.restoreAndRefresh() }

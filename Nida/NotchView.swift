@@ -6,7 +6,7 @@ struct NotchView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        let size = model.geometry.size(for: model.state)
+        let size = model.geometry.size(for: model.state, scheduleStatusHeight: controller.scheduleStatusHeight)
         VStack(spacing: 0) {
             Group {
                 if model.state == .collapsed {
