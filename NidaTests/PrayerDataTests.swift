@@ -267,6 +267,34 @@ private func temporaryDirectory() throws -> URL {
         #expect(await stub.requests.count == 2)
     }
 
+    @Test(.timeLimit(.minutes(1))) func repeatedRefreshDoesNotStackRequestsOrEraseRateLimitedData() async throws {
+        let folder = try temporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let suite = "nida-refresh-" + UUID().uuidString
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let stub = TransportStub()
+        await stub.set(path(), body: try payload())
+        await stub.set(path(jakarta, november.next), body: try payload(month: november.next))
+        let repo = PrayerRepository(api: PrayerAPI(load: { try await stub.response($0) }), cache: PrayerCache(directory: folder))
+        let store = PrayerDataStore(repository: repo, defaults: defaults)
+        await store.select(jakarta, now: referenceDate)
+        let saved = store.today(at: referenceDate)
+        await stub.set(path(), body: Data(), status: 429, headers: ["Retry-After": "120"])
+        await stub.hold(path())
+        let refresh = Task { await store.refresh(now: referenceDate) }
+        await stub.waitUntilHeld()
+        for _ in 0..<20 { await store.refresh(now: referenceDate) }
+        #expect(await stub.requests.count == 3)
+        await stub.release()
+        await refresh.value
+        for _ in 0..<20 { await store.refresh(now: referenceDate) }
+        #expect(await stub.requests.count == 3)
+        #expect(store.today(at: referenceDate) == saved)
+        #expect(store.message != nil)
+        #expect(!store.isRefreshing)
+    }
+
     @Test func failedSetupDoesNotPersistCompletionOrReplaceConfirmedCity() async throws {
         let folder = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: folder) }

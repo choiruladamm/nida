@@ -119,20 +119,30 @@ struct ScheduleView: View {
                         Text(store.location == nil ? "Pilih kota di Pengaturan untuk mulai." : "Jadwal tanggal ini belum tersedia. Coba perbarui.")
                             .font(.callout).foregroundStyle(NidaStyle.secondaryText)
                     }
-                    if let message = store.message {
-                        Text((snapshot?.hasToday == true ? "Jadwal tetap ditampilkan · " : "") + message)
-                            .font(.system(size: 11)).foregroundStyle(NidaStyle.secondaryText)
-                    }
+
                 }
+                .padding(.horizontal, 12)
             }
-            .scrollIndicators(.hidden)
-            .scrollClipDisabled()
+            .scrollIndicators(store.message == nil ? .hidden : .visible)
+            .padding(.horizontal, -12)
+            if let message = store.message {
+                Text((snapshot?.hasToday == true ? "Jadwal tetap ditampilkan · " : "") + message)
+                    .font(.system(size: 11)).foregroundStyle(NidaStyle.secondaryText)
+                    .lineLimit(3).fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .help(message)
+            }
             HStack {
-                if store.isRefreshing { ProgressView().controlSize(.mini) }
-                else {
-                    Button { Task { await store.refresh() } } label: { Image(systemName: "arrow.clockwise").frame(width: NidaStyle.iconControlSize, height: NidaStyle.iconControlSize) }
-                        .disabled(store.location == nil).accessibilityLabel("Perbarui jadwal").help("Perbarui jadwal")
+                Button { Task { await store.refresh() } } label: {
+                    Group {
+                        if store.isRefreshing { ProgressView().controlSize(.mini) }
+                        else { Image(systemName: "arrow.clockwise") }
+                    }
+                    .frame(width: NidaStyle.iconControlSize, height: NidaStyle.iconControlSize)
                 }
+                .disabled(store.location == nil || store.isRefreshing)
+                .accessibilityLabel(store.isRefreshing ? "Memperbarui jadwal" : "Perbarui jadwal")
+                .help("Perbarui jadwal")
                 Spacer(minLength: 8)
                 Text(PrayerMonth.attribution + " · " + zone.label)
                     .font(.system(size: 11)).foregroundStyle(NidaStyle.secondaryText)

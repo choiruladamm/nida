@@ -84,3 +84,5 @@ Notch controls share explicit contrasting primary/secondary colors, native glass
 ## Native design review (Debug)
 
 The latest material/layout revision uses AppKit Liquid Glass and unified native Settings chrome. See [revision plan and review findings](docs/ui-revision-plan.md). With the normal app stopped, Debug builds accept `--review-menu`, `--review-settings`, `--review-notch`, or `--review-follow-up` to inspect the production views without starting real delivery. Menu/Settings use native review hosts; the notch uses its actual panel. Screen capture requires the user's OS permission and an unlocked session.
+
+Debug `--review-refresh-error` shows a simulated rate-limit status on the real notch panel after normal cached restoration; it never forces requests or starts reminder delivery. This reproduces error layout without spamming the live provider.

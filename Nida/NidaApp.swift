@@ -65,6 +65,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             showReviewWindow(NSHostingView(rootView: MenuContent(controller: controller)), titled: false)
             return
         }
+        if ProcessInfo.processInfo.arguments.contains("--review-refresh-error") {
+            controller.show(.schedule, interactive: true)
+            Task {
+                await schedules.restoreAndRefresh()
+                schedules.showRefreshFailureForReview()
+            }
+            return
+        }
         if ProcessInfo.processInfo.arguments.contains("--review-notch") {
             controller.show(.schedule, interactive: true)
             return
