@@ -29,7 +29,7 @@ Local builds use ad-hoc signing. These are personal development builds, not nota
 
 ## Scope
 
-The notch geometry retains its prototype verification boundary. First launch offers automatic location with city confirmation or manual selection. Settings supports location refresh, real daily schedules, and validated current/next-month offline storage. Menu bar, notch, and Settings show the selected city’s real schedule and next prayer. Two-stage notch reminders run while the app is open and the Mac is awake/unlocked. Login launch and reminder preference controls remain #9.
+The notch geometry retains its prototype verification boundary. First launch offers automatic location with city confirmation or manual selection. Settings supports location refresh, real daily schedules, and validated current/next-month offline storage. Menu bar, notch, and Settings show the selected city’s real schedule and next prayer. Two-stage notch reminders run while the app is open and the Mac is awake/unlocked. Settings includes validated 5/10-minute presets or a custom 1–60-minute follow-up delay, optional short sound (off by default), and optional native launch at login.
 
 Product plan and implementation tracker: https://github.com/choiruladamm/nida/issues/1
 
@@ -67,6 +67,12 @@ The menu bar and notch share one schedule store, with a local date, next-prayer 
 
 ## Timing foundation
 
-The Settings timetable includes **Berikutnya**, the city-local prayer time, and a system countdown. At each prayer boundary it advances to the next prayer; after Isha it shows tomorrow's Subuh only when tomorrow's schedule exists.
+Settings provides reminder preferences alongside city selection and real schedules. The timetable includes **Berikutnya**, the city-local prayer time, and a system countdown. At each prayer boundary it advances to the next prayer; after Isha it shows tomorrow's Subuh only when tomorrow's schedule exists.
 
 The pure timing engine also produces stable entry/follow-up/snooze events with delay-change, expiry, collision, and recovery rules. The delivery layer now persists and presents these events through the notch. See [delivery contract](docs/reminder-delivery.md). See [timing contract](docs/prayer-timing.md).
+
+## Reminder preferences
+
+Open **Pengaturan** to choose the follow-up delay, enable the short sound, or register Nida to open at login. Invalid delay input leaves the last saved value unchanged. Started follow-ups and explicit snoozes keep their original times; new prayer occurrences use the new delay.
+
+Login registration reflects macOS status and can require approval in System Settings. Keep the app at a stable installed path before enabling it. Preview buttons remain visual-only and do not affect real delivery; **Coba suara** auditions audio only when sound is enabled. See [settings contract and manual checks](docs/reminder-preferences.md).

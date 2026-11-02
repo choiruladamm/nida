@@ -71,7 +71,7 @@ struct NotchView: View {
 
     private var reminderSubtitle: String {
         guard let event = model.reminder else {
-            return model.state == .prayer ? "15.12 · Saatnya ambil jeda" : "10 menit sejak masuk waktu Ashar"
+            return model.state == .prayer ? "15.12 · Saatnya ambil jeda" : "\(controller.preferences.delayMinutes) menit sejak masuk waktu Ashar"
         }
         if event.id.stage == .entry {
             let format = Date.FormatStyle(date: .omitted, time: .shortened,

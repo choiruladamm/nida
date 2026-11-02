@@ -66,7 +66,6 @@ final class ReminderDelivery: NSObject {
     private var failedLoad = false
     private var running = false
     private var lastRefreshDay: String?
-    private var lastDelayMinutes = UserDefaults.standard.integer(forKey: "followUpDelayMinutes")
 
     init(controller: NotchPanelController, file: ReminderLedgerFile = ReminderLedgerFile()) {
         self.controller = controller
@@ -97,8 +96,6 @@ final class ReminderDelivery: NSObject {
             name: .NSSystemClockDidChange, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(changed),
             name: .NSSystemTimeZoneDidChange, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(settingsChanged),
-            name: UserDefaults.didChangeNotification, object: nil)
         observeSchedules()
         reload()
     }
@@ -107,6 +104,7 @@ final class ReminderDelivery: NSObject {
         withObservationTracking {
             _ = store.location
             _ = store.months
+            _ = controller.preferences.delayMinutes
         } onChange: { [weak self] in
             Task { @MainActor in
                 guard let self, self.running else { return }
@@ -139,12 +137,6 @@ final class ReminderDelivery: NSObject {
 
     @objc private func resume() { suspended = false; reload() }
     @objc private func changed() { reload() }
-    @objc private func settingsChanged() {
-        let minutes = UserDefaults.standard.integer(forKey: "followUpDelayMinutes")
-        guard minutes != lastDelayMinutes else { return }
-        lastDelayMinutes = minutes
-        tick()
-    }
 
     private func reload() {
         tick()
@@ -166,8 +158,7 @@ final class ReminderDelivery: NSObject {
         let now = Date()
         if let event = controller.model.reminder, event.expiresAt <= now { controller.hideDeliveredReminder() }
         if let timeline = try? store.timeline() {
-            let minutes = UserDefaults.standard.integer(forKey: "followUpDelayMinutes")
-            let delay = (try? FollowUpDelay(minutes: minutes)) ?? .standard
+            let delay = (try? FollowUpDelay(minutes: controller.preferences.delayMinutes)) ?? .standard
             var next = ledger
             next.reconcile(timeline, at: now, delay: delay)
             let event = next.takeDue(at: now, available: canPresent)

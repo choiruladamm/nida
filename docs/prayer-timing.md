@@ -40,7 +40,7 @@ The caller owns durable handling history and pending requests. Retain records ou
 
 ## Current UI boundary
 
-Settings now shows the real next prayer, its city-local wall time/zone, a native countdown, and a `besok` label where appropriate. Menu bar and notch now share this live timeline through ScheduleView (#7); only reminder previews retain fixtures. Reminder delay controls belong to #9; the validated policy type is available now.
+Settings now shows the real next prayer, its city-local wall time/zone, a native countdown, and a `besok` label where appropriate. Menu bar and notch now share this live timeline through ScheduleView (#7); only reminder previews retain fixtures. Native delay controls are implemented in #9, using the validated policy and shared preferences.
 
 ## Verification
 

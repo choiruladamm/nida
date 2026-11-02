@@ -11,7 +11,7 @@ struct NidaApp: App {
         }
         .menuBarExtraStyle(.window)
         Settings {
-            PrototypeSettings(controller: delegate.controller, schedules: delegate.schedules)
+            NidaSettings(controller: delegate.controller, schedules: delegate.schedules)
         }
     }
 }
@@ -140,7 +140,7 @@ struct MenuContent: View {
     }
 }
 
-struct PrototypeSettings: View {
+struct NidaSettings: View {
     let controller: NotchPanelController
     let schedules: PrayerDataStore
 
@@ -151,6 +151,7 @@ struct PrototypeSettings: View {
                 Text("Jadwal asli tersedia di menu bar dan notch. Pengingat otomatis aktif saat Nida berjalan dan Mac terjaga. Tombol coba pengingat memakai data contoh.")
                     .foregroundStyle(.secondary)
             }
+            ReminderPreferencesView(controller: controller)
             PrayerDataSettings(store: schedules)
             Section("Coba tampilan notch") {
                 ForEach(PreviewState.allCases, id: \.self) { state in
@@ -159,9 +160,9 @@ struct PrototypeSettings: View {
                 Text("Klik garis kecil di bawah kamera untuk membuka jadwal. Escape atau klik di luar panel untuk menutup.")
                     .font(.callout).foregroundStyle(.secondary)
             }
-            Section("Tentang prototipe") {
+            Section("Tentang Nida") {
                 LabeledContent("Minimum macOS", value: "26.0")
-                LabeledContent("Pengingat", value: "Aktif · Jeda awal 10 menit")
+                LabeledContent("Pengingat", value: "Aktif · Jeda \(controller.preferences.delayMinutes) menit")
                 Text("Preview tunda hanya menampilkan konfirmasi; tidak menjadwalkan pengingat.")
                     .font(.callout).foregroundStyle(.secondary)
             }
