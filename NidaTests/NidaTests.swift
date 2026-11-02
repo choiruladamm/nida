@@ -54,6 +54,44 @@ struct NotchGeometryTests {
 }
 
 @MainActor struct PrototypeTests {
+    @Test func fullScheduleAndRefreshErrorFitWithoutScrolling() async throws {
+        let folder = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let suite = "nida-full-fit-" + UUID().uuidString
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let now = Date()
+        let city = PrayerCity(id: String(repeating: "a", count: 32), name: "KOTA JAKARTA")
+        let location = PrayerLocation(city: city, province: "DKI JAKARTA", zone: .west)
+        let period = ScheduleMonth(containing: now, in: .west)
+        let cache = PrayerCache(directory: folder)
+        for month in [period, period.next] {
+            try cache.save(PrayerMonth(provider: PrayerMonth.providerID, location: location,
+                period: month, retrievedAt: now,
+                days: Dictionary(uniqueKeysWithValues: try month.dateKeys().map {
+                    ($0, PrayerDay(subuh: "04:00", dzuhur: "11:40", ashar: "14:55", maghrib: "17:49", isya: "23:59"))
+                })))
+        }
+        defaults.set(try JSONEncoder().encode(location), forKey: "prayerLocation")
+        let store = PrayerDataStore(repository: PrayerRepository(cache: cache), defaults: defaults)
+        await store.restoreAndRefresh(now: now)
+        #expect(store.today(at: now) != nil)
+        #expect(store.message == nil)
+        let geometry = NotchGeometry(screenFrame: CGRect(x: 0, y: 0, width: 1470, height: 956),
+                                     cameraWidth: 179, cameraHeight: 32)
+        let host = NSHostingView(rootView: ScheduleView(store: store, onOpenNotch: {})
+            .fixedSize(horizontal: false, vertical: true).frame(width: 384))
+        let normalHeight = host.fittingSize.height
+        #expect(normalHeight > 300)
+        #expect(normalHeight <= geometry.size(for: .schedule).height - geometry.cameraHeight)
+        store.showRefreshFailureForReview()
+        let errorHost = NSHostingView(rootView: ScheduleView(store: store, onOpenNotch: {})
+            .fixedSize(horizontal: false, vertical: true).frame(width: 384))
+        #expect(errorHost.fittingSize.height > normalHeight)
+        #expect(errorHost.fittingSize.height <= geometry.size(for: .schedule,
+            scheduleStatusHeight: NidaStyle.scheduleStatusHeight).height - geometry.cameraHeight)
+    }
+
     @Test(arguments: [false, true])
     func compactScheduleFitsBelowTheCamera(highContrastAppearance: Bool) {
         let geometry = NotchGeometry(screenFrame: CGRect(x: 0, y: 0, width: 1470, height: 956),

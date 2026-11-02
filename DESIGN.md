@@ -48,7 +48,7 @@ Use the default system font and SF Symbols. Keep dates, attribution, disclosures
 | Reminder actions | 12 pt medium |
 | Status / source / preview disclosure | 11 pt regular |
 
-Schedule insets are 30 pt horizontal and 16 pt vertical. Main groups use 12 pt spacing, the hero-to-list gap is 14 pt, and hero text uses 4 pt spacing. Each prayer row is 30 pt high with 2 pt between rows. The selection fill extends 10 pt into the side gutters; the 4 pt next-prayer dot sits outside the time column.
+Schedule insets are 24 pt horizontal and 12 pt vertical. Main groups use 12 pt spacing, the hero-to-list gap is 14 pt, and hero text uses 4 pt spacing. Each prayer row is 30 pt high with 2 pt between rows. The selection fill extends 10 pt into the side gutters; the 4 pt next-prayer dot sits outside the time column.
 
 Reminder content uses 30 pt horizontal and 20 pt top inset, 16 pt between groups, and 12 pt between symbol/copy or actions. Its symbol is 20 pt inside a 36 pt circle. Shared icon targets are 28 × 28 pt; reminder actions are 34 pt high.
 
@@ -61,23 +61,23 @@ Keep the hierarchy consistent in menu and notch:
 3. All five prayer rows in the same name/time grid.
 4. Optional refresh status, followed by refresh/source actions.
 
-Elapsed rows use the supporting text color without multiplying opacity again. Selected rows keep their time aligned with every other row. The notch footer includes Settings; the menu has one Settings action in its bottom section. Menu preview controls live in the initially collapsed “Coba pengingat” disclosure so they do not compete with the schedule.
+Elapsed rows use the supporting text color without multiplying opacity again. Selected rows keep their time aligned with every other row. The notch footer includes Settings; the menu has Settings and Quit icon actions with tooltips in its compact bottom row. The row keeps the same 24 pt horizontal inset and uses 12 pt vertical padding. The “Coba pengingat” toggle shares the control row; when expanded, its two equal-width preview buttons sit side by side below it, spanning the full content width without a disclosure indent.
 
 | Surface | Width | Content height |
 | --- | --- | --- |
-| Menu schedule region | 384 pt | 344 pt, plus status space |
-| Notch schedule | 384 pt | 360 pt, plus camera clearance and status space |
+| Menu schedule region | 384 pt | Fits full content, plus status space |
+| Notch schedule | 384 pt | 380 pt, plus camera clearance and status space |
 | Prayer reminder | 368 pt | 112 pt, plus camera clearance |
 | Follow-up reminder | 400 pt | 170 pt, plus camera clearance |
 | Settings form | 520 pt | 660 pt; native window chrome is separate |
 
-A refresh message adds `NidaStyle.scheduleStatusHeight` (52 pt) to both schedule surfaces. The notch silhouette and pointer region grow together. The message must not take space away from the five prayer rows or overlap the footer. Keep vertical scroll clipping; use the horizontal gutters for selection decoration. The message wraps to at most three lines and exposes the full text through help.
+A refresh message adds `NidaStyle.scheduleStatusHeight` (52 pt) to both schedule surfaces. The notch silhouette and pointer region grow together. The message must not take space away from the five prayer rows or overlap the footer. The schedule has no scroll container; all five prayer rows remain visible. The menu follows its content height; use the horizontal gutters for selection decoration. The message wraps to at most three lines and exposes the full text through help.
 
 While refreshing, replace the refresh symbol with a mini spinner inside the same 28 pt target and disable repeat clicks. Retain cached schedule rows on failure. Loading, missing city, missing schedule, and error copy must remain understandable without requiring a successful request.
 
 ## Notch behavior and Settings
 
-Derive camera width, clearance, and placement from the selected display. The current development Mac measures 179 × 32 pt; these are observations, not hardcoded device dimensions. The schedule is therefore 384 × 392 pt normally and 384 × 444 pt with a status. The transparent hosting canvas is 520 × 480 pt.
+Derive camera width, clearance, and placement from the selected display. The current development Mac measures 179 × 32 pt; these are observations, not hardcoded device dimensions. The schedule is therefore 384 × 412 pt normally and 384 × 464 pt with a status. The transparent hosting canvas is 520 × 480 pt.
 
 At rest, draw no black extension, background, border, or shadow. The hit region matches the measured camera width and extends 8 pt below it; a 20 × 2 pt handle appears only on hover. On an unnotched display, the current fallback trigger is 164 × 8 pt. Expanded content starts below camera clearance, without a separate branding/titlebar strip.
 

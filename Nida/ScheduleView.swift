@@ -28,7 +28,7 @@ struct ScheduleView: View {
                 }
             }
         }
-        .frame(height: isNotch ? 360 + (store.message == nil ? 0 : NidaStyle.scheduleStatusHeight) : nil)
+        .frame(height: isNotch ? 380 + (store.message == nil ? 0 : NidaStyle.scheduleStatusHeight) : nil)
         .foregroundStyle(NidaStyle.text)
         .onReceive(NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.didWakeNotification)) { _ in
             Task { await store.restoreAndRefresh() }
@@ -56,75 +56,71 @@ struct ScheduleView: View {
                         .accessibilityLabel("Buka jadwal di notch").help("Buka jadwal di notch")
                 }
             }
-            ScrollView {
-                VStack(alignment: .leading, spacing: 14) {
-                    if let next = snapshot?.next {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Berikutnya").font(.system(size: 11, weight: .medium))
-                                .foregroundStyle(NidaStyle.secondaryText)
-                            HStack(alignment: .firstTextBaseline) {
-                                let tomorrow = next.id.dateKey != ScheduleMonth.dateKey(date, in: zone)
-                                Text(next.id.prayer.label + (tomorrow ? " · besok" : ""))
-                                    .font(.system(size: 24, weight: .semibold))
-                                Spacer()
-                                Text(next.wallTime).monospacedDigit()
-                                    .font(.system(size: 28, weight: .regular))
-                            }
-                            HStack(spacing: 5) {
-                                Image(systemName: "clock").font(.system(size: 10)).accessibilityHidden(true)
-                                Text("Dalam")
-                                Text(next.startsAt, style: .timer).monospacedDigit()
-                                    .accessibilityLabel("Sisa waktu menuju sholat berikutnya")
-                                    .accessibilityValue(Text(next.startsAt, style: .timer))
-                            }
-                            .font(.system(size: 12)).foregroundStyle(NidaStyle.secondaryText)
+            VStack(alignment: .leading, spacing: 14) {
+                if let next = snapshot?.next {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Berikutnya").font(.system(size: 11, weight: .medium))
+                            .foregroundStyle(NidaStyle.secondaryText)
+                        HStack(alignment: .firstTextBaseline) {
+                            let tomorrow = next.id.dateKey != ScheduleMonth.dateKey(date, in: zone)
+                            Text(next.id.prayer.label + (tomorrow ? " · besok" : ""))
+                                .font(.system(size: 24, weight: .semibold))
+                            Spacer()
+                            Text(next.wallTime).monospacedDigit()
+                                .font(.system(size: 28, weight: .regular))
                         }
-                    } else if snapshot?.hasToday == true {
-                        Text("Jadwal Subuh besok belum tersedia.").font(.callout)
-                    }
-                    if let snapshot, snapshot.hasToday {
-                        VStack(spacing: 2) {
-                            ForEach(snapshot.today) { prayer in
-                                let selected = snapshot.next?.id == prayer.id
-                                HStack {
-                                    Text(prayer.id.prayer.label)
-                                    Spacer()
-                                    Text(prayer.wallTime).monospacedDigit()
-                                }
-                                .font(.system(size: 13, weight: selected ? .semibold : .regular))
-                                .foregroundStyle(prayer.hasStarted(at: date) && contrast != .increased ? NidaStyle.secondaryText : NidaStyle.text)
-                                .frame(height: 30)
-                                .background {
-                                    RoundedRectangle(cornerRadius: NidaStyle.rowRadius)
-                                        .fill(selected ? .white.opacity(0.08) : .clear)
-                                        .padding(.horizontal, -10)
-                                }
-                                .overlay {
-                                    RoundedRectangle(cornerRadius: NidaStyle.rowRadius)
-                                        .strokeBorder(selected && contrast == .increased ? NidaStyle.text : .clear, lineWidth: 1)
-                                        .padding(.horizontal, -10)
-                                }
-                                .overlay(alignment: .trailing) {
-                                    Circle().fill(selected ? NidaStyle.accent : .clear)
-                                        .frame(width: 4, height: 4).offset(x: 12)
-                                        .accessibilityHidden(true)
-                                }
-                                .accessibilityElement(children: .combine)
-                                .accessibilityValue(selected ? "Berikutnya" : prayer.hasStarted(at: date) ? "Sudah lewat" : "")
-                            }
+                        HStack(spacing: 5) {
+                            Image(systemName: "clock").font(.system(size: 10)).accessibilityHidden(true)
+                            Text("Dalam")
+                            Text(next.startsAt, style: .timer).monospacedDigit()
+                                .accessibilityLabel("Sisa waktu menuju sholat berikutnya")
+                                .accessibilityValue(Text(next.startsAt, style: .timer))
                         }
-                    } else if store.isRefreshing {
-                        ProgressView("Memuat jadwal…").controlSize(.small)
-                    } else {
-                        Text(store.location == nil ? "Pilih kota di Pengaturan untuk mulai." : "Jadwal tanggal ini belum tersedia. Coba perbarui.")
-                            .font(.callout).foregroundStyle(NidaStyle.secondaryText)
+                        .font(.system(size: 12)).foregroundStyle(NidaStyle.secondaryText)
                     }
-
+                } else if snapshot?.hasToday == true {
+                    Text("Jadwal Subuh besok belum tersedia.").font(.callout)
                 }
-                .padding(.horizontal, 12)
+                if let snapshot, snapshot.hasToday {
+                    VStack(spacing: 2) {
+                        ForEach(snapshot.today) { prayer in
+                            let selected = snapshot.next?.id == prayer.id
+                            HStack {
+                                Text(prayer.id.prayer.label)
+                                Spacer()
+                                Text(prayer.wallTime).monospacedDigit()
+                            }
+                            .font(.system(size: 13, weight: selected ? .semibold : .regular))
+                            .foregroundStyle(prayer.hasStarted(at: date) && contrast != .increased ? NidaStyle.secondaryText : NidaStyle.text)
+                            .frame(height: 30)
+                            .background {
+                                RoundedRectangle(cornerRadius: NidaStyle.rowRadius)
+                                    .fill(selected ? .white.opacity(0.08) : .clear)
+                                    .padding(.horizontal, -10)
+                            }
+                            .overlay {
+                                RoundedRectangle(cornerRadius: NidaStyle.rowRadius)
+                                    .strokeBorder(selected && contrast == .increased ? NidaStyle.text : .clear, lineWidth: 1)
+                                    .padding(.horizontal, -10)
+                            }
+                            .overlay(alignment: .trailing) {
+                                Circle().fill(selected ? NidaStyle.accent : .clear)
+                                    .frame(width: 4, height: 4).offset(x: 12)
+                                    .accessibilityHidden(true)
+                            }
+                            .accessibilityElement(children: .combine)
+                            .accessibilityValue(selected ? "Berikutnya" : prayer.hasStarted(at: date) ? "Sudah lewat" : "")
+                        }
+                    }
+                } else if store.isRefreshing {
+                    ProgressView("Memuat jadwal…").controlSize(.small)
+                } else {
+                    Text(store.location == nil ? "Pilih kota di Pengaturan untuk mulai." : "Jadwal tanggal ini belum tersedia. Coba perbarui.")
+                        .font(.callout).foregroundStyle(NidaStyle.secondaryText)
+                }
+
             }
-            .scrollIndicators(store.message == nil ? .hidden : .visible)
-            .padding(.horizontal, -12)
+            .fixedSize(horizontal: false, vertical: true)
             if let message = store.message {
                 Text((snapshot?.hasToday == true ? "Jadwal tetap ditampilkan · " : "") + message)
                     .font(.system(size: 11)).foregroundStyle(NidaStyle.secondaryText)
@@ -157,7 +153,7 @@ struct ScheduleView: View {
             .font(.system(size: 12))
         }
         .buttonStyle(NidaButtonStyle()).tint(.clear)
-        .padding(.horizontal, 30).padding(.vertical, 16)
+        .padding(.horizontal, NidaStyle.panelInset).padding(.vertical, 12)
         .task(id: ScheduleMonth.dateKey(date, in: zone)) { await store.restoreAndRefresh() }
     }
 }
