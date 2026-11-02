@@ -45,8 +45,17 @@ struct NotchGeometryTests {
         let geometry = NotchGeometry(screenFrame: CGRect(x: 0, y: 0, width: 1470, height: 956),
                                      cameraWidth: 179, cameraHeight: 32)
         let size = geometry.size(for: .schedule)
-        let host = NSHostingView(rootView: ScheduleView(onClose: {}).frame(width: size.width))
+        let suite = "nida-fit-" + UUID().uuidString
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let host = NSHostingView(rootView: ScheduleView(store: PrayerDataStore(defaults: defaults), onClose: {}).frame(width: size.width))
         #expect(host.fittingSize.height <= size.height - geometry.cameraHeight)
+    }
+
+    @Test func panelUsesTheSharedScheduleStore() {
+        let store = PrayerDataStore()
+        let controller = NotchPanelController(schedules: store)
+        #expect(controller.schedules === store)
     }
 
     @Test func previewSnoozeDoesNotCreateAnotherReminder() {

@@ -25,13 +25,13 @@ struct NotchView: View {
                         .contentShape(.rect)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Buka jadwal contoh Nida")
-                    .help("Buka jadwal contoh")
+                    .accessibilityLabel("Buka jadwal Nida")
+                    .help("Buka jadwal")
                 } else {
                     VStack(spacing: 0) {
                         Color.clear.frame(height: model.geometry.cameraHeight)
                         if model.state == .schedule {
-                            ScheduleView(onClose: { controller.show(.collapsed) })
+                            ScheduleView(store: controller.schedules, onClose: { controller.show(.collapsed) })
                         } else {
                             reminder
                                 .padding(.horizontal, NidaStyle.panelInset + 10)
@@ -97,7 +97,7 @@ struct NotchView: View {
                 .buttonBorderShape(.circle)
                 .tint(.clear)
                 .foregroundStyle(NidaStyle.secondaryText)
-                .accessibilityLabel("Lihat jadwal contoh")
+                .accessibilityLabel("Lihat jadwal")
             }
             if model.state == .followUp {
                 HStack(spacing: NidaStyle.groupGap) {
