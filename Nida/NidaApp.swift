@@ -153,7 +153,7 @@ struct MenuContent: View {
             .padding(.horizontal, 30).padding(.vertical, 16)
         }
         .frame(width: 384)
-        .background { NidaGlassBackground(shape: RoundedRectangle(cornerRadius: 26)) }
+        .background { NidaGlassBackground(shape: Rectangle(), cornerRadius: 0) }
         .foregroundStyle(NidaStyle.text)
         .tint(NidaStyle.text)
         .preferredColorScheme(.dark)
@@ -195,7 +195,7 @@ struct NidaSettings: View {
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
         .frame(width: 520, height: 660)
-        .background { NidaGlassBackground(shape: Rectangle()).ignoresSafeArea() }
+        .background { NidaGlassBackground(shape: Rectangle(), cornerRadius: 0).ignoresSafeArea() }
         .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
         .containerBackground(.clear, for: .window)
         .tint(NidaStyle.text)
