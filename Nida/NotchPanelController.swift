@@ -12,11 +12,13 @@ final class NotchPanel: NSPanel {
 @MainActor
 final class NotchPanelController: NSObject {
     let model = PrototypeModel()
+    let preferences: ReminderPreferences
     let schedules: PrayerDataStore
     var onDismissReminder: ((PrayerEvent) -> Void)?
     var onSnoozeReminder: ((PrayerEvent) -> Void)?
 
-    init(schedules: PrayerDataStore = PrayerDataStore()) {
+    init(schedules: PrayerDataStore = PrayerDataStore(), preferences: ReminderPreferences = ReminderPreferences()) {
+        self.preferences = preferences
         self.schedules = schedules
         super.init()
     }
@@ -89,6 +91,7 @@ final class NotchPanelController: NSObject {
     func present(_ event: PrayerEvent) {
         show(event.id.stage == .entry ? .prayer : .followUp)
         model.reminder = event
+        preferences.playSound()
     }
 
     func hideDeliveredReminder() {

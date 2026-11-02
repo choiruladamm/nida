@@ -4,13 +4,13 @@ Issue: #8. `ReminderDelivery` bridges the existing pure timeline, atomic local l
 
 ## Delivery contract
 
-- Entry at the validated prayer instant; personal follow-up at the configured delay (`followUpDelayMinutes`, validated 1–60, default 10). Preference controls remain #9. Started occurrences preserve their existing pending follow-up when the setting changes.
-- Entry displays for roughly seven seconds, follow-up/snooze for eighteen; hovering pauses the existing timeout. Actual prayer name, selected-city time, and actual follow-up offset replace preview copy. Automatic presentation resigns keyboard focus.
+- Entry at the validated prayer instant; personal follow-up at the configured delay (`followUpDelayMinutes`, validated 1–60, default 10). Native preference controls are provided by #9. Started occurrences preserve their existing pending follow-up when the setting changes.
+- Entry displays for roughly seven seconds, follow-up/snooze for eighteen; hovering pauses the existing timeout. Actual prayer name, selected-city time, and actual follow-up offset replace preview copy. Optional system sound is played only on real presentation when enabled; default off. Automatic presentation resigns keyboard focus.
 - Entry close leaves the follow-up intact. Closing a follow-up/snooze retires that occurrence's chain. Only an explicit snooze action adds one request for five minutes later, strictly before the next prayer. Snooze failure at the next-prayer cutoff leaves an explanatory message in the panel.
 - Real delivery saves handled IDs before presentation. On recovery, only the latest eligible stage within the inclusive five-minute grace is delivered; past skipped stages are retired too. A process crash between save and presentation may miss a reminder, rather than duplicate it.
 - Pending follow-ups, explicit snoozes, handled IDs, and closed occurrence IDs live in `Application Support/Nida/reminder-ledger.json`, inside the sandbox. Writes are atomic. A corrupt file blocks automatic delivery rather than clearing history and replaying events. A write failure blocks that presentation and appears in Settings. After resolving a corrupt file, restart is required. History is retained across cities and clock corrections; this personal-use version has no automatic history deletion.
 - City/month changes are observed on the shared store. A confirmed city change hides an old-city reminder and rebuilds the plan; old-city snoozes are discarded. Returning to a previously used city keeps its handling history.
-- One cancellable task waits for the next future event, capped at sixty seconds to recheck the session and calendar. API refresh is on launch, wake, clock/time-zone change, and city-local date rollover, with repository cache/coalescing. It is not polled every minute. Default changes only reschedule when the delay value actually changes.
+- One cancellable task waits for the next future event, capped at sixty seconds to recheck the session and calendar. API refresh is on launch, wake, clock/time-zone change, and city-local date rollover, with repository cache/coalescing. It is not polled every minute. The shared validated preference model is observed alongside schedules; changing the delay reschedules future occurrences without relying on a separate raw UserDefaults conversion.
 
 ## Session and lifecycle limits
 

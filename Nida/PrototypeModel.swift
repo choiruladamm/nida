@@ -1,16 +1,16 @@
 import AppKit
 import Observation
 
-// Preview state only: never schedules or persists real prayer reminders.
+// Panel presentation states; scheduling and persistence belong to the delivery layer.
 enum PreviewState: String, CaseIterable {
     case collapsed, prayer, followUp, schedule
 
     var label: String {
         switch self {
-        case .collapsed: "Collapsed"
-        case .prayer: "Prayer time"
-        case .followUp: "Follow-up"
-        case .schedule: "Today's schedule"
+        case .collapsed: "Tutup notch"
+        case .prayer: "Masuk waktu"
+        case .followUp: "Pengingat kedua"
+        case .schedule: "Jadwal hari ini"
         }
     }
 

@@ -134,11 +134,16 @@ private func deliveryTimeline(cityID: String = String(repeating: "a", count: 32)
         #expect(try #require(result23).id.stage == .snooze(requestedAt: now))
     }
 
-    @Test func delayChangesPreserveStartedFollowUpButUpdateFuturePrayers() throws {
+    @MainActor @Test func delayChangesPreserveStartedFollowUpButUpdateFuturePrayers() throws {
+        let suite = "nida-delay-plan-" + UUID().uuidString
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let preferences = ReminderPreferences(defaults: defaults)
         let timeline = try deliveryTimeline()
         var ledger = ReminderLedger()
-        ledger.reconcile(timeline, at: try deliveryDate("11:30:00"), delay: .standard)
-        ledger.reconcile(timeline, at: try deliveryDate("11:41:00"), delay: try FollowUpDelay(minutes: 5))
+        ledger.reconcile(timeline, at: try deliveryDate("11:30:00"), delay: try FollowUpDelay(minutes: preferences.delayMinutes))
+        #expect(preferences.setDelay("5"))
+        ledger.reconcile(timeline, at: try deliveryDate("11:41:00"), delay: try FollowUpDelay(minutes: preferences.delayMinutes))
         let dhuhr = try #require(ledger.pending.first { $0.id.occurrence.prayer == .dzuhur && $0.id.stage == .followUp })
         let ashar = try #require(ledger.pending.first { $0.id.occurrence.prayer == .ashar && $0.id.stage == .followUp })
         #expect(dhuhr.firesAt == (try deliveryDate("11:50:00")))
