@@ -17,8 +17,9 @@ build: ## Build a locally signed app.
 test: ## Run the focused Swift Testing suite.
 	$(XCODEBUILD) test CODE_SIGN_IDENTITY=-
 
-run: build ## Build and open Nida (does not restart an already running instance).
-	open "$(APP)"
+run: build ## Build, force-close running Nida instances, and open the new build.
+	@pkill -KILL -x Nida || [ $$? -eq 1 ]
+	open -n "$(APP)"
 
 smoke: ## Build Debug and cycle native preview states, then exit.
 	$(MAKE) build CONFIGURATION=Debug

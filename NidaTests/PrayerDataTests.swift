@@ -249,7 +249,9 @@ private func temporaryDirectory() throws -> URL {
         #expect(first.location == nil)
         #expect(defaults.data(forKey: "prayerLocation") == nil)
         #expect(!defaults.bool(forKey: "locationOnboardingComplete"))
-        await first.select(jakarta, now: referenceDate)
+        await first.select(jakarta, now: referenceDate, displayName: "Jakarta Selatan")
+        #expect(first.displayCityName == "Jakarta Selatan")
+        #expect(first.location?.city == jakarta)
         #expect(first.onboardingComplete)
         #expect(defaults.bool(forKey: "locationOnboardingComplete"))
         #expect(detection.state == .idle)
@@ -263,8 +265,11 @@ private func temporaryDirectory() throws -> URL {
         _ = await (menu, notch)
         #expect(restored.onboardingComplete)
         #expect(restored.location?.city == jakarta)
+        #expect(restored.displayCityName == "Jakarta Selatan")
         #expect(restored.today(at: referenceDate) == first.today(at: referenceDate))
         #expect(await stub.requests.count == 2)
+        await restored.select(jakarta, now: referenceDate)
+        #expect(restored.displayCityName == "Kota Jakarta")
     }
 
     @Test(.timeLimit(.minutes(1))) func repeatedRefreshDoesNotStackRequestsOrEraseRateLimitedData() async throws {

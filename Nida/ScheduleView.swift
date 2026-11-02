@@ -11,11 +11,12 @@ struct PrayerDisplaySchedule: TimelineSchedule {
 
 struct ScheduleView: View {
     let store: PrayerDataStore
-    var onClose: (() -> Void)?
+    var isNotch = false
     var onOpenNotch: (() -> Void)?
+    var onOpenSettings: (() -> Void)?
+    @Environment(\.openSettings) private var openSettings
     @Environment(\.locale) private var locale
     @Environment(\.colorSchemeContrast) private var contrast
-    private var isNotch: Bool { onClose != nil }
 
     var body: some View {
         let timeline = try? store.timeline()
@@ -29,7 +30,6 @@ struct ScheduleView: View {
                 }
             }
         }
-        .frame(height: isNotch ? 364 + (store.message == nil ? 0 : NidaStyle.scheduleStatusHeight) : nil, alignment: .top)
         .foregroundStyle(NidaStyle.text)
         .onReceive(NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.didWakeNotification)) { _ in
             Task { await store.restoreAndRefresh() }
@@ -39,78 +39,115 @@ struct ScheduleView: View {
     private func content(at date: Date, timeline: PrayerTimeline?) -> some View {
         let snapshot = timeline?.snapshot(at: date)
         let zone = store.location?.zone ?? .west
-        return VStack(spacing: 12) {
+        return VStack(spacing: isNotch ? 12 : 8) {
             HStack(spacing: 12) {
-                Text(store.location?.city.name.localizedCapitalized ?? "Nida")
-                    .font(.system(size: 12, weight: .medium))
+                Text(store.displayCityName ?? "Nida")
+                    .font(.system(size: isNotch ? 11 : 12, weight: .medium))
+                    .foregroundStyle(isNotch ? NidaStyle.secondaryText : NidaStyle.text)
                     .lineLimit(1).layoutPriority(1)
                 Spacer(minLength: 4)
-                Text(date.formatted(Date.FormatStyle(locale: locale, timeZone: zone.timeZone)
-                    .day().month(.abbreviated)))
-                    .font(.system(size: 11, weight: .regular))
-                    .foregroundStyle(NidaStyle.secondaryText).fixedSize()
-                if let onClose {
-                    Button(action: onClose) { Image(systemName: "xmark").frame(width: NidaStyle.iconControlSize, height: NidaStyle.iconControlSize) }
-                        .accessibilityLabel("Tutup jadwal").help("Tutup jadwal · Escape")
-                } else if let onOpenNotch {
+                if !isNotch {
+                    Text(date.formatted(Date.FormatStyle(locale: locale, timeZone: zone.timeZone)
+                        .day().month(.abbreviated)))
+                        .font(.system(size: 11, weight: .regular))
+                        .foregroundStyle(NidaStyle.secondaryText).fixedSize()
+                }
+                if let onOpenNotch {
                     Button(action: onOpenNotch) { Image(systemName: "arrow.up.right").frame(width: NidaStyle.iconControlSize, height: NidaStyle.iconControlSize) }
                         .accessibilityLabel("Buka jadwal di notch").help("Buka jadwal di notch")
                 }
             }
-            VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: isNotch ? 14 : 10) {
                 if let next = snapshot?.next {
+                    let countdown = HStack(spacing: 5) {
+                        Image(systemName: "clock").font(.system(size: 10)).accessibilityHidden(true)
+                        Text("Dalam")
+                        Text(next.startsAt, style: .timer).monospacedDigit()
+                            .accessibilityLabel("Sisa waktu menuju sholat berikutnya")
+                            .accessibilityValue(Text(next.startsAt, style: .timer))
+                    }
+                    .font(.system(size: isNotch ? 12 : 11)).foregroundStyle(NidaStyle.secondaryText)
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Berikutnya").font(.system(size: 11, weight: .medium))
-                            .foregroundStyle(NidaStyle.secondaryText)
+                        HStack {
+                            Text("Berikutnya").font(.system(size: 11, weight: .medium))
+                                .foregroundStyle(NidaStyle.secondaryText)
+                            if !isNotch {
+                                Spacer()
+                                countdown
+                            }
+                        }
                         HStack(alignment: .firstTextBaseline) {
                             let tomorrow = next.id.dateKey != ScheduleMonth.dateKey(date, in: zone)
                             Text((tomorrow ? LocalizedStringResource("\(next.id.prayer.label.localized(in: locale)) · besok") : next.id.prayer.label).localized(in: locale))
-                                .font(.system(size: 24, weight: .semibold))
+                                .font(.system(size: isNotch ? 26 : 22, weight: .semibold))
                             Spacer()
                             Text(next.wallTime).monospacedDigit()
-                                .font(.system(size: 28, weight: .regular))
+                                .font(.system(size: isNotch ? 32 : 30, weight: .regular))
                         }
-                        HStack(spacing: 5) {
-                            Image(systemName: "clock").font(.system(size: 10)).accessibilityHidden(true)
-                            Text("Dalam")
-                            Text(next.startsAt, style: .timer).monospacedDigit()
-                                .accessibilityLabel("Sisa waktu menuju sholat berikutnya")
-                                .accessibilityValue(Text(next.startsAt, style: .timer))
-                        }
-                        .font(.system(size: 12)).foregroundStyle(NidaStyle.secondaryText)
+                        if isNotch { countdown }
                     }
+                    .padding(.vertical, isNotch ? 0 : 2)
                 } else if snapshot?.hasToday == true {
                     Text("Jadwal Subuh besok belum tersedia.").font(.callout)
                 }
                 if let snapshot, snapshot.hasToday {
-                    VStack(spacing: 2) {
+                    let layout = isNotch ? AnyLayout(HStackLayout(spacing: 6)) : AnyLayout(VStackLayout(spacing: 2))
+                    layout {
                         ForEach(snapshot.today) { prayer in
                             let selected = snapshot.next?.id == prayer.id
-                            HStack {
-                                Text(prayer.id.prayer.label.localized(in: locale))
-                                Spacer()
-                                Text(prayer.wallTime).monospacedDigit()
+                            Group {
+                                if isNotch {
+                                    VStack(spacing: 6) {
+                                        Text(prayer.id.prayer.label.localized(in: locale))
+                                            .font(.system(size: 11, weight: selected ? .semibold : .regular))
+                                        Text(prayer.wallTime).monospacedDigit()
+                                            .font(.system(size: 14, weight: selected ? .semibold : .medium))
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                } else {
+                                    HStack(spacing: 10) {
+                                        Image(systemName: prayerSymbol(prayer.id.prayer))
+                                            .font(.system(size: 13, weight: .medium))
+                                            .foregroundStyle(selected ? NidaStyle.accent : NidaStyle.secondaryText)
+                                            .frame(width: 22)
+                                            .accessibilityHidden(true)
+                                        Text(prayer.id.prayer.label.localized(in: locale))
+                                        Spacer()
+                                        Text(prayer.wallTime).monospacedDigit()
+                                    }
+                                    .padding(.horizontal, 12)
+                                }
                             }
                             .font(.system(size: 13, weight: selected ? .semibold : .regular))
                             .foregroundStyle(prayer.hasStarted(at: date) && contrast != .increased ? NidaStyle.secondaryText : NidaStyle.text)
-                            .frame(height: 30)
+                            .frame(height: isNotch ? 62 : 29)
                             .background {
-                                RoundedRectangle(cornerRadius: NidaStyle.rowRadius)
-                                    .fill(selected ? .white.opacity(0.08) : .clear)
-                                    .padding(.horizontal, -10)
+                                RoundedRectangle(cornerRadius: isNotch ? 12 : NidaStyle.rowRadius)
+                                    .fill(selected ? (isNotch ? Color.white.opacity(0.08) : NidaStyle.accent.opacity(0.13)) : .clear)
                             }
                             .overlay {
-                                RoundedRectangle(cornerRadius: NidaStyle.rowRadius)
+                                RoundedRectangle(cornerRadius: isNotch ? 12 : NidaStyle.rowRadius)
                                     .strokeBorder(selected && contrast == .increased ? NidaStyle.text : .clear, lineWidth: 1)
-                                    .padding(.horizontal, -10)
                             }
-                            .overlay(alignment: .trailing) {
-                                Circle().fill(selected ? NidaStyle.accent : .clear)
-                                    .frame(width: 4, height: 4).offset(x: 12)
+                            .overlay(alignment: isNotch ? .bottom : .trailing) {
+                                Circle().fill(selected && isNotch ? NidaStyle.accent : .clear)
+                                    .frame(width: 4, height: 4)
+                                    .offset(x: isNotch ? 0 : 12, y: isNotch ? -5 : 0)
                                     .accessibilityHidden(true)
                             }
                             .accessibilityElement(children: .combine)
                             .accessibilityValue(Text(selected ? LocalizedStringKey("Berikutnya") : prayer.hasStarted(at: date) ? LocalizedStringKey("Sudah lewat") : LocalizedStringKey("")))
+                        }
+                    }
+                    .padding(isNotch ? 0 : 4)
+                    .background {
+                        if !isNotch {
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(.black.opacity(0.12))
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .strokeBorder(.white.opacity(contrast == .increased ? 0.5 : 0.07), lineWidth: 1)
+                                }
                         }
                     }
                 } else if store.isRefreshing {
@@ -129,32 +166,51 @@ struct ScheduleView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .help(message.localized(in: locale))
             }
-            HStack {
-                Button { Task { await store.refresh() } } label: {
-                    Group {
-                        if store.isRefreshing { ProgressView().controlSize(.mini) }
-                        else { Image(systemName: "arrow.clockwise") }
-                    }
-                    .frame(width: NidaStyle.iconControlSize, height: NidaStyle.iconControlSize)
-                }
-                .disabled(store.location == nil || store.isRefreshing)
-                .accessibilityLabel(Text(store.isRefreshing ? LocalizedStringKey("Memperbarui jadwal") : LocalizedStringKey("Perbarui jadwal")))
-                .help("Perbarui jadwal")
-                Spacer(minLength: 8)
+            HStack(spacing: 8) {
                 Text(PrayerMonth.attribution + " · " + zone.label)
                     .font(.system(size: 11)).foregroundStyle(NidaStyle.secondaryText)
                     .lineLimit(1)
                 if isNotch {
                     Spacer(minLength: 8)
-                    SettingsLink { Image(systemName: "gearshape").frame(width: NidaStyle.iconControlSize, height: NidaStyle.iconControlSize) }
-                        .simultaneousGesture(TapGesture().onEnded { NSApplication.shared.activate() })
-                        .accessibilityLabel("Pengaturan dan pilihan kota").help("Pengaturan dan pilihan kota")
+                    refreshButton
+                    Button {
+                        onOpenSettings?()
+                        NSApplication.shared.activate()
+                        openSettings()
+                    } label: {
+                        Image(systemName: "gearshape").frame(width: NidaStyle.iconControlSize, height: NidaStyle.iconControlSize)
+                    }
+                    .accessibilityLabel("Pengaturan dan pilihan kota").help("Pengaturan dan pilihan kota")
                 }
             }
             .font(.system(size: 12))
         }
-        .buttonStyle(NidaButtonStyle()).tint(.clear)
-        .padding(.horizontal, 30).padding(.vertical, 20)
+        .buttonStyle(NidaButtonStyle(flat: isNotch)).tint(.clear)
+        .padding(.horizontal, isNotch ? NidaStyle.notchHorizontalInset : 16)
+        .padding(.top, isNotch ? 12 : 10).padding(.bottom, isNotch ? 20 : 6)
         .task(id: ScheduleMonth.dateKey(date, in: zone)) { await store.restoreAndRefresh() }
+    }
+
+    private func prayerSymbol(_ prayer: PrayerKind) -> String {
+        switch prayer {
+        case .subuh: "sunrise"
+        case .dzuhur: "sun.max"
+        case .ashar: "sun.haze"
+        case .maghrib: "sunset"
+        case .isya: "moon.stars"
+        }
+    }
+
+    private var refreshButton: some View {
+        Button { Task { await store.refresh() } } label: {
+            Group {
+                if store.isRefreshing { ProgressView().controlSize(.mini) }
+                else { Image(systemName: "arrow.clockwise") }
+            }
+            .frame(width: NidaStyle.iconControlSize, height: NidaStyle.iconControlSize)
+        }
+        .disabled(store.location == nil || store.isRefreshing)
+        .accessibilityLabel(Text(store.isRefreshing ? LocalizedStringKey("Memperbarui jadwal") : LocalizedStringKey("Perbarui jadwal")))
+        .help("Perbarui jadwal")
     }
 }

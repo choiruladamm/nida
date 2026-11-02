@@ -17,6 +17,17 @@ struct NotchGeometryTests {
         #expect(frame.height > geometry.cameraHeight)
     }
 
+    @Test(arguments: [PreviewState.prayer, .followUp, .schedule])
+    func hitRegionFollowsFittedContent(state: PreviewState) {
+        let height: CGFloat = 137
+        let frame = geometry.interactiveFrame(for: state, contentHeight: height)
+        #expect(frame.height == height)
+        #expect(frame.maxY == geometry.screenFrame.maxY)
+        #expect(!frame.contains(CGPoint(x: frame.midX, y: frame.minY - 1)))
+        #expect(geometry.interactiveFrame(for: .collapsed, contentHeight: height)
+            == geometry.interactiveFrame(for: .collapsed))
+    }
+
     @Test func scheduleStatusAddsSpaceWithoutChangingOtherStates() {
         let extra = NidaStyle.scheduleStatusHeight
         let normal = geometry.interactiveFrame(for: .schedule)
@@ -54,6 +65,27 @@ struct NotchGeometryTests {
 }
 
 @MainActor struct PrototypeTests {
+    @Test(arguments: AppLanguage.allCases, [PreviewState.prayer, .followUp, .schedule])
+    func redesignedNotchContentFits(language: AppLanguage, state: PreviewState) {
+        let controller = NotchPanelController()
+        for camera in [CGSize(width: 179, height: 32), .zero, CGSize(width: 280, height: 40)] {
+            let model = PrototypeModel()
+            model.state = state
+            model.geometry = NotchGeometry(screenFrame: CGRect(x: 0, y: 0, width: 1470, height: 956),
+                cameraWidth: camera.width, cameraHeight: camera.height)
+            let size = model.geometry.size(for: state)
+            let host = NSHostingView(rootView: NotchView(model: model, controller: controller).expandedPanel
+                .frame(width: size.width).fixedSize(horizontal: false, vertical: true)
+                .environment(\.locale, language.locale))
+            #expect(host.fittingSize.height <= NotchGeometry.canvasSize.height)
+            let fitted = NSHostingView(rootView: NotchView(model: model, controller: controller).fittedPanel
+                .fixedSize(horizontal: false, vertical: true)
+                .environment(\.locale, language.locale))
+            #expect(abs(fitted.fittingSize.height - host.fittingSize.height) < 0.5)
+
+        }
+    }
+
     @Test(arguments: AppLanguage.allCases)
     func fullScheduleAndRefreshErrorFitWithoutScrolling(language: AppLanguage) async throws {
         let folder = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
@@ -86,10 +118,28 @@ struct NotchGeometryTests {
         let normalHeight = host.fittingSize.height
         #expect(normalHeight > 300)
         #expect(normalHeight <= geometry.size(for: .schedule).height - geometry.cameraHeight)
+        let controller = NotchPanelController(schedules: store)
+        let model = PrototypeModel()
+        model.state = .schedule
+        model.geometry = geometry
+        func notchContentHeight() -> CGFloat {
+            let view = NotchView(model: model, controller: controller)
+            let content = NSHostingView(rootView: view.expandedPanel
+                .frame(width: 384).fixedSize(horizontal: false, vertical: true)
+                .environment(\.locale, language.locale)).fittingSize.height
+            let fitted = NSHostingView(rootView: view.fittedPanel
+                .fixedSize(horizontal: false, vertical: true)
+                .environment(\.locale, language.locale)).fittingSize.height
+            #expect(abs(fitted - content) < 0.5)
+            return fitted
+        }
+        #expect(notchContentHeight() <= geometry.size(for: .schedule).height)
         store.showRefreshFailureForReview()
         let errorHost = NSHostingView(rootView: ScheduleView(store: store, onOpenNotch: {})
             .fixedSize(horizontal: false, vertical: true).frame(width: 384)
             .environment(\.locale, language.locale))
+        #expect(notchContentHeight() <= geometry.size(for: .schedule,
+            scheduleStatusHeight: NidaStyle.scheduleStatusHeight).height)
         #expect(errorHost.fittingSize.height > normalHeight)
         #expect(errorHost.fittingSize.height <= geometry.size(for: .schedule,
             scheduleStatusHeight: NidaStyle.scheduleStatusHeight).height - geometry.cameraHeight)
@@ -103,7 +153,7 @@ struct NotchGeometryTests {
         let suite = "nida-fit-" + UUID().uuidString
         let defaults = UserDefaults(suiteName: suite)!
         defer { defaults.removePersistentDomain(forName: suite) }
-        let host = NSHostingView(rootView: ScheduleView(store: PrayerDataStore(defaults: defaults), onClose: {})
+        let host = NSHostingView(rootView: ScheduleView(store: PrayerDataStore(defaults: defaults), isNotch: true)
             .frame(width: size.width))
         host.appearance = NSAppearance(named: highContrastAppearance ? .accessibilityHighContrastDarkAqua : .darkAqua)
         #expect(host.fittingSize.height <= size.height - geometry.cameraHeight)

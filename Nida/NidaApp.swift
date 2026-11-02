@@ -139,14 +139,16 @@ struct MenuContent: View {
         VStack(spacing: 0) {
             ScheduleView(store: controller.schedules, onOpenNotch: { preview(.schedule) })
                 .fixedSize(horizontal: false, vertical: true)
-            NidaStyle.hairline.frame(height: 0.5)
+            NidaStyle.hairline.frame(height: 0.5).padding(.horizontal, 16)
             VStack(spacing: 10) {
                 HStack(spacing: 12) {
                     Button { previewExpanded.toggle() } label: {
                         HStack(spacing: 6) {
-                            Image(systemName: previewExpanded ? "chevron.down" : "chevron.right")
-                                .font(.system(size: 10, weight: .semibold))
+                            Image(systemName: "bell.badge")
+                                .font(.system(size: 12))
                             Text("Coba pengingat")
+                            Image(systemName: previewExpanded ? "chevron.up" : "chevron.down")
+                                .font(.system(size: 8, weight: .semibold))
                         }
                         .frame(minHeight: NidaStyle.iconControlSize)
                         .contentShape(.rect)
@@ -154,8 +156,19 @@ struct MenuContent: View {
                     .buttonStyle(.plain)
                     .accessibilityValue(Text(previewExpanded ? LocalizedStringKey("Terbuka") : LocalizedStringKey("Tertutup")))
                     Spacer(minLength: 0)
-                    HStack(spacing: 8) {
+                    HStack(spacing: 6) {
+                        Button { Task { await controller.schedules.refresh() } } label: {
+                            Group {
+                                if controller.schedules.isRefreshing { ProgressView().controlSize(.mini) }
+                                else { Image(systemName: "arrow.clockwise") }
+                            }
+                            .frame(width: NidaStyle.iconControlSize, height: NidaStyle.iconControlSize)
+                        }
+                        .disabled(controller.schedules.location == nil || controller.schedules.isRefreshing)
+                        .accessibilityLabel("Perbarui jadwal").help("Perbarui jadwal")
                         Button {
+                            NSApplication.shared.keyWindow?.close()
+                            controller.dismissReminder()
                             NSApplication.shared.activate()
                             openSettings()
                         } label: {
@@ -184,9 +197,11 @@ struct MenuContent: View {
                     .font(.system(size: 12)).buttonStyle(NidaButtonStyle())
                 }
             }
-            .padding(.horizontal, 30).padding(.vertical, 20)
+            .padding(.horizontal, 16)
+            .padding(.top, 6)
+            .padding(.bottom, 16)
         }
-        .frame(width: 384)
+        .frame(width: 340)
         .background { NidaGlassBackground(shape: Rectangle(), cornerRadius: 0) }
         .foregroundStyle(NidaStyle.text)
         .tint(NidaStyle.text)
@@ -203,6 +218,7 @@ struct NidaSettings: View {
     let controller: NotchPanelController
     let schedules: PrayerDataStore
     @Environment(\.locale) private var locale
+    @State private var isScrolled = false
 
     var body: some View {
         @Bindable var preferences = controller.preferences
@@ -237,12 +253,17 @@ struct NidaSettings: View {
             }
         }
         .formStyle(.grouped)
+        .onScrollGeometryChange(for: Bool.self) { geometry in
+            geometry.contentOffset.y + geometry.contentInsets.top > 1
+        } action: { _, scrolled in
+            isScrolled = scrolled
+        }
         .scrollContentBackground(.hidden)
         .frame(width: 520, height: 660)
         .background { NidaGlassBackground(shape: Rectangle(), cornerRadius: 0).ignoresSafeArea() }
-        .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+        .toolbarBackground(.black.opacity(0.25), for: .windowToolbar)
+        .toolbarBackgroundVisibility(isScrolled ? .visible : .hidden, for: .windowToolbar)
         .containerBackground(.clear, for: .window)
-        .tint(NidaStyle.text)
         .preferredColorScheme(.dark)
     }
 }

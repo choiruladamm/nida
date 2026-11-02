@@ -27,6 +27,8 @@ final class NotchPanelController: NSObject {
     private var globalMonitor: Any?
     private var localMonitor: Any?
     private var dismissal: Task<Void, Never>?
+    private var hoverTransition: Task<Void, Never>?
+    private var openedByHover = false
 
     func start() {
         guard panel == nil, let geometry = NotchGeometry.current() else { return }
@@ -78,6 +80,8 @@ final class NotchPanelController: NSObject {
 
     func show(_ state: PreviewState, interactive: Bool = false) {
         start()
+        hoverTransition?.cancel()
+        openedByHover = false
         dismissal?.cancel()
         model.notice = nil
         model.reminder = nil
@@ -114,8 +118,27 @@ final class NotchPanelController: NSObject {
     }
 
     func setHovering(_ hovering: Bool) {
+        guard model.isHovering != hovering else { return }
         model.isHovering = hovering
-        if hovering { dismissal?.cancel() } else { armDismissal() }
+        hoverTransition?.cancel()
+        if hovering {
+            dismissal?.cancel()
+            guard model.state == .collapsed else { return }
+            hoverTransition = Task { [weak self] in
+                do { try await Task.sleep(for: .milliseconds(180)) } catch { return }
+                guard let self, self.model.isHovering, self.model.state == .collapsed else { return }
+                self.show(.schedule)
+                self.openedByHover = true
+            }
+        } else {
+            armDismissal()
+            guard openedByHover else { return }
+            hoverTransition = Task { [weak self] in
+                do { try await Task.sleep(for: .milliseconds(250)) } catch { return }
+                guard let self, !self.model.isHovering, self.openedByHover else { return }
+                self.show(.collapsed)
+            }
+        }
     }
 
     func previewSnooze() {
@@ -137,18 +160,31 @@ final class NotchPanelController: NSObject {
     private func handlePointer(_ event: NSEvent) {
         guard event.type != .keyDown else { return }
         updatePointerPassthrough()
+        if event.type == .mouseMoved {
+            let frame = model.geometry.interactiveFrame(for: model.state,
+                scheduleStatusHeight: scheduleStatusHeight, contentHeight: model.expandedHeight)
+            setHovering(frame.contains(NSEvent.mouseLocation))
+        }
         if event.type == .leftMouseDown || event.type == .rightMouseDown {
-            if !model.geometry.interactiveFrame(for: model.state, scheduleStatusHeight: scheduleStatusHeight).contains(NSEvent.mouseLocation) {
+            if !model.geometry.interactiveFrame(for: model.state, scheduleStatusHeight: scheduleStatusHeight, contentHeight: model.expandedHeight).contains(NSEvent.mouseLocation) {
                 dismissReminder()
             } else if model.state != .collapsed {
+                openedByHover = false
+                hoverTransition?.cancel()
                 panel?.allowsKeyboardFocus = true
                 panel?.makeKey()
             }
         }
     }
 
+    func updatePanelHeight(_ height: CGFloat) {
+        guard model.state != .collapsed else { return }
+        model.expandedHeight = height
+        updatePointerPassthrough()
+    }
+
     private func updatePointerPassthrough() {
-        let rect = model.geometry.interactiveFrame(for: model.state, scheduleStatusHeight: scheduleStatusHeight)
+        let rect = model.geometry.interactiveFrame(for: model.state, scheduleStatusHeight: scheduleStatusHeight, contentHeight: model.expandedHeight)
         panel?.ignoresMouseEvents = !rect.contains(NSEvent.mouseLocation)
     }
 
@@ -160,6 +196,7 @@ final class NotchPanelController: NSObject {
     }
 
     func stop() {
+        hoverTransition?.cancel()
         dismissal?.cancel()
         if let globalMonitor { NSEvent.removeMonitor(globalMonitor) }
         if let localMonitor { NSEvent.removeMonitor(localMonitor) }

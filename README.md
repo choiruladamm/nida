@@ -1,6 +1,6 @@
 # Nida
 
-A native macOS prayer reminder with a frosted Liquid Glass notch panel and menu bar access. Indonesian city schedules are **Kemenag via myQuran**, with validated current/next-month offline storage, two-stage reminders, explicit five-minute snooze, optional short sound, and launch at login.
+A native macOS prayer reminder with a camera-integrated black/glass notch panel and frosted menu bar access. Indonesian city schedules are **Kemenag via myQuran**, with validated current/next-month offline storage, two-stage reminders, explicit five-minute snooze, optional short sound, and launch at login.
 
 **[0.2.0 (4) · published prerelease](https://github.com/choiruladamm/nida/releases/tag/v0.2.0).** Hardware acceptance remains pending in [parent #1](https://github.com/choiruladamm/nida/issues/1); see [verification evidence and remaining checks](docs/mvp-verification.md). Requires **macOS 26+**. Local builds are ad-hoc signed, not notarized for public distribution.
 
@@ -16,6 +16,8 @@ In source builds 0.2.0 (3) and later, **Pengaturan → Bahasa → Bahasa aplikas
 
 Reminders require Nida running and the Mac awake/unlocked. Recovery shows only the latest eligible event within five minutes; stale events are skipped. Cached dates work offline; missing dates never reuse yesterday's schedule. A personal follow-up is not a mosque iqomah time. Real sleep/lock recovery, login launch, fullscreen/display behavior, keyboard/VoiceOver, and visual accessibility acceptance are still pending. See the [installation and hardware checklist](docs/mvp-verification.md).
 
+Current source includes the owner-accepted three-panel [notch redesign](DESIGN.md): hover access, a compact five-prayer strip, shared prayer-name/time reminder hierarchy, and subtle lower glass. It also updates Settings/city selection and preserves concise Jakarta district names separately from provider IDs. These changes are not yet part of the published 0.2.0 (4) download. See [revision and skill provenance](docs/ui-revision-plan.md).
+
 ## Develop
 
 Requires Xcode 26+ and a macOS 26+ SDK; no external packages. Verified on MacBook Air M4, macOS 27.0.1, Xcode 27.0, Swift 6.4. Open `Nida.xcodeproj` with the **Nida** scheme, or use:
@@ -23,7 +25,7 @@ Requires Xcode 26+ and a macOS 26+ SDK; no external packages. Verified on MacBoo
 ```sh
 make build       # Debug app, local ad-hoc signing
 make test        # Focused Swift Testing suite
-make run         # Build and open; does not restart an existing instance
+make run         # Build, force-close running instances, and open the new build
 make smoke       # Native preview/geometry/focus check; quit normal app first
 make data-smoke  # Live provider + disposable offline-cache check; internet required
 make help        # All commands, including clean, project, and doctor

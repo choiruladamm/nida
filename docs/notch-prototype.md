@@ -2,6 +2,14 @@
 
 Issues: [setup #2](https://github.com/choiruladamm/nida/issues/2), [prototype #3](https://github.com/choiruladamm/nida/issues/3).
 
+## Current accepted presentation — 2026-11-02
+
+The owner accepted the three-panel revamp in [#25](https://github.com/choiruladamm/nida/issues/25). [DESIGN.md](../DESIGN.md) owns the current visual specification. Prayer time, personal follow-up and today's schedule share measured camera wings, more rounded shoulders/lower curves, a black upper surface, subtle lower glass and a fitted body. The schedule uses five horizontal cells and no close icon; a delayed hover opens/closes it, while clicking keeps it open until Escape/outside dismissal. Rendered content height also controls pointer pass-through. Keep the physical collapsed trigger unchanged.
+
+Dimensions and captures below describe earlier prototype revisions, not current fixed heights. Current owner visual acceptance covers the reviewed running previews; fullscreen, display topology/scaling, accessibility, real delivery and lifecycle acceptance remain pending in [mvp-verification.md](mvp-verification.md).
+
+## Historical prototype record
+
 ## Implemented
 
 - SwiftUI menu bar panel, native Settings scene, and AppKit nonactivating panel hosting SwiftUI.

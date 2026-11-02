@@ -1,116 +1,137 @@
 # Nida design system
 
-Nida is a quiet, native macOS prayer reminder. The owner's latest frosted Liquid Glass reference defines the visual direction: translucent neutral gray, softly lit edges, off-white system type, circular icon controls, pill actions, and restrained spacing. This document describes the current implementation and guides future UI changes; earlier sage and opaque charcoal mockups are superseded.
+## Visual direction
 
-## Source of truth
+Nida is a quiet macOS prayer reminder. The notch feels like an extension of the camera: black at the screen edge, softly rounded below, with a restrained hint of glass at its lower boundary. The menu and Settings use frosted neutral glass and native macOS controls. Off-white system typography carries the hierarchy; the native macOS accent identifies the next prayer.
 
-- `Nida/NidaStyle.swift`: colors, shared control dimensions, button appearance, and notch silhouette.
-- `Nida/NotchView.swift`: desktop glass, reminder composition, and panel transitions.
-- `Nida/ScheduleView.swift`: shared live schedule hierarchy, rows, status, and footer.
-- `Nida/PrototypeModel.swift`: measured notch geometry and panel dimensions.
-- `Nida/NidaApp.swift`: menu composition and native Settings scene.
+This document defines the current design, not the revision history. The owner accepted the three-panel notch revamp on 2026-11-02. See [revision decisions and skill provenance](docs/ui-revision-plan.md) and [verification status](docs/mvp-verification.md) for history and evidence.
 
-Values below describe their actual use. Older general spacing constants in NidaStyle do not override the explicit schedule/reminder insets.
+## Color and material
 
-## Material and color
-
-Use one shared `NidaGlassBackground`: native AppKit `NSGlassEffectView`, regular style, dark Aqua appearance, and 8% white tint. It samples the desktop; wallpaper and underlying windows affect the result. Keep the foreground readable without covering the glass with a heavy opaque fill or stacking a popover blur beneath it.
-
-| Role | Current treatment |
-| --- | --- |
-| Main text | Off-white, approximately #F6F6F2 |
-| Supporting text | Warm off-white, approximately #E6E6DE |
-| Accent | Pale lime, approximately #C9DCAA; next-prayer dot |
-| Selected row | 8% white fill; 14 pt rounded rectangle |
-| Primary action | Solid off-white capsule with dark text |
-| Secondary action | 10% white base plus native interactive regular glass |
-| Hairline | 12% white; used for quiet separators and the reminder symbol outline |
-| Accessibility surface | Opaque neutral gray, approximately #575952 |
-
-The palette is derived from the supplied reference, not an official Apple token set. Legacy surface/chrome/raised colors are not the main glass background. The dark surface color remains the primary button's text color.
-
-Window-backed menu and Settings use a rectangular glass background with zero glass corner radius. Native macOS window rounding owns the outer contour. Do not add another rounded clip, border, or glass rim: this previously produced visibly doubled corners.
-
-The notch uses the custom silhouette: 10 pt concave top shoulders and 26 pt lower curves. Its glass corner radius is zero; the silhouette defines its outline. Only the expanded notch has the subtle black shadow (14% opacity, 16 pt radius, 8 pt vertical offset).
-
-## Typography and spacing
-
-Use the default system font and SF Symbols. Keep dates, attribution, disclosures, and statuses at least 11 pt. Prayer times and countdowns use monospaced digits; names and times align on stable columns.
-
-| Element | Size / weight |
-| --- | --- |
-| City | 12 pt medium |
-| Date / next-prayer caption | 11 pt regular / medium |
-| Next prayer / headline time | 24 pt semibold / 28 pt regular, first-baseline aligned |
-| Countdown | 12 pt regular; 10 pt clock symbol |
-| Prayer rows | 13 pt regular; selected row semibold |
-| Reminder title / subtitle | 18 pt semibold / 12 pt regular |
-| Reminder actions | 12 pt medium |
-| Status / source / preview disclosure | 11 pt regular |
-
-Schedule insets are 30 pt horizontal and 20 pt vertical, matching the reminder's 30 pt horizontal / 20 pt top inset. The fixed notch schedule aligns content to the top rather than centering it into extra vertical space. Main groups use 12 pt spacing, the hero-to-list gap is 14 pt, and hero text uses 4 pt spacing. Each prayer row is 30 pt high with 2 pt between rows. The selection fill extends 10 pt into the side gutters; the 4 pt next-prayer dot sits outside the time column.
-
-Reminder content uses 30 pt horizontal and 20 pt top inset, 16 pt between groups, and 12 pt between symbol/copy or actions. Its symbol is 20 pt inside a 36 pt circle. Shared icon targets are 28 × 28 pt; reminder actions are 34 pt high.
-
-## Schedule and menu
-
-Keep the hierarchy consistent in menu and notch:
-
-1. City and local date, with one close or open-notch icon.
-2. Quiet “Berikutnya” caption, prayer/time headline, then a separate countdown.
-3. All five prayer rows in the same name/time grid.
-4. Optional refresh status, followed by refresh/source actions.
-
-Elapsed rows use the supporting text color without multiplying opacity again. Selected rows keep their time aligned with every other row. The notch footer includes Settings; the menu has Settings and Quit icon actions with tooltips in its compact bottom row. The row keeps the same 30 pt horizontal / 20 pt vertical insets as the schedule. The “Coba pengingat” toggle shares the control row; when expanded, its two equal-width preview buttons sit side by side below it, spanning the full content width without a disclosure indent.
-
-| Surface | Width | Content height |
+| Role | Treatment | Purpose |
 | --- | --- | --- |
-| Menu schedule region | 384 pt | Fits full content, plus status space |
-| Notch schedule | 384 pt | 364 pt, plus camera clearance and status space |
-| Prayer reminder | 368 pt | 112 pt, plus camera clearance |
-| Follow-up reminder | 400 pt | 170 pt, plus camera clearance |
-| Settings form | 520 pt | 660 pt; native window chrome is separate |
+| Notch upper surface | Solid black | Visually joins the physical camera |
+| Notch lower surface | Native dark glass beneath a black overlay fading from 100% to 88% opacity over the lower half | Separates the panel from underlying apps without turning the whole panel gray |
+| Lower edge | 0.75 pt white stroke, fading in from 40% of panel height to 18% opacity at the bottom | Defines one quiet outer contour |
+| Primary text | Warm off-white, approximately #F6F6F2 | Headlines, prayer times and active labels |
+| Supporting text | Warm off-white, approximately #E6E6DE | Metadata, countdowns, source and disclosures |
+| Next-prayer accent | Native macOS control accent | Notch selection dot; menu selected icon and 13% accent fill |
+| Selected notch prayer | 8% white fill | Quiet emphasis within the horizontal schedule |
+| Menu schedule group | 12% black fill; 7% white outline | Contains the five menu rows |
+| Menu selected prayer | 13% system-accent fill | Pairs selection with its accent-colored icon |
+| Divider | 12% white | Inset menu footer separator |
+| Opaque glass fallback | Neutral gray-green, approximately #575952 | Preserves legibility when transparency is reduced |
+| Primary reminder action | Solid off-white capsule, dark text | Makes the explicit five-minute snooze easy to find |
+| Secondary notch action | 10% white capsule | Supports dismissal and utility controls |
+| Settings accent | Native system accent | Follows the user's macOS accent-color choice |
 
-A refresh message adds `NidaStyle.scheduleStatusHeight` (52 pt) to both schedule surfaces. The notch silhouette and pointer region grow together. The message must not take space away from the five prayer rows or overlap the footer. The schedule has no scroll container; all five prayer rows remain visible. The menu follows its content height; use the horizontal gutters for selection decoration. The message wraps to at most three lines and exposes the full text through help.
+Menu and Settings share native `NSGlassEffectView`, regular style, dark Aqua appearance and 8% white tint. Let macOS own window rounding; the glass backing has zero corner radius. The notch uses its custom silhouette as the only outer clip. Its expanded shadow is black at 14%, radius 16 pt, offset 8 pt downward.
 
-While refreshing, replace the refresh symbol with a mini spinner inside the same 28 pt target and disable repeat clicks. Retain cached schedule rows on failure. Loading, missing city, missing schedule, and error copy must remain understandable without requiring a successful request.
+## Shape and spacing
 
-## Notch behavior and Settings
+All dimensions are macOS points. These rules apply to prayer time, follow-up and today's schedule.
 
-Derive camera width, clearance, and placement from the selected display. The current development Mac measures 179 × 32 pt; these are observations, not hardcoded device dimensions. The schedule is therefore 384 × 396 pt normally and 384 × 448 pt with a status. The transparent hosting canvas is 520 × 480 pt.
+| Element | Value |
+| --- | --- |
+| Concave upper shoulders | 18 pt |
+| Convex lower curves | 36 pt |
+| Horizontal content inset | 38 pt, shared by header and body |
+| Effective side gutter | 20 pt after the 18 pt silhouette inset |
+| Body gap after camera header | 12 pt |
+| Bottom content inset | 20 pt |
+| Main group gap | 12 pt |
+| Schedule hero-to-strip gap | 14 pt |
+| Header symbol and icon targets | 16 pt symbol; 28 × 28 pt target |
+| Follow-up actions | 30 pt high; 12 pt gap |
+| Schedule cells | 62 pt high; 6 pt gap; 12 pt selected corner radius |
 
-At rest, draw no black extension, background, border, or shadow. The hit region matches the measured camera width and extends 8 pt below it; a 20 × 2 pt handle appears only on hover. On an unnotched display, the current fallback trigger is 164 × 8 pt. Expanded content starts below camera clearance, without a separate branding/titlebar strip.
+Widths are 368 pt for prayer time, 400 pt for follow-up, and 384 pt for the schedule. Height follows the rendered content, including wrapped disclosures and errors; avoid a fixed-height body or trailing flexible spacer. The pointer region follows the same measured height. The transparent hosting canvas is 520 × 480 pt.
 
-Automatic reminders must not take keyboard focus. Explicit interaction can make the panel key; Escape and outside clicks dismiss it. Hover pauses reminder dismissal, and keyboard activity renews it. Entry and follow-up states dismiss after 7 and 18 seconds respectively; the schedule stays open until dismissed.
+Reserve the selected screen's actual camera lane between equal-width header wings. The header is at least 36 pt high and never shorter than camera clearance. If either wing cannot fit a 28 pt control after horizontal insets, put the header below the camera. Collapsed presentation keeps the physical camera width and an 8 pt trigger below it, without drawing an extension, border or shadow.
 
-Settings uses the native grouped Form and real macOS window controls. Hidden titlebar backing, unified toolbar styling, and glass extending through the safe area form one continuous surface. Keep the Form background hidden so it does not mask the material. Preserve native control grouping and behavior.
+## Typography and iconography
 
-Preview copy explicitly says “Preview · Data contoh”; real follow-ups explain that they are personal reminders, not a mosque's iqomah schedule. Preview actions stay isolated from real delivery state.
+Use the system font and SF Symbols. Names use proportional type; prayer times and countdowns use monospaced digits. Align headline names and times on their first baseline. Keep metadata and disclosures at least 11 pt; smaller SF Symbols are decorative companions to text.
 
-## Motion, controls, and accessibility
+| Role | Size / weight |
+| --- | --- |
+| Notch prayer name | 26 pt semibold |
+| Notch headline time | 32 pt regular |
+| Notch city, state caption and date | 11 pt medium |
+| Supporting message and countdown | 12 pt regular |
+| Schedule cell name | 11 pt regular; selected semibold |
+| Schedule cell time | 14 pt medium; selected semibold |
+| Reminder action | 12 pt medium |
+| Source, error and preview disclosure | 11 pt regular |
+| Menu city / date | 12 pt medium / 11 pt regular |
+| Menu prayer name / headline time | 22 pt semibold / 30 pt regular |
+| Menu row label and time | 13 pt regular; selected semibold |
+| Menu caption / countdown | 11 pt medium / 11 pt regular |
 
-Settings begins with a native app-language picker offering self-named Bahasa Indonesia / English choices. Indonesian is the default; all SwiftUI scenes and AppKit hosting roots share the same observable preference. Language changes update copy without resetting views or reminder services. Both catalogs retain the existing type hierarchy and compact insets; five prayer rows stay visible without a scroll container. City names, source identity, zones and 24-hour prayer times remain provider/domain data. See [language selection](docs/language-selection.md) for OS-owned dialog limits and verification.
+A moon identifies reminders; a calendar identifies the schedule. Symbols in the camera wings sit directly on the black surface. Avoid decorative icon circles or a separate branding bar.
 
-State changes use an interruptible spring with 0.26 second duration and 0.08 bounce. Reduce Motion disables that explicit state animation. Avoid decorative stagger, perpetual motion, text scaling on press, and extra glow.
+## Notch compositions
 
-`NidaButtonStyle` keeps text colors explicit even when the panel is not key. Pressed controls use 82% opacity; disabled controls use 45%. Keep native focus feedback and label/help text for icon-only actions.
+### Prayer time
 
-Reduce Transparency or Increase Contrast replaces the desktop glass with the opaque neutral surface. Secondary buttons also use the opaque surface. Increase Contrast adds a selected-row outline and button borders, and keeps elapsed rows in the primary text color. Reminder title/subtitle are grouped for VoiceOver; the countdown has an accessible label and value.
+Moon in the left wing; a calendar button in the right wing opens the live schedule. Below: quiet stage caption, prayer name on the left and prayer-start time on the right, then a short pause message. A visible sample-data disclosure distinguishes previews from real delivery.
 
-## Skills and implementation guidance
+### Follow-up
 
-- **SwiftUI Expert**: view composition, observable data flow, layout, native controls, accessibility, and performance.
-- **Write Swift**: Swift modeling, concurrency, and separation of UI from scheduling/data behavior.
-- **Emil Design Engineering**: restrained, interruptible motion, stable alignment, and interaction polish; translate principles to native APIs.
-- **SwiftUI Liquid Glass** (`dimillian/skills`): material composition, modifier order, shape consistency, and grouped interactive controls. Its iOS examples require macOS-specific verification.
-- **macOS Design Guidelines** (`ehmo/platform-design-skills`): native Settings, window controls, keyboard behavior, and Mac typography. Document-app or multi-window patterns are outside this utility's scope.
+Use the same header and name/time hierarchy. The large time remains the original prayer-start time. Supporting copy explains elapsed minutes or identifies a snooze; it does not imply a mosque iqomah time. A compact secondary Close capsule precedes a wider primary five-minute snooze capsule with a clock symbol. Keep the preview or personal-reminder disclosure visible below the actions.
 
-These skills guide decisions; they do not override the owner's reference or establish API correctness. Check changed platform APIs through Context7 and the installed Apple SDK. The project targets macOS 26 and later. See `docs/ui-revision-plan.md` for the revision history and skill provenance.
+### Today's schedule
 
-## Finish checks and evidence
+Calendar in the left wing; city-local date in the right wing. No X button. Below: city name, next-prayer caption, prayer/time headline and countdown. All five prayers form one horizontal strip with equal-width cells. The selected cell has a subtle rounded fill and a system-accent dot below its time. Elapsed cells use supporting text without another opacity reduction.
 
-For future UI changes, verify normal, loading, missing-data, and refresh-error layouts. Check all five rows, aligned time columns, stable controls, camera clearance, a single outer contour, and the shared menu/notch store. Run focused geometry/state tests and build checks when implementation changes; use native compositor captures to judge glass and fit.
+The footer puts source/time zone on the left and refresh/Settings controls on the right. Refresh becomes a mini spinner and disables repeat clicks while loading. A bounded, wrapping error appears above the footer while valid cached content stays visible. Missing-city, loading and missing-schedule states remain actionable. The notch schedule has no internal scroll container.
 
-Native captures have been inspected for the live notch, menu content, follow-up preview, Settings, and the notch's simulated refresh error with Isya fully visible. Menu/Settings captures use debug review hosts with production content; they do not prove every scene interaction. The menu error state has not been separately captured. Screenshots remain local because the translucent background can include desktop content.
+## Interaction and motion
 
-Automated fit, geometry, and solid-palette contrast checks support those observations. They do not certify translucent contrast over arbitrary wallpaper or complete hardware acceptance. Fullscreen, VoiceOver, OS-wide accessibility toggles, display changes, and lifecycle/login checks remain tracked in issue #11.
+Hovering over the collapsed notch for 180 ms opens the schedule without taking keyboard focus. A schedule opened by hover closes 250 ms after pointer exit. Clicking inside keeps it open and enables keyboard interaction; Escape or an outside click dismisses it. Menu-initiated schedules also stay open until dismissed. Opening Settings closes the originating menu/notch surface first.
+
+Automatic prayer reminders do not take typing focus. Prayer time dismisses after seven seconds, follow-up after eighteen; hover pauses dismissal and keyboard activity renews it. Preview actions remain isolated from the delivery ledger.
+
+Transitions use an interruptible 0.26 second spring with 0.08 bounce. Reduce Motion removes the explicit state animation. Keep text stable and avoid decorative stagger, perpetual motion or press scaling. Shared capsule controls use 82% opacity when pressed and 45% when disabled.
+
+## Menu and Settings
+
+The menu is 340 pt wide with 16 pt horizontal insets. Its open hero keeps the next-prayer caption and countdown on one line above a 22/30 pt prayer/time headline. Five 29 pt rows sit in a rounded 20 pt group with 4 pt internal padding, prayer-specific SF Symbols and a system-accent selected row. Attribution sits below the group. The inset footer combines preview disclosure with refresh, Settings and Quit; expanded preview actions follow beneath. Footer padding is 6 pt above and 16 pt below. Schedule content uses 10 pt top and 6 pt bottom padding, with 8–10 pt group gaps. Do not apply the notch's camera inset or horizontal strip to this surface. Avoid redundant last-prayer context beneath the hero.
+
+Settings uses a native grouped Form, native window controls and default Form spacing. Controls follow the system accent. Titlebar backing is transparent at the top of the scroll; a 25% black backing appears after scrolling down. The city picker shares the glass backing, with a rounded search field, inset list and capsule glass actions.
+
+Display location names separately from provider schedule identity: use concise labels such as Jakarta Selatan in UI while requests/cache retain the provider's Kota Jakarta ID. See [location behavior](docs/location-setup.md) for matching and persistence.
+
+## Accessibility and content
+
+Reduce Transparency or Increase Contrast gives the notch a solid black surface. Increase Contrast raises its lower-edge opacity to 50%, outlines selected cells/buttons and keeps elapsed prayer text in the primary color. Menu/Settings glass falls back to an opaque neutral surface; secondary capsules also retain an opaque fallback.
+
+Keep native keyboard focus, labels and help for icon actions. Group reminder caption/name/time/message for VoiceOver; expose countdown label/value and selected/elapsed schedule state. Product copy follows Indonesian or English; city names and 24-hour times remain domain data. Keep preview disclosures explicit and explain real personal follow-ups separately from mosque schedules.
+
+## Shared tokens and ownership
+
+`NidaStyle` contains only values referenced by the current Swift views and geometry. Component-specific values remain beside their layout; a documented dimension does not require a separate global token.
+
+| Swift token | Current role |
+| --- | --- |
+| `surface` | Dark foreground for prominent off-white actions |
+| `text`, `secondaryText` | Primary and supporting warm-neutral foregrounds |
+| `accent` | Dynamic `NSColor.controlAccentColor`, independent of local view tint overrides |
+| `hairline` | Menu divider |
+| `opaqueGlass` | Accessible opaque backing and secondary control fallback |
+| `notchHorizontalInset` | Shared 38 pt camera-header/body inset and wing-fit calculation |
+| `groupGap` | 12 pt gap between follow-up actions |
+| `iconControlSize` | 28 pt utility targets and camera-wing fit threshold |
+| `controlHeight` | 34 pt expanded menu preview actions |
+| `rowRadius` | 14 pt menu selection corners |
+| `scheduleStatusHeight` | 52 pt geometry fallback allowance for schedule status; not visible bottom padding |
+
+Do not reintroduce unused palette levels (`chrome`, `raised`) or obsolete generic spacing (`panelInset`, `sectionGap`). The fitted notch content remains authoritative over legacy geometry height allowances. Keep the menu's component spacing separate from camera geometry.
+
+## Implementation references
+
+- [NidaStyle.swift](Nida/NidaStyle.swift): shared palette, insets, controls and silhouette.
+- [NotchView.swift](Nida/NotchView.swift): surface, camera wings and reminder compositions.
+- [ScheduleView.swift](Nida/ScheduleView.swift): live schedule hierarchy and per-surface layouts.
+- [PrototypeModel.swift](Nida/PrototypeModel.swift) and [NotchPanelController.swift](Nida/NotchPanelController.swift): geometry, pointer bounds and hover/focus behavior.
+- [NidaApp.swift](Nida/NidaApp.swift): menu and native Settings composition.

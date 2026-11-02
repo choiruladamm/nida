@@ -8,6 +8,7 @@ final class PrayerDataStore {
     let detection: LocationDetection
     private(set) var onboardingComplete = false
     private(set) var location: PrayerLocation?
+    private(set) var displayCityName: String?
     private(set) var months: [ScheduleMonth: PrayerMonth] = [:]
     private(set) var pendingCity: PrayerCity?
     private(set) var isRefreshing = false
@@ -27,6 +28,7 @@ final class PrayerDataStore {
            let saved = try? JSONDecoder().decode(PrayerLocation.self, from: data),
            (try? saved.validate()) != nil {
             location = saved
+            displayCityName = PrayerCityChoice.displayName(defaults.string(forKey: "prayerDisplayCityName") ?? saved.city.name.localizedCapitalized)
             onboardingComplete = true
             defaults.set(true, forKey: "locationOnboardingComplete")
         }
@@ -59,20 +61,20 @@ final class PrayerDataStore {
 
     func restoreAndRefresh(now: Date = Date()) async {
         guard !isRefreshing else { return }
-        if let location { await load(city: location.city, hint: location, force: false, now: now) }
+        if let location { await load(city: location.city, hint: location, force: false, now: now, displayName: displayCityName) }
     }
 
-    func select(_ city: PrayerCity, now: Date = Date()) async {
+    func select(_ city: PrayerCity, now: Date = Date(), displayName: String? = nil) async {
         detection.cancel()
-        await load(city: city, hint: location?.city == city ? location : nil, force: false, now: now)
+        await load(city: city, hint: location?.city == city ? location : nil, force: false, now: now, displayName: displayName)
     }
 
     func refresh(now: Date = Date()) async {
         guard !isRefreshing, let location else { return }
-        await load(city: location.city, hint: location, force: true, now: now)
+        await load(city: location.city, hint: location, force: true, now: now, displayName: displayCityName)
     }
 
-    private func load(city: PrayerCity, hint: PrayerLocation?, force: Bool, now: Date) async {
+    private func load(city: PrayerCity, hint: PrayerLocation?, force: Bool, now: Date, displayName: String? = nil) async {
         let id = UUID()
         requestID = id
         isRefreshing = true
@@ -101,6 +103,8 @@ final class PrayerDataStore {
             if let issue = first.issue { message = issue.message }
             let selection = try JSONEncoder().encode(first.month.location)
             defaults.set(selection, forKey: "prayerLocation")
+            displayCityName = PrayerCityChoice.displayName(displayName ?? first.month.location.city.name.localizedCapitalized)
+            defaults.set(displayCityName, forKey: "prayerDisplayCityName")
             onboardingComplete = true
             defaults.set(true, forKey: "locationOnboardingComplete")
 
@@ -141,7 +145,7 @@ struct PrayerDataSettings: View {
                 choosingCity = true
             } label: {
                 HStack {
-                    if let city = store.location?.city { Text(city.name.localizedCapitalized) }
+                    if let name = store.displayCityName { Text(name) }
                     else { Text("Pilih kota / kabupaten") }
                     Spacer()
                     Image(systemName: "chevron.right").foregroundStyle(.secondary)
@@ -186,53 +190,107 @@ struct PrayerDataSettings: View {
 
 struct CitySelectionView: View {
     @Environment(\.locale) private var locale
+    @Environment(\.dismiss) private var dismiss
     let store: PrayerDataStore
     @State private var query = ""
-    @Environment(\.dismiss) private var dismiss
+    @State private var selectedChoiceID: String?
+    @FocusState private var searchFocused: Bool
+
+    private var filteredChoices: [PrayerCityChoice] {
+        PrayerCityChoice.choices(for: store.cities).filter { query.isEmpty || $0.name.localizedStandardContains(query) }
+    }
 
     var body: some View {
-        NavigationStack {
-            List {
-                if let message = store.message { Text(message.localized(in: locale)).foregroundStyle(.secondary) }
-                if let pending = store.pendingCity {
-                    ProgressView("Memuat \(pending.name.localizedCapitalized)…")
-                }
-                if let error = store.cityError {
-                    Text(error.localized(in: locale)).foregroundStyle(.secondary)
-                    Button("Coba lagi") { Task { await store.loadCities() } }
-                }
-                ForEach(store.cities.filter { query.isEmpty || $0.name.localizedStandardContains(query) }) { city in
-                    Button {
-                        store.detection.cancel()
-                        Task {
-                            await store.select(city)
-                            if store.location?.city == city { dismiss() }
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Pilih wilayah")
+                .font(.title2.weight(.semibold))
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(.secondary).accessibilityHidden(true)
+                TextField("Cari kota atau kabupaten", text: $query)
+                    .textFieldStyle(.plain)
+                    .focused($searchFocused)
+                    .accessibilityLabel("Cari kota atau kabupaten")
+            }
+            .padding(.horizontal, 12).padding(.vertical, 10)
+            .background(.white.opacity(0.06), in: .rect(cornerRadius: 12))
+            .overlay {
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(searchFocused ? Color.accentColor : .clear, lineWidth: 2)
+            }
+            List(selection: $selectedChoiceID) {
+                ForEach(filteredChoices) { choice in
+                    HStack {
+                        Text(choice.name)
+                        Spacer()
+                        if store.location?.city == choice.city, store.displayCityName == choice.name {
+                            Image(systemName: "checkmark")
+                                .foregroundStyle(.secondary)
+                                .accessibilityLabel("Jadwal yang digunakan")
                         }
-                    } label: {
-                        HStack {
-                            Text(city.name.localizedCapitalized)
-                            Spacer()
-                            if store.location?.city == city { Image(systemName: "checkmark") }
-                        }
-                        .contentShape(.rect)
                     }
-                    .buttonStyle(.plain)
+                    .padding(.vertical, 4)
+                    .tag(choice.id)
+                    .listRowSeparator(.hidden)
                 }
             }
+            .listStyle(.inset)
+            .scrollContentBackground(.hidden)
+            .background(.white.opacity(0.05), in: .rect(cornerRadius: 14))
+            .clipShape(.rect(cornerRadius: 14))
             .overlay {
                 if store.isLoadingCities { ProgressView("Memuat daftar wilayah…") }
-                else if store.cityError == nil, !query.isEmpty,
-                        !store.cities.contains(where: { $0.name.localizedStandardContains(query) }) {
+                else if store.cityError == nil, !query.isEmpty, filteredChoices.isEmpty {
                     ContentUnavailableView.search(text: query)
                 }
             }
             .disabled(store.isRefreshing)
-            .searchable(text: $query, prompt: "Cari kota atau kabupaten")
-            .navigationTitle("Pilih wilayah")
-            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Tutup") { dismiss() } } }
+            if let error = store.cityError {
+                HStack {
+                    Text(error.localized(in: locale)).foregroundStyle(.secondary)
+                    Spacer()
+                    Button("Coba lagi") { Task { await store.loadCities() } }
+                }
+            }
+            if let message = store.message {
+                Text(message.localized(in: locale)).font(.callout).foregroundStyle(.secondary)
+            }
+            HStack {
+                if let pending = store.pendingCity {
+                    ProgressView().controlSize(.small)
+                    Text("Memuat \(pending.name.localizedCapitalized)…")
+                        .font(.callout).lineLimit(1)
+                }
+                Spacer()
+                Button("Batal") { dismiss() }
+                    .buttonStyle(.glass)
+                    .keyboardShortcut(.cancelAction)
+                Button("Gunakan kota ini") {
+                    guard let choice = filteredChoices.first(where: { $0.id == selectedChoiceID }) else { return }
+                    store.detection.cancel()
+                    Task {
+                        await store.select(choice.city, displayName: choice.name)
+                        if store.location?.city == choice.city, store.displayCityName == choice.name { dismiss() }
+                    }
+                }
+                .buttonStyle(.glassProminent)
+                .keyboardShortcut(.defaultAction)
+                .disabled(store.isRefreshing || !filteredChoices.contains(where: { $0.id == selectedChoiceID }))
+            }
+            .controlSize(.large)
+            .buttonBorderShape(.capsule)
         }
+        .padding(20)
         .frame(width: 440, height: 460)
-        .task { if store.cities.isEmpty { await store.loadCities() } }
+        .background { NidaGlassBackground(shape: Rectangle(), cornerRadius: 0).ignoresSafeArea() }
+        .presentationBackground(.clear)
+        .preferredColorScheme(.dark)
+        .task {
+            if store.cities.isEmpty { await store.loadCities() }
+            selectedChoiceID = PrayerCityChoice.choices(for: store.cities).first {
+                $0.city == store.location?.city && $0.name == store.displayCityName
+            }?.id
+        }
     }
 }
 
@@ -289,21 +347,9 @@ struct LocationDetectionControls: View {
                     Spacer()
                     Button("Batal") { store.detection.cancel() }
                 }
-            case .found(let city, let detectedNames):
-                LabeledContent("Lokasi terdeteksi") {
-                    Text(detectedNames.joined(separator: ", "))
-                        .multilineTextAlignment(.trailing)
-                }
-                LabeledContent("Jadwal yang digunakan", value: city.name.localizedCapitalized)
-                Text("Pastikan wilayah ini benar sebelum menggunakan jadwalnya.")
-                    .font(.callout).foregroundStyle(.secondary)
-                HStack {
-                    Button("Gunakan kota ini") { Task { await store.select(city) } }
-                    Button("Pilih kota lain") {
-                        store.detection.cancel()
-                        chooseManually()
-                    }
-                }
+            case .found(let city, _):
+                ProgressView("Memuat \(city.name.localizedCapitalized)…")
+                    .controlSize(.small)
             case .failed(let error):
                 Text(error.message.localized(in: locale)).font(.callout).foregroundStyle(.secondary)
                 Button("Coba lokasi lagi") { detect() }
@@ -316,10 +362,16 @@ struct LocationDetectionControls: View {
     }
 
     private func detect() {
-        store.detection.start {
+        let request = store.detection.start {
             if store.cities.isEmpty { await store.loadCities() }
             guard !store.cities.isEmpty else { throw LocationSetupError.unavailable }
             return store.cities
+        }
+        Task {
+            await request.value
+            guard !request.isCancelled,
+                  case .found(let city, let names) = store.detection.state else { return }
+            await store.select(city, displayName: names.map { PrayerCityChoice.displayName($0) }.joined(separator: ", "))
         }
     }
 }

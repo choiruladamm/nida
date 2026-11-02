@@ -37,6 +37,30 @@ struct PrayerCity: Codable, Equatable, Identifiable, Sendable {
     }
 }
 
+// Display aliases keep provider IDs and names intact for requests and cache validation.
+struct PrayerCityChoice: Identifiable {
+    let city: PrayerCity
+    let name: String
+    var id: String { city.id + ":" + name }
+
+    static let jakartaDistricts = ["Jakarta Barat", "Jakarta Pusat", "Jakarta Selatan", "Jakarta Timur", "Jakarta Utara"]
+
+    static func displayName(_ name: String) -> String {
+        jakartaDistricts.first { district in
+            [district, "Kota " + district, "Kota Administrasi " + district]
+                .contains { $0.localizedCaseInsensitiveCompare(name) == .orderedSame }
+        } ?? name
+    }
+
+    static func choices(for cities: [PrayerCity]) -> [Self] {
+        cities.flatMap { city in
+            let names = city.name == "KOTA JAKARTA"
+                ? jakartaDistricts : [city.name.localizedCapitalized]
+            return names.map { Self(city: city, name: $0) }
+        }
+    }
+}
+
 enum IndonesianZone: String, Codable, Sendable {
     case west = "Asia/Jakarta", central = "Asia/Makassar", east = "Asia/Jayapura"
 

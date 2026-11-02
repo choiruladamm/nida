@@ -2068,6 +2068,22 @@
           }
         }
       }
+    },
+    "Saatnya ambil jeda": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saatnya ambil jeda"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time for a pause"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -20,6 +20,19 @@ private let bandungRegency = PrayerCity(id: String(repeating: "b", count: 32), n
         #expect(try DetectedArea.match([detected], cities: [jakarta, denpasarCity]) == jakarta)
     }
 
+    @Test func jakartaChoicesKeepProviderIdentityAndShortDisplayNames() {
+        let jakarta = PrayerCity(id: "58a2fc6ed39fd083f55d4182bf88826d", name: "KOTA JAKARTA")
+        let choices = PrayerCityChoice.choices(for: [jakarta, denpasarCity])
+        #expect(Set(choices.map(\.id)).count == choices.count)
+        #expect(!choices.contains(where: { $0.name == "Kota Jakarta" }))
+        for name in PrayerCityChoice.jakartaDistricts {
+            #expect(choices.first(where: { $0.name == name })?.city == jakarta)
+            #expect(PrayerCityChoice.displayName("Kota Administrasi " + name) == name)
+        }
+        #expect(PrayerCityChoice.displayName("Kota Denpasar") == "Kota Denpasar")
+        #expect(choices.first(where: { $0.city == denpasarCity })?.name == "Kota Denpasar")
+    }
+
     @Test func jakartaMappingDoesNotAbsorbOtherAdministrativeAreas() throws {
         let jakarta = PrayerCity(id: "58a2fc6ed39fd083f55d4182bf88826d", name: "KOTA JAKARTA")
         let islands = PrayerCity(id: "cfecdb276f634854f3ef915e2e980c31", name: "KAB. KEPULAUAN SERIBU")
