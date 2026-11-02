@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.0 (4) — 2026-11-02
+
+- Align schedule/menu insets with prayer reminders: 30 pt horizontally and 20 pt vertically.
+- Top-align the notch schedule and trim its surplus height to keep the footer comfortably inside the panel, retaining five visible rows and refresh-status space.
+
 ## 0.2.0 (3) — 2026-11-02
 
 Language-selection prerelease candidate for [#22](https://github.com/choiruladamm/nida/issues/22); not yet a published GitHub release.

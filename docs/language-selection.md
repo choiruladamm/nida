@@ -1,6 +1,6 @@
 # App language selection
 
-Issue: [#22](https://github.com/choiruladamm/nida/issues/22). Source build: **0.2.0 (3)**, prerelease candidate.
+Issue: [#22](https://github.com/choiruladamm/nida/issues/22). Source build: **0.2.0 (4)**, prerelease candidate.
 
 ## Behavior
 
@@ -24,6 +24,12 @@ On macOS 27.0.1 / Xcode 27.0 / arm64:
 The first catalog-coverage test attempted to read repository source from the sandboxed test host and blocked on file access. It was replaced with checks of the compiled resources inside the app bundle. The full suite was rerun without that access; no additional permission or sandbox entitlement was added.
 
 ## Manual checks still required
+
+### Owner-requested schedule inset alignment — build 4
+
+After baseline comparison established that the differing schedule/reminder insets predated localization, the owner requested matching them. Schedule and menu-footer insets are now 30 pt horizontal / 20 pt vertical, matching the reminder's horizontal/top insets. The notch schedule aligns content to the top and uses a 364 pt body, removing surplus centering space while retaining all five rows and a separate 52 pt refresh-status allowance. With the measured 32 pt camera, its panel is 396 pt high normally and 448 pt with a status; the camera silhouette remains unchanged.
+
+All 86 tests in 14 suites, Debug/Release builds and native smoke passed after this change. The full schedule/error fit check passed in both languages. A compositor capture of the English schedule was inspected for full rows, footer clearance and aligned insets; it remains local at `build/layout-comparison/schedule-insets-build4.png`. Build 0.2.0 (4) was installed, signature verified and opened from `/Applications/Nida.app`; the candidate ZIP is `build/issue-22-evidence/Nida-0.2.0-build4.zip`. The owner has not yet accepted the revised layout; this observation does not complete the checks below.
 
 - Switch id → en → id with Settings, menu, notch, city sheet, error message and real/preview reminder open. Verify immediate text/date/help updates, preserved state/focus and unchanged delivery timing.
 - Relaunch and verify the language persists; inspect first-launch/manual location and OS-owned permission wording separately.

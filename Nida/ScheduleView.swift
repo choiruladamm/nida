@@ -29,7 +29,7 @@ struct ScheduleView: View {
                 }
             }
         }
-        .frame(height: isNotch ? 380 + (store.message == nil ? 0 : NidaStyle.scheduleStatusHeight) : nil)
+        .frame(height: isNotch ? 364 + (store.message == nil ? 0 : NidaStyle.scheduleStatusHeight) : nil, alignment: .top)
         .foregroundStyle(NidaStyle.text)
         .onReceive(NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.didWakeNotification)) { _ in
             Task { await store.restoreAndRefresh() }
@@ -154,7 +154,7 @@ struct ScheduleView: View {
             .font(.system(size: 12))
         }
         .buttonStyle(NidaButtonStyle()).tint(.clear)
-        .padding(.horizontal, NidaStyle.panelInset).padding(.vertical, 12)
+        .padding(.horizontal, 30).padding(.vertical, 20)
         .task(id: ScheduleMonth.dateKey(date, in: zone)) { await store.restoreAndRefresh() }
     }
 }

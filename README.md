@@ -2,7 +2,7 @@
 
 A native macOS prayer reminder with a frosted Liquid Glass notch panel and menu bar access. Indonesian city schedules are **Kemenag via myQuran**, with validated current/next-month offline storage, two-stage reminders, explicit five-minute snooze, optional short sound, and launch at login.
 
-**Source: 0.2.0 (3) · prerelease. Latest published: 0.1.0 (2).** Hardware acceptance remains pending in [parent #1](https://github.com/choiruladamm/nida/issues/1); see [verification evidence and remaining checks](docs/mvp-verification.md). Requires **macOS 26+**. Local builds are ad-hoc signed, not notarized for public distribution.
+**Source: 0.2.0 (4) · prerelease. Latest published: 0.1.0 (2).** Hardware acceptance remains pending in [parent #1](https://github.com/choiruladamm/nida/issues/1); see [verification evidence and remaining checks](docs/mvp-verification.md). Requires **macOS 26+**. Local builds are ad-hoc signed, not notarized for public distribution.
 
 ## Install and use
 
@@ -35,7 +35,7 @@ Debug-only review modes: `--review-menu`, `--review-settings`, `--review-notch`,
 
 ## Versioning
 
-Use `major.minor.patch` plus an increasing integer build: **0.2.0 (3)**. Language selection advances the feature version; it remains a prerelease while MVP hardware acceptance is pending. `1.0.0` follows observed acceptance, not issue closure alone. After stable release, use patch for fixes, minor for features, major for incompatible changes.
+Use `major.minor.patch` plus an increasing integer build: **0.2.0 (4)**. Language selection advances the feature version; it remains a prerelease while MVP hardware acceptance is pending. `1.0.0` follows observed acceptance, not issue closure alone. After stable release, use patch for fixes, minor for features, major for incompatible changes.
 
 Set `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in both Debug/Release app configurations in `Nida.xcodeproj/project.pbxproj`. Increment the build for every changed artifact installed for testing or shared, across all release versions; reinstalling the identical artifact retains its number. Do not bump on every compile. Update [CHANGELOG.md](CHANGELOG.md), tag the committed release source `vX.Y.Z`, and never move a published tag. Keep unverified releases marked prerelease. [Apple's build settings reference](https://developer.apple.com/documentation/xcode/build-settings-reference) describes the generated bundle keys.
 

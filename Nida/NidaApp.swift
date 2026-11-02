@@ -184,7 +184,7 @@ struct MenuContent: View {
                     .font(.system(size: 12)).buttonStyle(NidaButtonStyle())
                 }
             }
-            .padding(.horizontal, NidaStyle.panelInset).padding(.vertical, 12)
+            .padding(.horizontal, 30).padding(.vertical, 20)
         }
         .frame(width: 384)
         .background { NidaGlassBackground(shape: Rectangle(), cornerRadius: 0) }
