@@ -19,7 +19,7 @@ struct NidaApp: App {
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let controller = NotchPanelController()
-    let schedules = PrayerDataStore()
+    var schedules: PrayerDataStore { controller.schedules }
     private var setupWindow: NSWindow?
 
     func applicationWillFinishLaunching(_ notification: Notification) {
@@ -80,7 +80,7 @@ struct MenuContent: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ScheduleView()
+            ScheduleView(store: controller.schedules).frame(height: 350)
             NidaStyle.hairline.frame(height: 0.5)
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
@@ -146,7 +146,7 @@ struct PrototypeSettings: View {
         Form {
             Section("Nida") {
                 Text("Ambil jeda, kembali tenang.").font(.headline)
-                Text("Jadwal asli tersedia di bawah. Preview notch masih data contoh; pengingat otomatis belum aktif.")
+                Text("Jadwal asli tersedia di menu bar dan notch. Pengingat otomatis belum aktif; tombol coba pengingat masih memakai data contoh.")
                     .foregroundStyle(.secondary)
             }
             PrayerDataSettings(store: schedules)

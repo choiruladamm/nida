@@ -4,7 +4,7 @@ Issue: [#4](https://github.com/choiruladamm/nida/issues/4). Verified on 2026-11-
 
 ## Current feature boundary
 
-Settings provides searchable manual city selection, today's five real prayer times, source attribution, selected-city time zone, refresh, and stored coverage. The menu bar/notch reminder previews remain explicitly labeled demo data. Next-prayer and event calculations are documented in [prayer-timing.md](prayer-timing.md). Permission-based automatic location is documented in [location-setup.md](location-setup.md); automated delivery remains a later issue.
+Settings provides searchable manual city selection, today's five real prayer times, source attribution, selected-city time zone, refresh, and stored coverage. Menu bar and notch schedules now share the live store; only reminder previews remain explicitly labeled demo data. Next-prayer and event calculations are documented in [prayer-timing.md](prayer-timing.md). Permission-based automatic location is documented in [location-setup.md](location-setup.md); automated delivery remains a later issue.
 
 No city is assumed from the laptop's location or from the Jakarta preview fixture. The user selects a supported city or confirms a detected candidate. Only the confirmed city/province/zone is persisted; no precise coordinates are persisted and no account is used.
 

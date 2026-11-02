@@ -30,6 +30,20 @@ private func occurrence(_ prayer: PrayerKind = .ashar, date: String = "2026-11-1
 }
 
 @Suite(.serialized) struct PrayerBoundaryTests {
+    @Test func displayStartsAtCurrentTimeBeforeDhuhrInsteadOfFutureBoundary() throws {
+        let timeline = try timeline()
+        let now = try instant("2026-11-02T11:00:00+07:00")
+        let schedule = PrayerDisplaySchedule(boundaries: timeline.boundaryDates)
+        let entries = schedule.entries(from: now, mode: .normal)
+        #expect(entries.first == now)
+        let initial = timeline.snapshot(at: try #require(entries.first))
+        #expect(initial.next?.id.prayer == .dzuhur)
+        #expect(initial.remaining == 2400.0)
+        let boundary = try #require(entries.dropFirst().first)
+        #expect(boundary == (try instant("2026-11-02T11:40:00+07:00")))
+        #expect(timeline.snapshot(at: boundary).next?.id.prayer == .ashar)
+    }
+
     @Test(arguments: PrayerKind.allCases, [-1.0, 0.0, 1.0])
     func nextAndElapsedAtEveryPrayerBoundary(prayer: PrayerKind, offset: Double) throws {
         let timeline = try timeline()

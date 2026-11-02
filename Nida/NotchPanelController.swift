@@ -12,6 +12,12 @@ final class NotchPanel: NSPanel {
 @MainActor
 final class NotchPanelController: NSObject {
     let model = PrototypeModel()
+    let schedules: PrayerDataStore
+
+    init(schedules: PrayerDataStore = PrayerDataStore()) {
+        self.schedules = schedules
+        super.init()
+    }
     private var panel: NotchPanel?
     private var globalMonitor: Any?
     private var localMonitor: Any?

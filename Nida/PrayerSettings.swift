@@ -232,7 +232,7 @@ private struct NextPrayerSummary: View {
         if updates.isEmpty {
             summary(at: now)
         } else {
-            TimelineView(.explicit(updates)) { context in summary(at: context.date) }
+            TimelineView(PrayerDisplaySchedule(boundaries: updates)) { context in summary(at: context.date) }
         }
     }
 

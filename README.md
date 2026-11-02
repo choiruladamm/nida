@@ -29,7 +29,7 @@ Local builds use ad-hoc signing. These are personal development builds, not nota
 
 ## Scope
 
-The notch remains a feasibility prototype. First launch offers automatic location with city confirmation or manual selection. Settings supports location refresh, real daily schedules, and validated current/next-month offline storage. Settings also shows the city-aware next prayer and a native countdown. Production reminders and login launch are not implemented yet.
+The notch geometry retains its prototype verification boundary. First launch offers automatic location with city confirmation or manual selection. Settings supports location refresh, real daily schedules, and validated current/next-month offline storage. Menu bar, notch, and Settings show the selected city’s real schedule and next prayer. Production reminders and login launch are not implemented yet.
 
 Product plan and implementation tracker: https://github.com/choiruladamm/nida/issues/1
 
@@ -40,12 +40,12 @@ The owner’s supplied frosted Liquid Glass reference is the visual authority. S
 ## Try the notch prototype
 
 1. Launch the app. A moon-and-stars menu bar item appears. The physical notch is left visually unchanged while collapsed.
-2. Hover immediately below the camera to reveal the small handle, then click to open the sample schedule, or open the menu bar panel and click the circular **arrow-up-right** button.
+2. Hover immediately below the camera to reveal the small handle, then click to open today’s schedule, or open the menu bar panel and click the circular **arrow-up-right** button.
 3. Select **Masuk waktu** or **Pengingat kedua** to preview the two reminder states.
 4. Click the panel before using Escape; clicking outside also collapses it. An automatic reminder does not take keyboard focus.
 5. Open **Pengaturan** for all four preview states. Quit with **Keluar** in the menu bar panel.
 
-The timetable and date are fixed demo fixtures, visibly labeled **Data contoh**. Snooze only confirms the preview action; it does not schedule anything. Production reminders are not scheduled. Location permission is requested only after choosing **Gunakan lokasi saat ini**.
+The schedule uses real city-local data. Reminder previews still use fixed fixtures, visibly labeled **Data contoh**. Snooze only confirms the preview action; it does not schedule anything. Production reminders are not scheduled. Location permission is requested only after choosing **Gunakan lokasi saat ini**.
 
 The compact preview dismisses after 7 seconds and the follow-up after 18 seconds. Hovering pauses dismissal; leaving starts a fresh preview duration. A notched display is preferred. Without one, a hover-revealed top-center handle is used on the display containing the pointer at placement time.
 
@@ -61,7 +61,7 @@ This cycles the four states and prints detected geometry, visibility, and focus 
 
 On first launch, use **Gunakan lokasi saat ini**, confirm the suggested city, or choose **Pilih kota manual**. Existing users keep their saved city. To change it later, open **Pengaturan → Lokasi jadwal**, choose or detect a city, then inspect **Jadwal hari ini**. The search runs locally against the provider's cached catalog. The app fetches the selected city's current and next month and reuses cached dates offline. Refresh failures preserve usable data and show a message; unavailable dates are never replaced with yesterday's timetable.
 
-The menu bar/notch schedule and reminder buttons still show labeled preview fixtures until the next UI/scheduling issues. Real source attribution is **Kemenag via myQuran**. See [provider contract, time zones, and official comparisons](docs/prayer-data.md) and [location setup and verification](docs/location-setup.md).
+The menu bar and notch share one schedule store, with a local date, next-prayer countdown, elapsed styling, refresh, and Settings access. Valid schedules remain visible during refresh failures; missing dates stay unavailable. Reminder buttons still show labeled preview fixtures until production delivery in #8. Real source attribution is **Kemenag via myQuran**. See [provider contract, time zones, and official comparisons](docs/prayer-data.md) and [location setup and verification](docs/location-setup.md).
 
 `make data-smoke` uses live internet requests and a disposable cache, verifies offline restoration, and leaves the selected city unchanged. It is separate from the offline unit suite.
 
