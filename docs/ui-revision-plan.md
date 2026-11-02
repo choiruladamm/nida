@@ -5,7 +5,7 @@
 
 The final local menu iteration retains next prayer as the hero, puts its countdown beside the caption, groups five icon-led rows, and consolidates refresh with Settings/Quit. Width is 340 pt; footer bottom inset is 16 pt after owner feedback. Menu highlights and notch dots now follow the macOS control accent. A proposed latest-prayer context line was tried and removed as redundant at the owner's request.
 
-The same macOS Design Guidelines, SwiftUI Expert and Emil Design Engineering guidance informed these iterations. `grilling` (invoked through `grill-me`) supported the one-question-at-a-time content discussion; it introduced no retained extra content. No dependency was added. The owner reviewed successive running screenshots. Build, tests and smoke were intentionally not rerun for this follow-up at the owner's request; earlier passing evidence applies to the preceding commit only.
+The same macOS Design Guidelines, SwiftUI Expert and Emil Design Engineering guidance informed these iterations. `grilling` (invoked through `grill-me`) supported the one-question-at-a-time content discussion; it introduced no retained extra content. No dependency was added. The owner reviewed successive running screenshots. Build/tests were deferred during experimentation, then rerun at the owner's final request: product commit `2323856` passed 89 tests in 14 suites and a Debug build. Smoke was not rerun; earlier smoke evidence applies to the preceding notch commit.
 
 ## Accepted three-panel notch revamp — 2026-11-02
 
