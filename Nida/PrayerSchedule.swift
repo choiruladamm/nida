@@ -109,7 +109,7 @@ struct ScheduleMonth: Codable, Equatable, Hashable, Sendable {
     }
 }
 
-enum PrayerKind: String, CaseIterable, Sendable {
+enum PrayerKind: String, CaseIterable, Codable, Sendable {
     case subuh, dzuhur, ashar, maghrib, isya
     var label: String { rawValue.capitalized }
 }

@@ -28,6 +28,11 @@ final class PrayerDataStore {
         return months[ScheduleMonth(containing: date, in: location.zone)]?.day(at: date)
     }
 
+    func timeline() throws -> PrayerTimeline? {
+        guard let location else { return nil }
+        return try PrayerTimeline(location: location, months: Array(months.values))
+    }
+
     func loadCities() async {
         guard !isLoadingCities else { return }
         isLoadingCities = true
@@ -133,6 +138,9 @@ struct PrayerDataSettings: View {
             }
         }
         Section("Jadwal hari ini") {
+            if let timeline = try? store.timeline() {
+                NextPrayerSummary(timeline: timeline)
+            }
             if let day = store.today() {
                 ForEach(PrayerKind.allCases, id: \.self) { prayer in
                     LabeledContent(prayer.label, value: day.time(for: prayer))
@@ -190,5 +198,35 @@ private struct CitySelectionView: View {
         }
         .frame(width: 440, height: 460)
         .task { if store.cities.isEmpty { await store.loadCities() } }
+    }
+}
+
+private struct NextPrayerSummary: View {
+    let timeline: PrayerTimeline
+
+    var body: some View {
+        let now = Date()
+        let updates = timeline.boundaryDates.filter { $0 > now }
+        if updates.isEmpty {
+            summary(at: now)
+        } else {
+            TimelineView(.explicit(updates)) { context in summary(at: context.date) }
+        }
+    }
+
+    @ViewBuilder private func summary(at date: Date) -> some View {
+        let snapshot = timeline.snapshot(at: date)
+        if let next = snapshot.next {
+            let tomorrow = next.id.dateKey != ScheduleMonth.dateKey(date, in: timeline.location.zone)
+            LabeledContent("Berikutnya", value: next.id.prayer.label + (tomorrow ? " · besok" : ""))
+            LabeledContent("Waktu", value: "\(next.wallTime) \(timeline.location.zone.label)")
+            HStack {
+                Text("Sisa waktu")
+                Spacer()
+                Text(next.startsAt, style: .timer).monospacedDigit()
+            }
+        } else if snapshot.hasToday {
+            Text("Jadwal besok belum tersedia.").foregroundStyle(.secondary)
+        }
     }
 }

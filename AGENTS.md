@@ -6,6 +6,7 @@ Native macOS prayer reminder: SwiftUI content, AppKit notch panel, menu bar acce
 
 - UI or motion changes: read `DESIGN.md` first. The latest frosted Liquid Glass reference supersedes the earlier dark mockups.
 - API/cache/date changes: read `docs/prayer-data.md` for the verified contract, time-zone mapping, and data/UI boundary.
+- Timing/reminder calculations: read `docs/prayer-timing.md` for exact boundaries, pending-state preservation, and expiry rules.
 - Notch/window changes: read `docs/notch-prototype.md` for measured geometry and pending hardware checks.
 - Build/setup: see `README.md`; run `make help` for commands.
 
