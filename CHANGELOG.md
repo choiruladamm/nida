@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Refine notch shell motion with separate expansion/collapse curves, measured-height reuse and independent content fades; centralize timing and Reduce Motion handling.
+
 - Compact the glass menu into a 340 pt layout with grouped prayer icons, consolidated actions and native macOS accent highlights.
 
 - Revamp prayer-time, follow-up and today's notch schedule with camera wings, natural content height, a horizontal five-prayer strip, rounded black/glass surfaces and delayed hover access.

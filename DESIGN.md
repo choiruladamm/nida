@@ -92,7 +92,7 @@ Hovering over the collapsed notch for 180 ms opens the schedule without taking k
 
 Automatic prayer reminders do not take typing focus. Prayer time dismisses after seven seconds, follow-up after eighteen; hover pauses dismissal and keyboard activity renews it. Preview actions remain isolated from the delivery ledger.
 
-Transitions use an interruptible 0.26 second spring with 0.08 bounce. Reduce Motion removes the explicit state animation. Keep text stable and avoid decorative stagger, perpetual motion or press scaling. Shared capsule controls use 82% opacity when pressed and 45% when disabled.
+Panel expansion uses a spring with 0.4 second response and 0.82 damping; collapse uses a smooth 0.24 second animation. Content reveals with a 0.18 second fade after 0.06 seconds and hides with a 0.1 second fade. Keep the surface mounted and fade it to transparent while collapsed, so its boundary can interpolate rather than being replaced. Cache measured expanded content heights per presentation state for subsequent shell transitions; the first opening uses natural height until measured. Reduce Motion removes the explicit panel animation and uses an identity content transition. The local `NotchMotion` helper owns these timings. Keep text stable and avoid decorative stagger, perpetual motion or press scaling. Shared capsule controls use 82% opacity when pressed and 45% when disabled.
 
 ## Menu and Settings
 
