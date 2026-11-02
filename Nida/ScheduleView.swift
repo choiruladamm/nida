@@ -1,5 +1,14 @@
 import SwiftUI
 
+// Always emit the requested current instant before future prayer boundaries.
+struct PrayerDisplaySchedule: TimelineSchedule {
+    let boundaries: [Date]
+
+    func entries(from startDate: Date, mode: Mode) -> [Date] {
+        [startDate] + boundaries.filter { $0 > startDate }
+    }
+}
+
 struct ScheduleView: View {
     let store: PrayerDataStore
     var onClose: (() -> Void)?
@@ -12,7 +21,7 @@ struct ScheduleView: View {
         Group {
             if boundaries.isEmpty { content(at: now, timeline: timeline) }
             else {
-                TimelineView(.explicit(boundaries)) { context in
+                TimelineView(PrayerDisplaySchedule(boundaries: boundaries)) { context in
                     content(at: context.date, timeline: timeline)
                 }
             }
