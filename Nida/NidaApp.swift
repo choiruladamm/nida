@@ -133,33 +133,53 @@ struct MenuContent: View {
     var body: some View {
         VStack(spacing: 0) {
             ScheduleView(store: controller.schedules, onOpenNotch: { preview(.schedule) })
-                .frame(height: 344 + controller.scheduleStatusHeight)
+                .fixedSize(horizontal: false, vertical: true)
             NidaStyle.hairline.frame(height: 0.5)
-            VStack(alignment: .leading, spacing: 14) {
-                DisclosureGroup("Coba pengingat", isExpanded: $previewExpanded) {
-                    GlassEffectContainer(spacing: 12) {
-                        HStack(spacing: 12) {
-                            Button("Masuk waktu") { preview(.prayer) }
-                            Button("Pengingat kedua") { preview(.followUp) }
+            VStack(spacing: 10) {
+                HStack(spacing: 12) {
+                    Button { previewExpanded.toggle() } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: previewExpanded ? "chevron.down" : "chevron.right")
+                                .font(.system(size: 10, weight: .semibold))
+                            Text("Coba pengingat")
                         }
-                        .buttonStyle(.glass).buttonBorderShape(.capsule)
-                        .controlSize(.regular).tint(.clear)
-                        .padding(.top, 8)
+                        .frame(minHeight: NidaStyle.iconControlSize)
+                        .contentShape(.rect)
                     }
+                    .buttonStyle(.plain)
+                    .accessibilityValue(previewExpanded ? "Terbuka" : "Tertutup")
+                    Spacer(minLength: 0)
+                    HStack(spacing: 8) {
+                        Button {
+                            NSApplication.shared.activate()
+                            openSettings()
+                        } label: {
+                            Image(systemName: "gearshape")
+                                .frame(width: NidaStyle.iconControlSize, height: NidaStyle.iconControlSize)
+                        }
+                        .accessibilityLabel("Pengaturan").help("Pengaturan")
+                        Button { NSApplication.shared.terminate(nil) } label: {
+                            Image(systemName: "power")
+                                .frame(width: NidaStyle.iconControlSize, height: NidaStyle.iconControlSize)
+                        }
+                        .accessibilityLabel("Keluar").help("Keluar dari Nida")
+                    }
+                    .font(.system(size: 12)).buttonStyle(NidaButtonStyle())
                 }
                 .font(.system(size: 11)).foregroundStyle(NidaStyle.secondaryText)
-                HStack {
-                    Button("Pengaturan", systemImage: "gearshape") {
-                        NSApplication.shared.activate()
-                        openSettings()
+                if previewExpanded {
+                    HStack(spacing: 8) {
+                        Button { preview(.prayer) } label: {
+                            Text("Masuk waktu").frame(maxWidth: .infinity, minHeight: NidaStyle.controlHeight)
+                        }
+                        Button { preview(.followUp) } label: {
+                            Text("Pengingat kedua").frame(maxWidth: .infinity, minHeight: NidaStyle.controlHeight)
+                        }
                     }
-                    Spacer()
-                    Button("Keluar") { NSApplication.shared.terminate(nil) }
+                    .font(.system(size: 12)).buttonStyle(NidaButtonStyle())
                 }
-                .font(.system(size: 12)).buttonStyle(.plain)
-                .foregroundStyle(NidaStyle.secondaryText)
             }
-            .padding(.horizontal, 30).padding(.vertical, 16)
+            .padding(.horizontal, NidaStyle.panelInset).padding(.vertical, 12)
         }
         .frame(width: 384)
         .background { NidaGlassBackground(shape: Rectangle(), cornerRadius: 0) }
@@ -195,6 +215,7 @@ struct NidaSettings: View {
                     .font(.callout).foregroundStyle(.secondary)
             }
             Section("Tentang Nida") {
+                LabeledContent("Versi", value: "\(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—") (\(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "—"))")
                 LabeledContent("Minimum macOS", value: "26.0")
                 LabeledContent("Pengingat", value: "Aktif · Jeda \(controller.preferences.delayMinutes) menit")
                 Text("Preview tunda hanya menampilkan konfirmasi; tidak menjadwalkan pengingat.")
