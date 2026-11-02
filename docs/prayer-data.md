@@ -4,9 +4,9 @@ Issue: [#4](https://github.com/choiruladamm/nida/issues/4). Verified on 2026-11-
 
 ## Current feature boundary
 
-Settings provides searchable manual city selection, today's five real prayer times, source attribution, selected-city time zone, refresh, and stored coverage. The menu bar/notch reminder previews remain explicitly labeled demo data. Next-prayer and event calculations are documented in [prayer-timing.md](prayer-timing.md). Automated delivery and automatic location detection remain later issues.
+Settings provides searchable manual city selection, today's five real prayer times, source attribution, selected-city time zone, refresh, and stored coverage. The menu bar/notch reminder previews remain explicitly labeled demo data. Next-prayer and event calculations are documented in [prayer-timing.md](prayer-timing.md). Permission-based automatic location is documented in [location-setup.md](location-setup.md); automated delivery remains a later issue.
 
-No city is assumed from the laptop's location or from the Jakarta preview fixture. The user selects a supported city. Only the confirmed city/province/zone is persisted; no GPS coordinates or account are used.
+No city is assumed from the laptop's location or from the Jakarta preview fixture. The user selects a supported city or confirms a detected candidate. Only the confirmed city/province/zone is persisted; no precise coordinates are persisted and no account is used.
 
 ## Verified provider contract
 
@@ -71,6 +71,6 @@ These are sample comparisons, not validation of all cities/dates. Jakarta is a c
 - `make test`: deterministic provider, calendar/time-zone, cache, selection-race, and existing notch tests; no internet required.
 - `make data-smoke`: an opt-in live check through the signed sandboxed app. Fetches the catalog and current/next Jakarta months into a temporary directory, validates and saves them, restores them through an offline transport, then removes that directory. Does not change the selected city or persistent user cache.
 - Observed native live check: 517 cities, 61 validated days for November/December 2026, both months restored with offline transport.
-- Outgoing-network entitlement is explicitly declared; no location, incoming-network, or screen-capture permission was added.
+- Outgoing-network entitlement is explicitly declared. Location setup now also declares the sandbox location entitlement; no incoming-network or screen-capture permission is added.
 
 Tests cover malformed/failed payloads, wrong city/date/name, invalid/missing/reversed/equal times, unknown provinces, month/year/leap-day boundaries, offline fallback, missing coverage, corrupt cache/recovery, write failure, concurrent request coalescing, rate-limit cooldown, restored selection, and late selection responses. Native Settings interaction still needs manual user verification.

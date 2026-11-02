@@ -20,6 +20,7 @@ struct NidaApp: App {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let controller = NotchPanelController()
     let schedules = PrayerDataStore()
+    private var setupWindow: NSWindow?
 
     func applicationWillFinishLaunching(_ notification: Notification) {
         NSApplication.shared.setActivationPolicy(.accessory)
@@ -48,8 +49,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("--smoke-test") {
             controller.runSmokeCheck()
+            return
         }
         #endif
+        if !schedules.onboardingComplete { showLocationSetup() }
+    }
+
+    private func showLocationSetup() {
+        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 480, height: 440),
+                              styleMask: [.titled, .closable], backing: .buffered, defer: false)
+        window.title = "Selamat datang di Nida"
+        window.isReleasedWhenClosed = false
+        window.contentView = NSHostingView(rootView: LocationOnboardingView(store: schedules) { [weak window] in
+            window?.close()
+        })
+        setupWindow = window
+        window.center()
+        window.makeKeyAndOrderFront(nil)
+        NSApplication.shared.activate()
     }
 
     func applicationWillTerminate(_ notification: Notification) { controller.stop() }
@@ -129,7 +146,7 @@ struct PrototypeSettings: View {
         Form {
             Section("Nida") {
                 Text("Ambil jeda, kembali tenang.").font(.headline)
-                Text("Jadwal asli tersedia di bawah. Preview notch masih data contoh; pengingat otomatis dan deteksi lokasi belum aktif.")
+                Text("Jadwal asli tersedia di bawah. Preview notch masih data contoh; pengingat otomatis belum aktif.")
                     .foregroundStyle(.secondary)
             }
             PrayerDataSettings(store: schedules)
