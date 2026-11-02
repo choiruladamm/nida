@@ -12,6 +12,7 @@ struct PrayerDisplaySchedule: TimelineSchedule {
 struct ScheduleView: View {
     let store: PrayerDataStore
     var onClose: (() -> Void)?
+    @Environment(\.colorSchemeContrast) private var contrast
     private var isNotch: Bool { onClose != nil }
 
     var body: some View {
@@ -44,12 +45,12 @@ struct ScheduleView: View {
                         .lineLimit(1)
                     Text(date.formatted(Date.FormatStyle(locale: Locale(identifier: "id_ID"), timeZone: zone.timeZone)
                         .weekday(.abbreviated).day().month(.abbreviated)))
-                        .font(.system(size: 10)).foregroundStyle(NidaStyle.secondaryText)
+                        .font(.system(size: 11)).foregroundStyle(NidaStyle.secondaryText)
                 }
                 Spacer()
                 if let onClose {
-                    Button(action: onClose) { Image(systemName: "xmark").frame(width: 20, height: 20) }
-                        .accessibilityLabel("Tutup jadwal")
+                    Button(action: onClose) { Image(systemName: "xmark").frame(width: NidaStyle.iconControlSize, height: NidaStyle.iconControlSize) }
+                        .accessibilityLabel("Tutup jadwal").help("Tutup jadwal · Escape")
                 }
             }
             ScrollView {
@@ -83,18 +84,21 @@ struct ScheduleView: View {
                                     Circle().fill(selected ? NidaStyle.accent : .clear)
                                         .frame(width: 4, height: 4).accessibilityHidden(true)
                                 }
-                                .font(.system(size: 12, weight: selected ? .medium : .regular))
-                                .foregroundStyle(prayer.hasStarted(at: date) ? NidaStyle.secondaryText : NidaStyle.text)
-                                .opacity(prayer.hasStarted(at: date) ? 0.7 : 1)
+                                .font(.system(size: isNotch ? 12 : 13, weight: selected ? .semibold : .regular))
+                                .foregroundStyle(prayer.hasStarted(at: date) && contrast != .increased ? NidaStyle.secondaryText : NidaStyle.text)
                                 .padding(.horizontal, 10).frame(height: isNotch ? 26 : 30)
                                 .background(selected ? .black.opacity(0.12) : .clear,
                                             in: .rect(cornerRadius: NidaStyle.rowRadius))
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: NidaStyle.rowRadius)
+                                        .strokeBorder(selected && contrast == .increased ? NidaStyle.text : .clear, lineWidth: 1)
+                                }
                                 .accessibilityElement(children: .combine)
                                 .accessibilityValue(selected ? "Berikutnya" : prayer.hasStarted(at: date) ? "Sudah lewat" : "")
                             }
                         }
                         Text(PrayerMonth.attribution + " · " + zone.label)
-                            .font(.system(size: 10)).foregroundStyle(NidaStyle.secondaryText)
+                            .font(.system(size: 11)).foregroundStyle(NidaStyle.secondaryText)
                     } else if store.isRefreshing {
                         ProgressView("Memuat jadwal…").controlSize(.small)
                     } else {
@@ -103,7 +107,7 @@ struct ScheduleView: View {
                     }
                     if let message = store.message {
                         Text((snapshot?.hasToday == true ? "Jadwal tetap ditampilkan · " : "") + message)
-                            .font(.system(size: 10)).foregroundStyle(NidaStyle.secondaryText)
+                            .font(.system(size: 11)).foregroundStyle(NidaStyle.secondaryText)
                     }
                 }
             }
@@ -111,17 +115,17 @@ struct ScheduleView: View {
             HStack {
                 if store.isRefreshing { ProgressView().controlSize(.mini) }
                 else {
-                    Button { Task { await store.refresh() } } label: { Image(systemName: "arrow.clockwise") }
-                        .disabled(store.location == nil).accessibilityLabel("Perbarui jadwal")
+                    Button { Task { await store.refresh() } } label: { Image(systemName: "arrow.clockwise").frame(width: NidaStyle.iconControlSize, height: NidaStyle.iconControlSize) }
+                        .disabled(store.location == nil).accessibilityLabel("Perbarui jadwal").help("Perbarui jadwal")
                 }
                 Spacer()
-                SettingsLink { Image(systemName: "gearshape") }
+                SettingsLink { Image(systemName: "gearshape").frame(width: NidaStyle.iconControlSize, height: NidaStyle.iconControlSize) }
                     .simultaneousGesture(TapGesture().onEnded { NSApplication.shared.activate() })
-                    .accessibilityLabel("Pengaturan dan pilihan kota")
+                    .accessibilityLabel("Pengaturan dan pilihan kota").help("Pengaturan dan pilihan kota")
             }
             .font(.system(size: 12))
         }
-        .buttonStyle(.glass).buttonBorderShape(.circle).tint(.clear)
+        .buttonStyle(NidaButtonStyle()).tint(.clear)
         .padding(.horizontal, isNotch ? 30 : 24).padding(.vertical, 12)
         .task(id: ScheduleMonth.dateKey(date, in: zone)) { await store.restoreAndRefresh() }
     }

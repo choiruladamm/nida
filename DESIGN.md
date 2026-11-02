@@ -22,12 +22,12 @@ Source of truth in code: `Nida/NidaStyle.swift`.
 | Section spacing | Menu: 20 pt; compact notch: 12 pt |
 | Surface corners | Custom 10 pt concave shoulders joining the screen edge, 26 pt lower curves |
 | Selected prayer row | Continuous 14 pt radius |
-| Controls | Native glass pills and circular icon controls; approximately 34 pt label height |
+| Controls | Shared NidaButtonStyle: off-white primary, neutral native glass secondary, opaque fallback; 34 pt action height and 28 pt icon targets |
 | Type | System SF, default design; regular body, medium/semibold titles |
 | Prayer/time headline | Menu: 26 / 30 pt; notch: 21 / 26 pt, monospaced time digits |
-| Body/supporting type | 12–13 pt / 10–12 pt |
+| Body/supporting type | 12–13 pt / 11–12 pt |
 
-Colors are approximated from the supplied image, not an official Apple token specification. Native compositor materials vary with desktop content and OS accessibility settings.
+Colors are approximated from the supplied image, not an official Apple token specification. Native compositor materials vary with desktop content and OS accessibility settings. Automated sRGB contrast checks cover the solid primary and opaque fallback palettes only; they do not certify transparent glass over arbitrary wallpaper.
 
 ## Surface rules
 
@@ -47,8 +47,14 @@ Colors are approximated from the supplied image, not an official Apple token spe
 
 ## Motion and accessibility
 
-Expand from the notch with a restrained, interruptible spring (initial tuning: 0.28 seconds, 0.12 bounce). Keep native press/focus feedback. Reduce Motion uses a brief transition; Reduce Transparency and Increase Contrast use an opaque surface. Keyboard and VoiceOver labels remain functional.
+Expand from the notch with a restrained, interruptible spring (baseline tuning: 0.26 seconds, 0.08 bounce). Keep native press/focus feedback. Reduce Motion uses a brief transition; Reduce Transparency and Increase Contrast use an opaque surface. Keyboard activity refreshes reminder dismissal; Escape still dismisses. Native button focus effects remain enabled. Reminder title/subtitle are grouped for VoiceOver, and icon controls include labels and help text.
 
 ## Validation boundary
 
 The prototype builds and its geometry/state tests run on the development Mac. Actual glass, corner treatment, hover, button appearance, and motion still require owner review on hardware. App-view raster caches do not faithfully capture native compositor effects and are not accepted as visual approval.
+
+## Polish implementation (#10)
+
+NidaButtonStyle consolidates secondary/primary action and icon colors, press opacity without text scaling, native glass feedback, and opaque bordered controls under Reduce Transparency/Increase Contrast. The schedule keeps elapsed text readable without a second opacity reduction; selected rows get a border in Increase Contrast. Date/source/reminder disclosure text is at least 11 pt.
+
+The outer notch silhouette, camera clearance, collapsed hit region, and shared schedule/store remain unchanged. No black camera cap, ornamental accent fill, stagger, or continuous animation is added. Native appearance fitting tests and contrast checks do not establish owner visual approval. Hardware finish checks remain in #11.

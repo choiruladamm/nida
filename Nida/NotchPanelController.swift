@@ -55,9 +55,12 @@ final class NotchPanelController: NSObject {
         }
         localMonitor = NSEvent.addLocalMonitorForEvents(matching: events.union(.keyDown)) { [weak self] event in
             let handled = MainActor.assumeIsolated {
-                if event.type == .keyDown, event.keyCode == 53, self?.panel?.isKeyWindow == true {
-                    self?.dismissReminder()
-                    return true
+                if event.type == .keyDown, self?.panel?.isKeyWindow == true {
+                    if event.keyCode == 53 {
+                        self?.dismissReminder()
+                        return true
+                    }
+                    self?.armDismissal()
                 }
                 self?.handlePointer(event)
                 return false

@@ -41,14 +41,17 @@ struct NotchGeometryTests {
 }
 
 @MainActor struct PrototypeTests {
-    @Test func compactScheduleFitsBelowTheCamera() {
+    @Test(arguments: [false, true])
+    func compactScheduleFitsBelowTheCamera(highContrastAppearance: Bool) {
         let geometry = NotchGeometry(screenFrame: CGRect(x: 0, y: 0, width: 1470, height: 956),
                                      cameraWidth: 179, cameraHeight: 32)
         let size = geometry.size(for: .schedule)
         let suite = "nida-fit-" + UUID().uuidString
         let defaults = UserDefaults(suiteName: suite)!
         defer { defaults.removePersistentDomain(forName: suite) }
-        let host = NSHostingView(rootView: ScheduleView(store: PrayerDataStore(defaults: defaults), onClose: {}).frame(width: size.width))
+        let host = NSHostingView(rootView: ScheduleView(store: PrayerDataStore(defaults: defaults), onClose: {})
+            .frame(width: size.width))
+        host.appearance = NSAppearance(named: highContrastAppearance ? .accessibilityHighContrastDarkAqua : .darkAqua)
         #expect(host.fittingSize.height <= size.height - geometry.cameraHeight)
     }
 
@@ -81,5 +84,37 @@ struct NotchGeometryTests {
         #expect(PreviewState.followUp.autoDismissSeconds == 18)
         #expect(PreviewState.schedule.autoDismissSeconds == nil)
         #expect(PreviewState.collapsed.autoDismissSeconds == nil)
+    }
+}
+
+@MainActor struct ContrastTests {
+    private func luminance(_ color: Color) throws -> Double {
+        let rgb = try #require(NSColor(color).usingColorSpace(.sRGB))
+        func linear(_ value: CGFloat) -> Double {
+            let component = Double(value)
+            return component <= 0.04045 ? component / 12.92 : pow((component + 0.055) / 1.055, 2.4)
+        }
+        return 0.2126 * linear(rgb.redComponent) + 0.7152 * linear(rgb.greenComponent) + 0.0722 * linear(rgb.blueComponent)
+    }
+
+    @Test func opaqueButtonAndAccessibilitySurfaceHaveReadableText() throws {
+        let main = try luminance(NidaStyle.text)
+        let ink = try luminance(NidaStyle.surface)
+        let fallback = try luminance(NidaStyle.opaqueGlass)
+        let supporting = try luminance(NidaStyle.secondaryText)
+        #expect((main + 0.05) / (ink + 0.05) >= 7)
+        #expect((main + 0.05) / (fallback + 0.05) >= 4.5)
+        #expect((supporting + 0.05) / (fallback + 0.05) >= 4.5)
+    }
+
+    @Test(arguments: [false, true], [false, true])
+    func iconButtonKeepsItsTargetWithAccessibleStyles(prominent: Bool, highContrastAppearance: Bool) {
+        let host = NSHostingView(rootView: Button(action: {}) {
+            Image(systemName: "xmark").frame(width: NidaStyle.iconControlSize, height: NidaStyle.iconControlSize)
+        }
+        .buttonStyle(NidaButtonStyle(prominent: prominent)))
+        host.appearance = NSAppearance(named: highContrastAppearance ? .accessibilityHighContrastDarkAqua : .darkAqua)
+        #expect(host.fittingSize.width >= 28)
+        #expect(host.fittingSize.height >= 28)
     }
 }

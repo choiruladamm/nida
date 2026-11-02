@@ -76,3 +76,7 @@ The pure timing engine also produces stable entry/follow-up/snooze events with d
 Open **Pengaturan** to choose the follow-up delay, enable the short sound, or register Nida to open at login. Invalid delay input leaves the last saved value unchanged. Started follow-ups and explicit snoozes keep their original times; new prayer occurrences use the new delay.
 
 Login registration reflects macOS status and can require approval in System Settings. Keep the app at a stable installed path before enabling it. Preview buttons remain visual-only and do not affect real delivery; **Coba suara** auditions audio only when sound is enabled. See [settings contract and manual checks](docs/reminder-preferences.md).
+
+## Accessibility and motion
+
+Notch controls share explicit contrasting primary/secondary colors, native glass feedback, larger icon targets, and an opaque fallback for Reduce Transparency/Increase Contrast. Increase Contrast also outlines the next prayer; elapsed rows retain readable text. Reduce Motion disables panel size animation. Keyboard activity refreshes the reminder timeout, and Escape/outside-click dismissal is retained. Visual, keyboard, VoiceOver, and wallpaper checks remain part of the final hardware gate in #11.
