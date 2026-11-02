@@ -1,6 +1,12 @@
 # UI revision history and skill provenance
 
 
+## Notch motion follow-up — 2026-11-02
+
+The retained Dynamic Island-inspired approach animates the shell independently from content fades. Expansion uses spring response 0.4/damping 0.82; collapse uses smooth 0.24 s. Content reveals over 0.18 s after 0.06 s and hides over 0.1 s. A local private `NotchMotion` helper centralizes timing and Reduce Motion behavior. Measured expanded heights are retained per panel state; first opening still relies on natural layout until measured. No shimmer or staged unfold remains.
+
+`find-skills` searched animation options; installed SwiftUI Expert and Emil Design Engineering guidance were sufficient, so no additional skill or package was installed. References: [Apple Live Activities](https://developer.apple.com/design/human-interface-guidelines/live-activities) and [NotchKit motion notes](https://github.com/duongductrong/NotchKit/blob/master/docs/motion.md). This is an adaptation for the Mac camera silhouette, not a reproduction of private iOS system animation. First/repeated opens, rapid reversal, changing content/language and accessibility toggles remain hardware checks.
+
 ## Compact menu experiment — 2026-11-02
 
 The final local menu iteration retains next prayer as the hero, puts its countdown beside the caption, groups five icon-led rows, and consolidates refresh with Settings/Quit. Width is 340 pt; footer bottom inset is 16 pt after owner feedback. Menu highlights and notch dots now follow the macOS control accent. A proposed latest-prayer context line was tried and removed as redundant at the owner's request.

@@ -3,6 +3,7 @@ import SwiftUI
 struct NotchView: View {
     let model: PrototypeModel
     let controller: NotchPanelController
+    @State private var contentHeights: [PreviewState: CGFloat] = [:]
     @Environment(\.locale) private var locale
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
@@ -41,15 +42,19 @@ struct NotchView: View {
                 } else {
                     expandedPanel
                         .fixedSize(horizontal: false, vertical: true)
-                        .transition(.opacity)
+                        .onGeometryChange(for: CGFloat.self, of: { $0.size.height }) { height in
+                            guard model.state != .collapsed else { return }
+                            contentHeights[model.state] = height
+                        }
+                        .transition(NotchMotion.contentTransition(reduceMotion: reduceMotion))
                 }
             }
         }
-        .frame(width: size.width, height: model.state == .collapsed ? size.height : nil, alignment: .top)
+        .frame(width: size.width, height: model.state == .collapsed ? size.height : contentHeights[model.state], alignment: .top)
         .onGeometryChange(for: CGFloat.self, of: { $0.size.height }) { height in
             controller.updatePanelHeight(height)
         }
-        .background { surface }
+        .background { surface.opacity(model.state == .collapsed ? 0 : 1) }
         .clipShape(NotchSilhouette())
         .overlay {
             if model.state != .collapsed {
@@ -64,13 +69,12 @@ struct NotchView: View {
         }
         .shadow(color: .black.opacity(model.state == .collapsed ? 0 : 0.14), radius: 16, x: 0, y: 8)
         .onHover { controller.setHovering($0) }
-        .animation(reduceMotion ? nil : .spring(duration: 0.26, bounce: 0.08),
-                   value: model.state)
+        .animation(NotchMotion.panelAnimation(isCollapsed: model.state == .collapsed,
+                                              reduceMotion: reduceMotion), value: model.state)
     }
 
     @ViewBuilder private var surface: some View {
-        if model.state == .collapsed { Color.clear }
-        else if reduceTransparency || contrast == .increased { Color.black }
+        if reduceTransparency || contrast == .increased { Color.black }
         else {
             ZStack {
                 NidaGlassBackground(shape: NotchSilhouette(), cornerRadius: 0)
@@ -227,5 +231,20 @@ struct NidaGlassBackground<S: Shape>: View {
             DesktopGlass(cornerRadius: cornerRadius).clipShape(shape)
                 .allowsHitTesting(false).accessibilityHidden(true)
         }
+    }
+}
+
+private enum NotchMotion {
+    static func panelAnimation(isCollapsed: Bool, reduceMotion: Bool) -> Animation? {
+        guard !reduceMotion else { return nil }
+        return isCollapsed ? .smooth(duration: 0.24) : .spring(response: 0.4, dampingFraction: 0.82)
+    }
+
+    static func contentTransition(reduceMotion: Bool) -> AnyTransition {
+        guard !reduceMotion else { return .identity }
+        return .asymmetric(
+            insertion: .opacity.animation(.easeOut(duration: 0.18).delay(0.06)),
+            removal: .opacity.animation(.easeOut(duration: 0.1))
+        )
     }
 }

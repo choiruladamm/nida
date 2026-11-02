@@ -2,6 +2,10 @@
 
 Release gate: [issue #11](https://github.com/choiruladamm/nida/issues/11), following merged PR #19. Hardware acceptance remains open.
 
+## Notch motion follow-up verification — 2026-11-02
+
+`make test` passed 89 tests in 14 suites; `make build` passed Debug; `make smoke` passed with a 1470 × 956 pt screen and 179 × 32 pt camera (visible panel, frontmost preserved, non-key, delivery session available). `git diff --check` passed. Logs: `/tmp/nida-motion-test.log`, `/tmp/nida-motion-build.log`, `/tmp/nida-motion-smoke.log`. These checks do not prove first/repeated-open motion quality, rapid reversal, content/language changes, accessibility toggles or the broader hardware matrix. No release artifact was produced.
+
 ## Design-token cleanup verification — 2026-11-02
 
 After removing four unreferenced style constants and two no-op padding modifiers, `make test` passed all 89 tests in 14 suites and `make build` passed Debug. `git diff --check` passed. DESIGN.md now maps only active tokens and distinguishes menu/notch selection treatments. Logs: `/tmp/nida-cleanup-test.log` and `/tmp/nida-cleanup-build.log`. Smoke/hardware checks were not repeated for this cleanup.
