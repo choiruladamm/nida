@@ -1,6 +1,12 @@
 # UI revision history and skill provenance
 
 
+## Compact menu experiment — 2026-11-02
+
+The final local menu iteration retains next prayer as the hero, puts its countdown beside the caption, groups five icon-led rows, and consolidates refresh with Settings/Quit. Width is 340 pt; footer bottom inset is 16 pt after owner feedback. Menu highlights and notch dots now follow the macOS control accent. A proposed latest-prayer context line was tried and removed as redundant at the owner's request.
+
+The same macOS Design Guidelines, SwiftUI Expert and Emil Design Engineering guidance informed these iterations. `grilling` (invoked through `grill-me`) supported the one-question-at-a-time content discussion; it introduced no retained extra content. No dependency was added. The owner reviewed successive running screenshots. Build, tests and smoke were intentionally not rerun for this follow-up at the owner's request; earlier passing evidence applies to the preceding commit only.
+
 ## Accepted three-panel notch revamp — 2026-11-02
 
 Tracked in [#25](https://github.com/choiruladamm/nida/issues/25). The owner iterated on real running previews and supplied screenshots, then explicitly accepted the result after the final shoulder and horizontal-padding adjustments. The accepted scope is prayer time, personal follow-up and today's notch schedule. [DESIGN.md](../DESIGN.md) is the current visual specification; earlier contracts below describe prior iterations.

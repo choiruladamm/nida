@@ -39,7 +39,7 @@ struct ScheduleView: View {
     private func content(at date: Date, timeline: PrayerTimeline?) -> some View {
         let snapshot = timeline?.snapshot(at: date)
         let zone = store.location?.zone ?? .west
-        return VStack(spacing: 12) {
+        return VStack(spacing: isNotch ? 12 : 8) {
             HStack(spacing: 12) {
                 Text(store.displayCityName ?? "Nida")
                     .font(.system(size: isNotch ? 11 : 12, weight: .medium))
@@ -57,28 +57,36 @@ struct ScheduleView: View {
                         .accessibilityLabel("Buka jadwal di notch").help("Buka jadwal di notch")
                 }
             }
-            VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: isNotch ? 14 : 10) {
                 if let next = snapshot?.next {
+                    let countdown = HStack(spacing: 5) {
+                        Image(systemName: "clock").font(.system(size: 10)).accessibilityHidden(true)
+                        Text("Dalam")
+                        Text(next.startsAt, style: .timer).monospacedDigit()
+                            .accessibilityLabel("Sisa waktu menuju sholat berikutnya")
+                            .accessibilityValue(Text(next.startsAt, style: .timer))
+                    }
+                    .font(.system(size: isNotch ? 12 : 11)).foregroundStyle(NidaStyle.secondaryText)
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Berikutnya").font(.system(size: 11, weight: .medium))
-                            .foregroundStyle(NidaStyle.secondaryText)
+                        HStack {
+                            Text("Berikutnya").font(.system(size: 11, weight: .medium))
+                                .foregroundStyle(NidaStyle.secondaryText)
+                            if !isNotch {
+                                Spacer()
+                                countdown
+                            }
+                        }
                         HStack(alignment: .firstTextBaseline) {
                             let tomorrow = next.id.dateKey != ScheduleMonth.dateKey(date, in: zone)
                             Text((tomorrow ? LocalizedStringResource("\(next.id.prayer.label.localized(in: locale)) · besok") : next.id.prayer.label).localized(in: locale))
-                                .font(.system(size: isNotch ? 26 : 24, weight: .semibold))
+                                .font(.system(size: isNotch ? 26 : 22, weight: .semibold))
                             Spacer()
                             Text(next.wallTime).monospacedDigit()
-                                .font(.system(size: isNotch ? 32 : 28, weight: .regular))
+                                .font(.system(size: isNotch ? 32 : 30, weight: .regular))
                         }
-                        HStack(spacing: 5) {
-                            Image(systemName: "clock").font(.system(size: 10)).accessibilityHidden(true)
-                            Text("Dalam")
-                            Text(next.startsAt, style: .timer).monospacedDigit()
-                                .accessibilityLabel("Sisa waktu menuju sholat berikutnya")
-                                .accessibilityValue(Text(next.startsAt, style: .timer))
-                        }
-                        .font(.system(size: 12)).foregroundStyle(NidaStyle.secondaryText)
+                        if isNotch { countdown }
                     }
+                    .padding(.vertical, isNotch ? 0 : 2)
                 } else if snapshot?.hasToday == true {
                     Text("Jadwal Subuh besok belum tersedia.").font(.callout)
                 }
@@ -97,34 +105,51 @@ struct ScheduleView: View {
                                     }
                                     .frame(maxWidth: .infinity)
                                 } else {
-                                    HStack {
+                                    HStack(spacing: 10) {
+                                        Image(systemName: prayerSymbol(prayer.id.prayer))
+                                            .font(.system(size: 13, weight: .medium))
+                                            .foregroundStyle(selected ? NidaStyle.accent : NidaStyle.secondaryText)
+                                            .frame(width: 22)
+                                            .accessibilityHidden(true)
                                         Text(prayer.id.prayer.label.localized(in: locale))
                                         Spacer()
                                         Text(prayer.wallTime).monospacedDigit()
                                     }
+                                    .padding(.horizontal, 12)
                                 }
                             }
                             .font(.system(size: 13, weight: selected ? .semibold : .regular))
                             .foregroundStyle(prayer.hasStarted(at: date) && contrast != .increased ? NidaStyle.secondaryText : NidaStyle.text)
-                            .frame(height: isNotch ? 62 : 30)
+                            .frame(height: isNotch ? 62 : 29)
                             .background {
                                 RoundedRectangle(cornerRadius: isNotch ? 12 : NidaStyle.rowRadius)
-                                    .fill(selected ? .white.opacity(0.08) : .clear)
-                                    .padding(.horizontal, isNotch ? 0 : -10)
+                                    .fill(selected ? (isNotch ? Color.white.opacity(0.08) : NidaStyle.accent.opacity(0.13)) : .clear)
+                                    .padding(.horizontal, 0)
                             }
                             .overlay {
                                 RoundedRectangle(cornerRadius: isNotch ? 12 : NidaStyle.rowRadius)
                                     .strokeBorder(selected && contrast == .increased ? NidaStyle.text : .clear, lineWidth: 1)
-                                    .padding(.horizontal, isNotch ? 0 : -10)
+                                    .padding(.horizontal, 0)
                             }
                             .overlay(alignment: isNotch ? .bottom : .trailing) {
-                                Circle().fill(selected ? NidaStyle.accent : .clear)
+                                Circle().fill(selected && isNotch ? NidaStyle.accent : .clear)
                                     .frame(width: 4, height: 4)
                                     .offset(x: isNotch ? 0 : 12, y: isNotch ? -5 : 0)
                                     .accessibilityHidden(true)
                             }
                             .accessibilityElement(children: .combine)
                             .accessibilityValue(Text(selected ? LocalizedStringKey("Berikutnya") : prayer.hasStarted(at: date) ? LocalizedStringKey("Sudah lewat") : LocalizedStringKey("")))
+                        }
+                    }
+                    .padding(isNotch ? 0 : 4)
+                    .background {
+                        if !isNotch {
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(.black.opacity(0.12))
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .strokeBorder(.white.opacity(contrast == .increased ? 0.5 : 0.07), lineWidth: 1)
+                                }
                         }
                     }
                 } else if store.isRefreshing {
@@ -144,8 +169,6 @@ struct ScheduleView: View {
                     .help(message.localized(in: locale))
             }
             HStack(spacing: 8) {
-                if !isNotch { refreshButton }
-                if !isNotch { Spacer(minLength: 8) }
                 Text(PrayerMonth.attribution + " · " + zone.label)
                     .font(.system(size: 11)).foregroundStyle(NidaStyle.secondaryText)
                     .lineLimit(1)
@@ -165,9 +188,19 @@ struct ScheduleView: View {
             .font(.system(size: 12))
         }
         .buttonStyle(NidaButtonStyle(flat: isNotch)).tint(.clear)
-        .padding(.horizontal, isNotch ? NidaStyle.notchHorizontalInset : 20)
-        .padding(.top, isNotch ? 12 : 20).padding(.bottom, 20)
+        .padding(.horizontal, isNotch ? NidaStyle.notchHorizontalInset : 16)
+        .padding(.top, isNotch ? 12 : 10).padding(.bottom, isNotch ? 20 : 6)
         .task(id: ScheduleMonth.dateKey(date, in: zone)) { await store.restoreAndRefresh() }
+    }
+
+    private func prayerSymbol(_ prayer: PrayerKind) -> String {
+        switch prayer {
+        case .subuh: "sunrise"
+        case .dzuhur: "sun.max"
+        case .ashar: "sun.haze"
+        case .maghrib: "sunset"
+        case .isya: "moon.stars"
+        }
     }
 
     private var refreshButton: some View {

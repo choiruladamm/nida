@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Compact the glass menu into a 340 pt layout with grouped prayer icons, consolidated actions and native macOS accent highlights.
+
 - Revamp prayer-time, follow-up and today's notch schedule with camera wings, natural content height, a horizontal five-prayer strip, rounded black/glass surfaces and delayed hover access.
 - Refine menu spacing, Settings transitions/system accent/scroll backing, and the rounded native-glass city picker.
 - Apply explicitly requested current location without another confirmation; persist concise Jakarta district display names while preserving provider API/cache IDs.

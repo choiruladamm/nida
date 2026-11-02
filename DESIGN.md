@@ -2,7 +2,7 @@
 
 ## Visual direction
 
-Nida is a quiet macOS prayer reminder. The notch feels like an extension of the camera: black at the screen edge, softly rounded below, with a restrained hint of glass at its lower boundary. The menu and Settings use frosted neutral glass and native macOS controls. Off-white system typography carries the hierarchy; pale lime is reserved for the next prayer.
+Nida is a quiet macOS prayer reminder. The notch feels like an extension of the camera: black at the screen edge, softly rounded below, with a restrained hint of glass at its lower boundary. The menu and Settings use frosted neutral glass and native macOS controls. Off-white system typography carries the hierarchy; the native macOS accent identifies the next prayer.
 
 This document defines the current design, not the revision history. The owner accepted the three-panel notch revamp on 2026-11-02. See [revision decisions and skill provenance](docs/ui-revision-plan.md) and [verification status](docs/mvp-verification.md) for history and evidence.
 
@@ -15,7 +15,7 @@ This document defines the current design, not the revision history. The owner ac
 | Lower edge | 0.75 pt white stroke, fading in from 40% of panel height to 18% opacity at the bottom | Defines one quiet outer contour |
 | Primary text | Warm off-white, approximately #F6F6F2 | Headlines, prayer times and active labels |
 | Supporting text | Warm off-white, approximately #E6E6DE | Metadata, countdowns, source and disclosures |
-| Next-prayer accent | Pale lime, approximately #C9DCAA | A single 4 pt selection dot |
+| Next-prayer accent | Native macOS control accent | Notch selection dot; menu selected icon and 13% accent fill |
 | Selected prayer | 8% white fill | Quiet emphasis within the schedule |
 | Primary reminder action | Solid off-white capsule, dark text | Makes the explicit five-minute snooze easy to find |
 | Secondary notch action | 10% white capsule | Supports dismissal and utility controls |
@@ -74,7 +74,7 @@ Use the same header and name/time hierarchy. The large time remains the original
 
 ### Today's schedule
 
-Calendar in the left wing; city-local date in the right wing. No X button. Below: city name, next-prayer caption, prayer/time headline and countdown. All five prayers form one horizontal strip with equal-width cells. The selected cell has a subtle rounded fill and a dot below its time. Elapsed cells use supporting text without another opacity reduction.
+Calendar in the left wing; city-local date in the right wing. No X button. Below: city name, next-prayer caption, prayer/time headline and countdown. All five prayers form one horizontal strip with equal-width cells. The selected cell has a subtle rounded fill and a system-accent dot below its time. Elapsed cells use supporting text without another opacity reduction.
 
 The footer puts source/time zone on the left and refresh/Settings controls on the right. Refresh becomes a mini spinner and disables repeat clicks while loading. A bounded, wrapping error appears above the footer while valid cached content stays visible. Missing-city, loading and missing-schedule states remain actionable. The notch schedule has no internal scroll container.
 
@@ -88,7 +88,7 @@ Transitions use an interruptible 0.26 second spring with 0.08 bounce. Reduce Mot
 
 ## Menu and Settings
 
-The menu retains a vertical five-row schedule, 24/28 pt prayer/time headline, and 20 pt content padding on all sides. Its preview expansion and Settings/Quit controls align with the schedule. Do not apply the notch's camera inset or horizontal strip to this surface.
+The menu is 340 pt wide with 16 pt horizontal insets. Its open hero keeps the next-prayer caption and countdown on one line above a 22/30 pt prayer/time headline. Five 29 pt rows sit in a rounded 20 pt group with 4 pt internal padding, prayer-specific SF Symbols and a system-accent selected row. Attribution sits below the group. The inset footer combines preview disclosure with refresh, Settings and Quit; expanded preview actions follow beneath. Footer padding is 6 pt above and 16 pt below. Schedule content uses 10 pt top and 6 pt bottom padding, with 8–10 pt group gaps. Do not apply the notch's camera inset or horizontal strip to this surface. Avoid redundant last-prayer context beneath the hero.
 
 Settings uses a native grouped Form, native window controls and default Form spacing. Controls follow the system accent. Titlebar backing is transparent at the top of the scroll; a 25% black backing appears after scrolling down. The city picker shares the glass backing, with a rounded search field, inset list and capsule glass actions.
 

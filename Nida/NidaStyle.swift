@@ -7,7 +7,7 @@ enum NidaStyle {
     static let raised = Color(red: 0.278, green: 0.282, blue: 0.251)
     static let text = Color(red: 0.965, green: 0.965, blue: 0.949)
     static let secondaryText = Color(red: 0.90, green: 0.90, blue: 0.87)
-    static let accent = Color(red: 0.788, green: 0.863, blue: 0.667)
+    static var accent: Color { Color(nsColor: .controlAccentColor) }
     static let hairline = Color.white.opacity(0.12)
 
     static let panelInset: CGFloat = 24
