@@ -4,8 +4,6 @@ struct NotchView: View {
     let model: PrototypeModel
     let controller: NotchPanelController
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
-    @Environment(\.colorSchemeContrast) private var contrast
 
     var body: some View {
         let size = model.geometry.size(for: model.state)
@@ -35,8 +33,8 @@ struct NotchView: View {
                             ScheduleView(store: controller.schedules, onClose: { controller.show(.collapsed) })
                         } else {
                             reminder
-                                .padding(.horizontal, NidaStyle.panelInset + 10)
-                                .padding(.top, 16)
+                                .padding(.horizontal, 30)
+                                .padding(.top, 20)
                         }
                         Spacer(minLength: 0)
                     }
@@ -59,15 +57,8 @@ struct NotchView: View {
     }
 
     @ViewBuilder private var surface: some View {
-        if model.state == .collapsed {
-            Color.clear
-        } else if reduceTransparency || contrast == .increased {
-            NidaStyle.opaqueGlass
-        } else {
-            Color.white.opacity(0.08)
-                .background { DesktopMaterial() }
-                .glassEffect(.regular.tint(.white.opacity(0.08)), in: NotchSilhouette())
-        }
+        if model.state == .collapsed { Color.clear }
+        else { NidaGlassBackground(shape: NotchSilhouette(), cornerRadius: 0) }
     }
 
     private var reminderSubtitle: String {
@@ -88,15 +79,15 @@ struct NotchView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: NidaStyle.groupGap) {
                 Image(systemName: "moon.stars.fill")
-                    .font(.system(size: 22, weight: .regular))
+                    .font(.system(size: 20, weight: .regular))
                     .foregroundStyle(NidaStyle.text)
-                    .frame(width: 40, height: 40)
+                    .frame(width: 36, height: 36)
                     .background(.white.opacity(0.08), in: .circle)
                     .overlay { Circle().strokeBorder(NidaStyle.hairline, lineWidth: 0.5) }
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 5) {
                     Text(model.state == .prayer ? "Waktunya \(model.reminder?.id.occurrence.prayer.label ?? "Ashar")" : "Yuk, sholat dulu")
-                        .font(.system(size: 18, weight: .medium))
+                        .font(.system(size: 18, weight: .semibold))
                     Text(reminderSubtitle)
                         .font(.system(size: 12))
                         .foregroundStyle(NidaStyle.secondaryText)
@@ -138,16 +129,34 @@ struct NotchView: View {
     }
 }
 
-// SwiftUI glass samples the view hierarchy; this material also blurs the desktop behind our window.
-struct DesktopMaterial: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let view = NSVisualEffectView()
-        view.material = .popover
-        view.blendingMode = .behindWindow
-        view.state = .active
+// AppKit's glass view samples the desktop directly, without stacking a popover blur beneath it.
+struct DesktopGlass: NSViewRepresentable {
+    var cornerRadius: CGFloat = 26
+    func makeNSView(context: Context) -> NSGlassEffectView {
+        let view = NSGlassEffectView()
+        view.style = .regular
+        view.cornerRadius = cornerRadius
+        view.tintColor = NSColor.white.withAlphaComponent(0.08)
+        view.contentView = NSView()
         view.appearance = NSAppearance(named: .darkAqua)
         return view
     }
 
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
+    func updateNSView(_ nsView: NSGlassEffectView, context: Context) { nsView.cornerRadius = cornerRadius }
+}
+
+struct NidaGlassBackground<S: Shape>: View {
+    let shape: S
+    var cornerRadius: CGFloat = 26
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
+
+    var body: some View {
+        if reduceTransparency || contrast == .increased {
+            shape.fill(NidaStyle.opaqueGlass).allowsHitTesting(false).accessibilityHidden(true)
+        } else {
+            DesktopGlass(cornerRadius: cornerRadius).clipShape(shape)
+                .allowsHitTesting(false).accessibilityHidden(true)
+        }
+    }
 }

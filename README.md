@@ -80,3 +80,7 @@ Login registration reflects macOS status and can require approval in System Sett
 ## Accessibility and motion
 
 Notch controls share explicit contrasting primary/secondary colors, native glass feedback, larger icon targets, and an opaque fallback for Reduce Transparency/Increase Contrast. Increase Contrast also outlines the next prayer; elapsed rows retain readable text. Reduce Motion disables panel size animation. Keyboard activity refreshes the reminder timeout, and Escape/outside-click dismissal is retained. Visual, keyboard, VoiceOver, and wallpaper checks remain part of the final hardware gate in #11.
+
+## Native design review (Debug)
+
+The latest material/layout revision uses AppKit Liquid Glass and unified native Settings chrome. See [revision plan and review findings](docs/ui-revision-plan.md). With the normal app stopped, Debug builds accept `--review-menu`, `--review-settings`, `--review-notch`, or `--review-follow-up` to inspect the production views without starting real delivery. Menu/Settings use native review hosts; the notch uses its actual panel. Screen capture requires the user's OS permission and an unlocked session.

@@ -54,3 +54,7 @@ The owner supplied real screenshots of the widened collapsed pill and oversized 
 ## Polish follow-up (#10)
 
 Shared action/icon styling now preserves explicit text contrast in non-key panels, uses opaque high-contrast/transparency fallbacks, and keeps 28 pt icon targets. Supporting text is at least 11 pt; elapsed schedule rows no longer have a second opacity reduction. The spring baseline is 0.26 seconds / 0.08 bounce; Reduce Motion removes panel size animation. Keyboard activity resets the existing dismissal interval. The physical notch shape and collapsed hit area are unchanged. These implementation changes do not close pending visual/input/display hardware checks; they are consolidated in #11.
+
+## Subsequent material/layout revision
+
+Owner feedback expanded the schedule to 384 × 392 pt on the 179 × 32 pt camera display (360 pt content). The collapsed region is unchanged. NSGlassEffectView now supplies the desktop glass directly; Settings extends the same material through a unified native titlebar. Current layout/material evidence is in `docs/ui-revision-plan.md`; earlier dimensions above are historical prototype measurements.
