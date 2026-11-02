@@ -44,7 +44,7 @@ final class NotchPanelController: NSObject {
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary]
         panel.animationBehavior = .none
         panel.onEscape = { [weak self] in self?.dismissReminder() }
-        panel.contentView = NSHostingView(rootView: NotchView(model: model, controller: self))
+        panel.contentView = NSHostingView(rootView: NotchView(model: model, controller: self).appLanguage(preferences))
         self.panel = panel
         updatePointerPassthrough()
         panel.orderFrontRegardless()

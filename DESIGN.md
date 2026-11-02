@@ -89,6 +89,8 @@ Preview copy explicitly says “Preview · Data contoh”; real follow-ups expla
 
 ## Motion, controls, and accessibility
 
+Settings begins with a native app-language picker offering self-named Bahasa Indonesia / English choices. Indonesian is the default; all SwiftUI scenes and AppKit hosting roots share the same observable preference. Language changes update copy without resetting views or reminder services. Both catalogs retain the existing type hierarchy and compact insets; five prayer rows stay visible without a scroll container. City names, source identity, zones and 24-hour prayer times remain provider/domain data. See [language selection](docs/language-selection.md) for OS-owned dialog limits and verification.
+
 State changes use an interruptible spring with 0.26 second duration and 0.08 bounce. Reduce Motion disables that explicit state animation. Avoid decorative stagger, perpetual motion, text scaling on press, and extra glow.
 
 `NidaButtonStyle` keeps text colors explicit even when the panel is not key. Pressed controls use 82% opacity; disabled controls use 45%. Keep native focus feedback and label/help text for icon-only actions.

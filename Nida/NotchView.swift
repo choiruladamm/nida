@@ -3,6 +3,7 @@ import SwiftUI
 struct NotchView: View {
     let model: PrototypeModel
     let controller: NotchPanelController
+    @Environment(\.locale) private var locale
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
@@ -61,18 +62,19 @@ struct NotchView: View {
         else { NidaGlassBackground(shape: NotchSilhouette(), cornerRadius: 0) }
     }
 
-    private var reminderSubtitle: String {
+    private var reminderSubtitle: LocalizedStringResource {
         guard let event = model.reminder else {
-            return model.state == .prayer ? "15.12 · Saatnya ambil jeda" : "\(controller.preferences.delayMinutes) menit sejak masuk waktu Ashar"
+            return model.state == .prayer ? "15.12 · Saatnya ambil jeda" : "\(controller.preferences.delayMinutes) menit sejak masuk waktu \(PrayerKind.ashar.label.localized(in: locale))"
         }
         if event.id.stage == .entry {
-            let format = Date.FormatStyle(date: .omitted, time: .shortened,
-                locale: Locale(identifier: "id_ID"), timeZone: controller.schedules.location?.zone.timeZone ?? .gmt)
-            return event.prayerStartsAt.formatted(format) + " · Saatnya ambil jeda"
+            let time = event.prayerStartsAt.formatted(Date.FormatStyle(
+                locale: locale, timeZone: controller.schedules.location?.zone.timeZone ?? .gmt)
+                .hour(.twoDigits(amPM: .omitted)).minute(.twoDigits))
+            return "\(time) · Saatnya ambil jeda"
         }
-        if case .snooze = event.id.stage { return "Pengingat tunda · \(event.id.occurrence.prayer.label)" }
+        if case .snooze = event.id.stage { return "Pengingat tunda · \(event.id.occurrence.prayer.label.localized(in: locale))" }
         let minutes = Int(event.firesAt.timeIntervalSince(event.prayerStartsAt) / 60)
-        return "\(minutes) menit sejak masuk waktu \(event.id.occurrence.prayer.label)"
+        return "\(minutes) menit sejak masuk waktu \(event.id.occurrence.prayer.label.localized(in: locale))"
     }
 
     private var reminder: some View {
@@ -86,9 +88,9 @@ struct NotchView: View {
                     .overlay { Circle().strokeBorder(NidaStyle.hairline, lineWidth: 0.5) }
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 5) {
-                    Text(model.state == .prayer ? "Waktunya \(model.reminder?.id.occurrence.prayer.label ?? "Ashar")" : "Yuk, sholat dulu")
+                    Text((model.state == .prayer ? LocalizedStringResource("Waktunya \((model.reminder?.id.occurrence.prayer ?? .ashar).label.localized(in: locale))") : LocalizedStringResource("Yuk, sholat dulu")).localized(in: locale))
                         .font(.system(size: 18, weight: .semibold))
-                    Text(reminderSubtitle)
+                    Text(reminderSubtitle.localized(in: locale))
                         .font(.system(size: 12))
                         .foregroundStyle(NidaStyle.secondaryText)
                 }
@@ -121,10 +123,10 @@ struct NotchView: View {
                 .buttonBorderShape(.capsule)
                 .font(.system(size: 12, weight: .medium))
             }
-            Text(model.notice ?? (model.reminder == nil ? "Preview · Data contoh" : "Pengingat pribadi · Bukan jadwal iqomah masjid"))
+            Text((model.notice ?? (model.reminder == nil ? LocalizedStringResource("Preview · Data contoh") : LocalizedStringResource("Pengingat pribadi · Bukan jadwal iqomah masjid"))).localized(in: locale))
                 .font(.system(size: 11))
                 .foregroundStyle(NidaStyle.secondaryText)
-                .accessibilityLabel(model.notice ?? (model.reminder == nil ? "Preview dengan data contoh, bukan jadwal sebenarnya" : "Pengingat pribadi"))
+                .accessibilityLabel((model.notice ?? (model.reminder == nil ? LocalizedStringResource("Preview dengan data contoh, bukan jadwal sebenarnya") : LocalizedStringResource("Pengingat pribadi"))).localized(in: locale))
         }
     }
 }

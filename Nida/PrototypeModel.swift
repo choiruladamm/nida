@@ -5,7 +5,7 @@ import Observation
 enum PreviewState: String, CaseIterable {
     case collapsed, prayer, followUp, schedule
 
-    var label: String {
+    var label: LocalizedStringResource {
         switch self {
         case .collapsed: "Tutup notch"
         case .prayer: "Masuk waktu"
@@ -72,6 +72,6 @@ final class PrototypeModel {
     var geometry = NotchGeometry(screenFrame: CGRect(x: 0, y: 0, width: 1280, height: 832),
                                  cameraWidth: 180, cameraHeight: 32)
     var isHovering = false
-    var notice: String?
+    var notice: LocalizedStringResource?
     var reminder: PrayerEvent?
 }

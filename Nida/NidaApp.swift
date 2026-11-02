@@ -8,10 +8,12 @@ struct NidaApp: App {
     var body: some Scene {
         MenuBarExtra("Nida", systemImage: "moon.stars") {
             MenuContent(controller: delegate.controller)
+                .appLanguage(delegate.controller.preferences)
         }
         .menuBarExtraStyle(.window)
         Settings {
             NidaSettings(controller: delegate.controller, schedules: delegate.schedules)
+                .appLanguage(delegate.controller.preferences)
         }
         .windowStyle(.hiddenTitleBar)
         .windowToolbarStyle(.unified)
@@ -58,11 +60,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         #endif
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("--review-settings") {
-            showReviewWindow(NSHostingView(rootView: NidaSettings(controller: controller, schedules: schedules)), titled: true)
+            showReviewWindow(NSHostingView(rootView: NidaSettings(controller: controller, schedules: schedules).appLanguage(controller.preferences)), titled: true)
             return
         }
         if ProcessInfo.processInfo.arguments.contains("--review-menu") {
-            showReviewWindow(NSHostingView(rootView: MenuContent(controller: controller)), titled: false)
+            showReviewWindow(NSHostingView(rootView: MenuContent(controller: controller).appLanguage(controller.preferences)), titled: false)
             return
         }
         if ProcessInfo.processInfo.arguments.contains("--review-refresh-error") {
@@ -111,11 +113,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func showLocationSetup() {
         let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 480, height: 440),
                               styleMask: [.titled, .closable], backing: .buffered, defer: false)
-        window.title = "Selamat datang di Nida"
+        window.title = LocalizedStringResource("Selamat datang di Nida").localized(in: controller.preferences.language.locale)
         window.isReleasedWhenClosed = false
         window.contentView = NSHostingView(rootView: LocationOnboardingView(store: schedules) { [weak window] in
             window?.close()
-        })
+        }.appLanguage(controller.preferences)
+            .onChange(of: controller.preferences.language) { [weak window] _, language in
+                window?.title = LocalizedStringResource("Selamat datang di Nida").localized(in: language.locale)
+            })
         setupWindow = window
         window.center()
         window.makeKeyAndOrderFront(nil)
@@ -147,7 +152,7 @@ struct MenuContent: View {
                         .contentShape(.rect)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityValue(previewExpanded ? "Terbuka" : "Tertutup")
+                    .accessibilityValue(Text(previewExpanded ? LocalizedStringKey("Terbuka") : LocalizedStringKey("Tertutup")))
                     Spacer(minLength: 0)
                     HStack(spacing: 8) {
                         Button {
@@ -197,9 +202,18 @@ struct MenuContent: View {
 struct NidaSettings: View {
     let controller: NotchPanelController
     let schedules: PrayerDataStore
+    @Environment(\.locale) private var locale
 
     var body: some View {
+        @Bindable var preferences = controller.preferences
         Form {
+            Section("Bahasa") {
+                Picker("Bahasa aplikasi", selection: $preferences.language) {
+                    ForEach(AppLanguage.allCases, id: \.self) { language in
+                        Text(verbatim: language.name).tag(language)
+                    }
+                }
+            }
             Section("Nida") {
                 Text("Ambil jeda, kembali tenang.").font(.headline)
                 Text("Jadwal asli tersedia di menu bar dan notch. Pengingat otomatis aktif saat Nida berjalan dan Mac terjaga. Tombol coba pengingat memakai data contoh.")
@@ -209,7 +223,7 @@ struct NidaSettings: View {
             PrayerDataSettings(store: schedules)
             Section("Coba tampilan notch") {
                 ForEach(PreviewState.allCases, id: \.self) { state in
-                    Button(state.label) { controller.show(state) }
+                    Button(state.label.localized(in: locale)) { controller.show(state) }
                 }
                 Text("Klik garis kecil di bawah kamera untuk membuka jadwal. Escape atau klik di luar panel untuk menutup.")
                     .font(.callout).foregroundStyle(.secondary)
@@ -217,7 +231,7 @@ struct NidaSettings: View {
             Section("Tentang Nida") {
                 LabeledContent("Versi", value: "\(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—") (\(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "—"))")
                 LabeledContent("Minimum macOS", value: "26.0")
-                LabeledContent("Pengingat", value: "Aktif · Jeda \(controller.preferences.delayMinutes) menit")
+                LabeledContent("Pengingat") { Text("Aktif · Jeda \(controller.preferences.delayMinutes) menit") }
                 Text("Preview tunda hanya menampilkan konfirmasi; tidak menjadwalkan pengingat.")
                     .font(.callout).foregroundStyle(.secondary)
             }

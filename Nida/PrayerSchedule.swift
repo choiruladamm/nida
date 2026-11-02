@@ -9,7 +9,9 @@ enum PrayerDataError: Error, LocalizedError, Equatable {
     case cacheRead
     case cacheWrite
 
-    var errorDescription: String? {
+    var errorDescription: String? { message.localized(in: AppLanguage.indonesian.locale) }
+
+    var message: LocalizedStringResource {
         switch self {
         case .invalidData: "Data jadwal tidak valid. Coba perbarui lagi."
         case .unsupportedProvince: "Zona waktu wilayah ini belum dikenali. Pilih wilayah lain."
@@ -111,7 +113,15 @@ struct ScheduleMonth: Codable, Equatable, Hashable, Sendable {
 
 enum PrayerKind: String, CaseIterable, Codable, Sendable {
     case subuh, dzuhur, ashar, maghrib, isya
-    var label: String { rawValue.capitalized }
+    var label: LocalizedStringResource {
+        switch self {
+        case .subuh: "Subuh"
+        case .dzuhur: "Dzuhur"
+        case .ashar: "Ashar"
+        case .maghrib: "Maghrib"
+        case .isya: "Isya"
+        }
+    }
 }
 
 struct PrayerDay: Codable, Equatable, Sendable {

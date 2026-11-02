@@ -4,7 +4,7 @@ import Observation
 @MainActor @Observable
 final class PrayerDataStore {
     var cities: [PrayerCity] = []
-    var deliveryMessage: String?
+    var deliveryMessage: LocalizedStringResource?
     let detection: LocationDetection
     private(set) var onboardingComplete = false
     private(set) var location: PrayerLocation?
@@ -12,8 +12,8 @@ final class PrayerDataStore {
     private(set) var pendingCity: PrayerCity?
     private(set) var isRefreshing = false
     private(set) var isLoadingCities = false
-    private(set) var cityError: String?
-    private(set) var message: String?
+    private(set) var cityError: LocalizedStringResource?
+    private(set) var message: LocalizedStringResource?
     private let repository: PrayerRepository
     private let defaults: UserDefaults
     private var requestID = UUID()
@@ -34,7 +34,7 @@ final class PrayerDataStore {
 
     #if DEBUG
     func showRefreshFailureForReview() {
-        message = PrayerDataError.rateLimited(Date().addingTimeInterval(120)).localizedDescription
+        message = PrayerDataError.rateLimited(Date().addingTimeInterval(120)).message
     }
     #endif
 
@@ -54,7 +54,7 @@ final class PrayerDataStore {
         cityError = nil
         defer { isLoadingCities = false }
         do { cities = try await repository.cities().sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending } }
-        catch { cityError = error.localizedDescription }
+        catch { cityError = appErrorMessage(error) }
     }
 
     func restoreAndRefresh(now: Date = Date()) async {
@@ -98,7 +98,7 @@ final class PrayerDataStore {
             if location?.city != city { months = [:] }
             location = first.month.location
             months[anchor] = first.month
-            if let issue = first.issue { message = issue.localizedDescription }
+            if let issue = first.issue { message = issue.message }
             let selection = try JSONEncoder().encode(first.month.location)
             defaults.set(selection, forKey: "prayerLocation")
             onboardingComplete = true
@@ -111,28 +111,29 @@ final class PrayerDataStore {
                     guard requestID == id else { return }
                     guard result.month.location == location else { throw PrayerDataError.invalidData }
                     months[period] = result.month
-                    if let issue = result.issue { message = issue.localizedDescription }
+                    if let issue = result.issue { message = issue.message }
                 } catch {
                     guard requestID == id else { return }
-                    message = error.localizedDescription
+                    message = appErrorMessage(error)
                 }
             }
             guard requestID == id else { return }
             months = months.filter { $0.key == current || $0.key == current.next }
         } catch {
             guard requestID == id else { return }
-            message = error.localizedDescription
+            message = appErrorMessage(error)
         }
     }
 }
 
 struct PrayerDataSettings: View {
+    @Environment(\.locale) private var locale
     let store: PrayerDataStore
     @State private var choosingCity = false
 
     var body: some View {
         if let message = store.deliveryMessage {
-            Section("Pengingat") { Text(message).foregroundStyle(.secondary) }
+            Section("Pengingat") { Text(message.localized(in: locale)).foregroundStyle(.secondary) }
         }
         Section("Lokasi jadwal") {
             Button {
@@ -140,7 +141,8 @@ struct PrayerDataSettings: View {
                 choosingCity = true
             } label: {
                 HStack {
-                    Text(store.location?.city.name.localizedCapitalized ?? "Pilih kota / kabupaten")
+                    if let city = store.location?.city { Text(city.name.localizedCapitalized) }
+                    else { Text("Pilih kota / kabupaten") }
                     Spacer()
                     Image(systemName: "chevron.right").foregroundStyle(.secondary)
                 }
@@ -156,7 +158,7 @@ struct PrayerDataSettings: View {
                     .disabled(store.isRefreshing)
             }
             if let message = store.message {
-                Label(message, systemImage: "exclamationmark.circle")
+                Label(message.localized(in: locale), systemImage: "exclamationmark.circle")
                     .font(.callout).foregroundStyle(.secondary)
             }
         }
@@ -166,14 +168,14 @@ struct PrayerDataSettings: View {
             }
             if let day = store.today() {
                 ForEach(PrayerKind.allCases, id: \.self) { prayer in
-                    LabeledContent(prayer.label, value: day.time(for: prayer))
+                    LabeledContent(prayer.label.localized(in: locale), value: day.time(for: prayer))
                         .monospacedDigit()
                 }
                 Text(PrayerMonth.attribution).font(.caption).foregroundStyle(.secondary)
                 Text("\(store.months.values.reduce(0) { $0 + $1.days.count }) hari tersimpan untuk offline.")
                     .font(.caption).foregroundStyle(.secondary)
             } else {
-                Text(store.location == nil ? "Pilih wilayah untuk memuat jadwal asli." : "Jadwal tanggal ini belum tersedia. Coba perbarui.")
+                Text(store.location == nil ? LocalizedStringKey("Pilih wilayah untuk memuat jadwal asli.") : LocalizedStringKey("Jadwal tanggal ini belum tersedia. Coba perbarui."))
                     .foregroundStyle(.secondary)
             }
         }
@@ -183,6 +185,7 @@ struct PrayerDataSettings: View {
 }
 
 struct CitySelectionView: View {
+    @Environment(\.locale) private var locale
     let store: PrayerDataStore
     @State private var query = ""
     @Environment(\.dismiss) private var dismiss
@@ -190,12 +193,12 @@ struct CitySelectionView: View {
     var body: some View {
         NavigationStack {
             List {
-                if let message = store.message { Text(message).foregroundStyle(.secondary) }
+                if let message = store.message { Text(message.localized(in: locale)).foregroundStyle(.secondary) }
                 if let pending = store.pendingCity {
                     ProgressView("Memuat \(pending.name.localizedCapitalized)…")
                 }
                 if let error = store.cityError {
-                    Text(error).foregroundStyle(.secondary)
+                    Text(error.localized(in: locale)).foregroundStyle(.secondary)
                     Button("Coba lagi") { Task { await store.loadCities() } }
                 }
                 ForEach(store.cities.filter { query.isEmpty || $0.name.localizedStandardContains(query) }) { city in
@@ -234,6 +237,7 @@ struct CitySelectionView: View {
 }
 
 private struct NextPrayerSummary: View {
+    @Environment(\.locale) private var locale
     let timeline: PrayerTimeline
 
     var body: some View {
@@ -250,7 +254,10 @@ private struct NextPrayerSummary: View {
         let snapshot = timeline.snapshot(at: date)
         if let next = snapshot.next {
             let tomorrow = next.id.dateKey != ScheduleMonth.dateKey(date, in: timeline.location.zone)
-            LabeledContent("Berikutnya", value: next.id.prayer.label + (tomorrow ? " · besok" : ""))
+            LabeledContent("Berikutnya") {
+                if tomorrow { Text("\(next.id.prayer.label.localized(in: locale)) · besok") }
+                else { Text(next.id.prayer.label.localized(in: locale)) }
+            }
             LabeledContent("Waktu", value: "\(next.wallTime) \(timeline.location.zone.label)")
             HStack {
                 Text("Sisa waktu")
@@ -264,6 +271,7 @@ private struct NextPrayerSummary: View {
 }
 
 struct LocationDetectionControls: View {
+    @Environment(\.locale) private var locale
     let store: PrayerDataStore
     let chooseManually: () -> Void
 
@@ -296,11 +304,11 @@ struct LocationDetectionControls: View {
                         chooseManually()
                     }
                 }
-            case .failed(let message):
-                Text(message).font(.callout).foregroundStyle(.secondary)
+            case .failed(let error):
+                Text(error.message.localized(in: locale)).font(.callout).foregroundStyle(.secondary)
                 Button("Coba lokasi lagi") { detect() }
             }
-            if let error = store.cityError { Text(error).font(.callout).foregroundStyle(.secondary) }
+            if let error = store.cityError { Text(error.localized(in: locale)).font(.callout).foregroundStyle(.secondary) }
             Text("Lokasi hanya diambil saat diminta. Koordinat tidak disimpan; Apple memproses lokasi untuk mencari nama kota.")
                 .font(.caption).foregroundStyle(.secondary)
         }
@@ -317,6 +325,7 @@ struct LocationDetectionControls: View {
 }
 
 struct LocationOnboardingView: View {
+    @Environment(\.locale) private var locale
     let store: PrayerDataStore
     let finish: () -> Void
     @State private var choosingCity = false
@@ -338,7 +347,7 @@ struct LocationOnboardingView: View {
                 if let pending = store.pendingCity {
                     ProgressView("Memuat \(pending.name.localizedCapitalized)…")
                 }
-                if let message = store.message { Text(message).foregroundStyle(.secondary) }
+                if let message = store.message { Text(message.localized(in: locale)).foregroundStyle(.secondary) }
             }
         }
         .formStyle(.grouped)

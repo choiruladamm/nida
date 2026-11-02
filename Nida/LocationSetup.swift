@@ -47,7 +47,9 @@ struct DetectedArea: Equatable, Sendable {
 enum LocationSetupError: Error, LocalizedError, Equatable {
     case denied, unavailable, unsupported, ambiguous
 
-    var errorDescription: String? {
+    var errorDescription: String? { message.localized(in: AppLanguage.indonesian.locale) }
+
+    var message: LocalizedStringResource {
         switch self {
         case .denied: "Akses lokasi tidak diizinkan. Pilih kota manual, atau izinkan Nida di Pengaturan Sistem → Privasi & Keamanan → Layanan Lokasi."
         case .unavailable: "Lokasi belum bisa ditemukan. Coba lagi atau pilih kota manual."
@@ -60,7 +62,7 @@ enum LocationSetupError: Error, LocalizedError, Equatable {
 @MainActor @Observable
 final class LocationDetection {
     enum State: Equatable {
-        case idle, locating, failed(String)
+        case idle, locating, failed(LocationSetupError)
         case found(city: PrayerCity, detectedNames: [String])
     }
     private(set) var state: State = .idle
@@ -88,7 +90,7 @@ final class LocationDetection {
                 state = .found(city: city, detectedNames: Array(Set(areas.map(\.city))).sorted())
             } catch {
                 guard requestID == id, !Task.isCancelled else { return }
-                state = .failed((error as? LocationSetupError ?? .unavailable).localizedDescription)
+                state = .failed(error as? LocationSetupError ?? .unavailable)
             }
         }
         task = work

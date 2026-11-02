@@ -1,0 +1,40 @@
+{
+  "sourceLanguage": "id",
+  "strings": {
+    "NSLocationUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nida menggunakan lokasi sekali untuk membantu memilih kota jadwal sholat. Koordinat tidak disimpan."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nida uses your location once to help select a city for prayer times. Coordinates are not stored."
+          }
+        }
+      }
+    },
+    "NSLocationWhenInUseUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nida menggunakan lokasi sekali untuk membantu memilih kota jadwal sholat. Koordinat tidak disimpan."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nida uses your location once to help select a city for prayer times. Coordinates are not stored."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

@@ -1,0 +1,2074 @@
+{
+  "sourceLanguage": "id",
+  "strings": {
+    "%@ · Saatnya ambil jeda": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · Saatnya ambil jeda"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · Time for a pause"
+          }
+        }
+      }
+    },
+    "%@ · besok": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · besok"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · tomorrow"
+          }
+        }
+      }
+    },
+    "%lld hari tersimpan untuk offline.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld hari tersimpan untuk offline."
+          }
+        },
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld day saved for offline use."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld days saved for offline use."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld menit": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld menit"
+          }
+        },
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld minute"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld minutes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld menit sejak masuk waktu %@": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld menit sejak masuk waktu %@"
+          }
+        },
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld minute since %@ began"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld minutes since %@ began"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "15.12 · Saatnya ambil jeda": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "15.12 · Saatnya ambil jeda"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "15:12 · Time for a pause"
+          }
+        }
+      }
+    },
+    "Ada lebih dari satu wilayah yang cocok. Pilih kota atau kabupaten manual agar jadwal tepat.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ada lebih dari satu wilayah yang cocok. Pilih kota atau kabupaten manual agar jadwal tepat."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "More than one area matches. Choose a city or regency manually for the right schedule."
+          }
+        }
+      }
+    },
+    "Akses lokasi tidak diizinkan. Pilih kota manual, atau izinkan Nida di Pengaturan Sistem → Privasi & Keamanan → Layanan Lokasi.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Akses lokasi tidak diizinkan. Pilih kota manual, atau izinkan Nida di Pengaturan Sistem → Privasi & Keamanan → Layanan Lokasi."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Location access is denied. Choose a city manually, or allow Nida in System Settings → Privacy & Security → Location Services."
+          }
+        }
+      }
+    },
+    "Aktif": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktif"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On"
+          }
+        }
+      }
+    },
+    "Aktif · Jeda %lld menit": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktif · Jeda %lld menit"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On · %lld-minute delay"
+          }
+        }
+      }
+    },
+    "Ambil jeda, kembali tenang.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ambil jeda, kembali tenang."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Take a pause, find your calm."
+          }
+        }
+      }
+    },
+    "App belum tersedia untuk login otomatis": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App belum tersedia untuk login otomatis"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App unavailable for launch at login"
+          }
+        }
+      }
+    },
+    "Ashar": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ashar"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asr"
+          }
+        }
+      }
+    },
+    "Bahasa": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bahasa"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language"
+          }
+        }
+      }
+    },
+    "Bahasa aplikasi": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bahasa aplikasi"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App language"
+          }
+        }
+      }
+    },
+    "Batal": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Batal"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        }
+      }
+    },
+    "Batas permintaan tercapai. Tunggu sebentar sebelum memperbarui.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Batas permintaan tercapai. Tunggu sebentar sebelum memperbarui."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Request limit reached. Please wait before refreshing."
+          }
+        }
+      }
+    },
+    "Berikutnya": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Berikutnya"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next"
+          }
+        }
+      }
+    },
+    "Berlaku untuk waktu sholat berikutnya. Jeda yang sudah dimulai dan snooze tetap mengikuti jadwalnya.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Berlaku untuk waktu sholat berikutnya. Jeda yang sudah dimulai dan snooze tetap mengikuti jadwalnya."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Applies to future prayers. Follow-ups already started and snoozes keep their scheduled times."
+          }
+        }
+      }
+    },
+    "Buka Nida saat login": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buka Nida saat login"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Nida at login"
+          }
+        }
+      }
+    },
+    "Buka Pengaturan Sistem": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buka Pengaturan Sistem"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open System Settings"
+          }
+        }
+      }
+    },
+    "Buka jadwal": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buka jadwal"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open schedule"
+          }
+        }
+      }
+    },
+    "Buka jadwal Nida": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buka jadwal Nida"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Nida schedule"
+          }
+        }
+      }
+    },
+    "Buka jadwal di notch": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buka jadwal di notch"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open schedule in notch"
+          }
+        }
+      }
+    },
+    "Cari kota atau kabupaten": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cari kota atau kabupaten"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search cities or regencies"
+          }
+        }
+      }
+    },
+    "Coba lagi": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coba lagi"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try again"
+          }
+        }
+      }
+    },
+    "Coba lokasi lagi": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coba lokasi lagi"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try location again"
+          }
+        }
+      }
+    },
+    "Coba pengingat": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coba pengingat"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview reminders"
+          }
+        }
+      }
+    },
+    "Coba suara": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coba suara"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Test sound"
+          }
+        }
+      }
+    },
+    "Coba tampilan notch": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coba tampilan notch"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview notch"
+          }
+        }
+      }
+    },
+    "Dalam": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dalam"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In"
+          }
+        }
+      }
+    },
+    "Data jadwal tidak valid. Coba perbarui lagi.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data jadwal tidak valid. Coba perbarui lagi."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid schedule data. Try refreshing again."
+          }
+        }
+      }
+    },
+    "Dzuhur": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dzuhur"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dhuhr"
+          }
+        }
+      }
+    },
+    "Gunakan kota ini": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gunakan kota ini"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use this city"
+          }
+        }
+      }
+    },
+    "Gunakan lokasi saat ini": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gunakan lokasi saat ini"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use current location"
+          }
+        }
+      }
+    },
+    "Ingatkan 5 menit lagi": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ingatkan 5 menit lagi"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remind me in 5 min"
+          }
+        }
+      }
+    },
+    "Ingatkan satu kali lagi setelah 5 menit": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ingatkan satu kali lagi setelah 5 menit"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remind me once more in five minutes"
+          }
+        }
+      }
+    },
+    "Isya": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isya"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Isha"
+          }
+        }
+      }
+    },
+    "Jadwal Subuh besok belum tersedia.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jadwal Subuh besok belum tersedia."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tomorrow’s Fajr schedule is not available yet."
+          }
+        }
+      }
+    },
+    "Jadwal asli tersedia di menu bar dan notch. Pengingat otomatis aktif saat Nida berjalan dan Mac terjaga. Tombol coba pengingat memakai data contoh.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jadwal asli tersedia di menu bar dan notch. Pengingat otomatis aktif saat Nida berjalan dan Mac terjaga. Tombol coba pengingat memakai data contoh."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live schedules are available in the menu bar and notch. Reminders run while Nida is open and your Mac is awake. Preview buttons use sample data."
+          }
+        }
+      }
+    },
+    "Jadwal besok belum tersedia.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jadwal besok belum tersedia."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tomorrow’s schedule is not available yet."
+          }
+        }
+      }
+    },
+    "Jadwal hari ini": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jadwal hari ini"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today’s schedule"
+          }
+        }
+      }
+    },
+    "Jadwal tanggal ini belum tersedia. Coba perbarui.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jadwal tanggal ini belum tersedia. Coba perbarui."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No schedule for this date. Try refreshing."
+          }
+        }
+      }
+    },
+    "Jadwal tersimpan tidak dapat dibaca. Sambungkan internet untuk memperbarui.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jadwal tersimpan tidak dapat dibaca. Sambungkan internet untuk memperbarui."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The saved schedule cannot be read. Connect to the internet to refresh."
+          }
+        }
+      }
+    },
+    "Jadwal terunduh, tetapi belum dapat disimpan untuk offline.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jadwal terunduh, tetapi belum dapat disimpan untuk offline."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schedule downloaded, but could not be saved for offline use."
+          }
+        }
+      }
+    },
+    "Jadwal tetap ditampilkan · %@": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jadwal tetap ditampilkan · %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved schedule shown · %@"
+          }
+        }
+      }
+    },
+    "Jadwal yang digunakan": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jadwal yang digunakan"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schedule area"
+          }
+        }
+      }
+    },
+    "Jeda aktif": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeda aktif"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current delay"
+          }
+        }
+      }
+    },
+    "Jeda khusus (1–60 menit)": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeda khusus (1–60 menit)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom delay (1–60 minutes)"
+          }
+        }
+      }
+    },
+    "Jeda tersimpan tidak valid. Sementara memakai 10 menit; pilih jeda baru untuk menyimpan.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeda tersimpan tidak valid. Sementara memakai 10 menit; pilih jeda baru untuk menyimpan."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The saved delay is invalid. Using ten minutes for now; choose a new delay to save."
+          }
+        }
+      }
+    },
+    "Keluar": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keluar"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quit"
+          }
+        }
+      }
+    },
+    "Keluar dari Nida": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keluar dari Nida"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quit Nida"
+          }
+        }
+      }
+    },
+    "Klik garis kecil di bawah kamera untuk membuka jadwal. Escape atau klik di luar panel untuk menutup.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klik garis kecil di bawah kamera untuk membuka jadwal. Escape atau klik di luar panel untuk menutup."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Click the small handle below the camera to open the schedule. Press Escape or click outside the panel to close."
+          }
+        }
+      }
+    },
+    "Layanan jadwal belum tersedia. Coba lagi nanti.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Layanan jadwal belum tersedia. Coba lagi nanti."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The schedule service is unavailable. Try again later."
+          }
+        }
+      }
+    },
+    "Lihat jadwal": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lihat jadwal"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View schedule"
+          }
+        }
+      }
+    },
+    "Login otomatis gagal diperbarui. %@": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Login otomatis gagal diperbarui. %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not update launch at login. %@"
+          }
+        }
+      }
+    },
+    "Lokasi belum bisa ditemukan. Coba lagi atau pilih kota manual.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokasi belum bisa ditemukan. Coba lagi atau pilih kota manual."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your location could not be found. Try again or choose a city manually."
+          }
+        }
+      }
+    },
+    "Lokasi hanya diambil saat diminta. Koordinat tidak disimpan; Apple memproses lokasi untuk mencari nama kota.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokasi hanya diambil saat diminta. Koordinat tidak disimpan; Apple memproses lokasi untuk mencari nama kota."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Location is accessed only on request. Coordinates are not stored; Apple processes your location to find the city name."
+          }
+        }
+      }
+    },
+    "Lokasi jadwal": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokasi jadwal"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schedule location"
+          }
+        }
+      }
+    },
+    "Lokasi terdeteksi": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokasi terdeteksi"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detected location"
+          }
+        }
+      }
+    },
+    "Maghrib": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maghrib"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maghrib"
+          }
+        }
+      }
+    },
+    "Masuk waktu": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masuk waktu"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prayer time"
+          }
+        }
+      }
+    },
+    "Masukkan bilangan bulat antara 1 dan 60 menit.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masukkan bilangan bulat antara 1 dan 60 menit."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a whole number from 1 to 60 minutes."
+          }
+        }
+      }
+    },
+    "Membuka jadwal sholat hari ini di bawah kamera": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Membuka jadwal sholat hari ini di bawah kamera"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens today’s prayer schedule below the camera"
+          }
+        }
+      }
+    },
+    "Memperbarui jadwal": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Memperbarui jadwal"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refreshing schedule"
+          }
+        }
+      }
+    },
+    "Memuat %@…": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Memuat %@…"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading %@…"
+          }
+        }
+      }
+    },
+    "Memuat daftar wilayah…": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Memuat daftar wilayah…"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading areas…"
+          }
+        }
+      }
+    },
+    "Memuat jadwal…": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Memuat jadwal…"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading schedule…"
+          }
+        }
+      }
+    },
+    "Mencari kota…": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mencari kota…"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finding city…"
+          }
+        }
+      }
+    },
+    "Menunggu persetujuan di Pengaturan Sistem": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menunggu persetujuan di Pengaturan Sistem"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Awaiting approval in System Settings"
+          }
+        }
+      }
+    },
+    "Minimum macOS": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Minimum macOS"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Minimum macOS"
+          }
+        }
+      }
+    },
+    "Nida": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nida"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nida"
+          }
+        }
+      }
+    },
+    "Nonaktif": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nonaktif"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off"
+          }
+        }
+      }
+    },
+    "Pastikan wilayah ini benar sebelum menggunakan jadwalnya.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pastikan wilayah ini benar sebelum menggunakan jadwalnya."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm this area is correct before using its schedule."
+          }
+        }
+      }
+    },
+    "Pengaturan": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pengaturan"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
+          }
+        }
+      }
+    },
+    "Pengaturan dan pilihan kota": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pengaturan dan pilihan kota"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings and city selection"
+          }
+        }
+      }
+    },
+    "Pengingat": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pengingat"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminders"
+          }
+        }
+      }
+    },
+    "Pengingat hanya berjalan saat Nida terbuka dan Mac terjaga. Simpan app di lokasi tetap sebelum mengaktifkan login otomatis.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pengingat hanya berjalan saat Nida terbuka dan Mac terjaga. Simpan app di lokasi tetap sebelum mengaktifkan login otomatis."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminders run only while Nida is open and your Mac is awake. Keep the app at a stable path before enabling launch at login."
+          }
+        }
+      }
+    },
+    "Pengingat kedua": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pengingat kedua"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Follow-up"
+          }
+        }
+      }
+    },
+    "Pengingat pribadi": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pengingat pribadi"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personal reminder"
+          }
+        }
+      }
+    },
+    "Pengingat pribadi · Bukan jadwal iqomah masjid": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pengingat pribadi · Bukan jadwal iqomah masjid"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personal reminder · Not a mosque iqomah time"
+          }
+        }
+      }
+    },
+    "Pengingat tidak dapat disimpan; pengiriman dijeda. %@": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pengingat tidak dapat disimpan; pengiriman dijeda. %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminders could not be saved; delivery is paused. %@"
+          }
+        }
+      }
+    },
+    "Pengingat tunda · %@": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pengingat tunda · %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Snoozed reminder · %@"
+          }
+        }
+      }
+    },
+    "Perbarui jadwal": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perbarui jadwal"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh schedule"
+          }
+        }
+      }
+    },
+    "Pilih kota / kabupaten": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pilih kota / kabupaten"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose city / regency"
+          }
+        }
+      }
+    },
+    "Pilih kota di Pengaturan untuk mulai.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pilih kota di Pengaturan untuk mulai."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a city in Settings to begin."
+          }
+        }
+      }
+    },
+    "Pilih kota lain": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pilih kota lain"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose another city"
+          }
+        }
+      }
+    },
+    "Pilih kota manual": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pilih kota manual"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose city manually"
+          }
+        }
+      }
+    },
+    "Pilih kota untuk jadwal sholat yang sesuai. Kamu bisa menggantinya kapan saja di Pengaturan.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pilih kota untuk jadwal sholat yang sesuai. Kamu bisa menggantinya kapan saja di Pengaturan."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a city for local prayer times. You can change it anytime in Settings."
+          }
+        }
+      }
+    },
+    "Pilih wilayah": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pilih wilayah"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose area"
+          }
+        }
+      }
+    },
+    "Pilih wilayah untuk memuat jadwal asli.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pilih wilayah untuk memuat jadwal asli."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose an area to load live prayer times."
+          }
+        }
+      }
+    },
+    "Preview dengan data contoh, bukan jadwal sebenarnya": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview dengan data contoh, bukan jadwal sebenarnya"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview with sample data, not the actual schedule"
+          }
+        }
+      }
+    },
+    "Preview saja · Tidak ada pengingat dijadwalkan.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview saja · Tidak ada pengingat dijadwalkan."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview only · No reminder scheduled."
+          }
+        }
+      }
+    },
+    "Preview tunda hanya menampilkan konfirmasi; tidak menjadwalkan pengingat.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview tunda hanya menampilkan konfirmasi; tidak menjadwalkan pengingat."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview snooze only shows confirmation; it does not schedule a reminder."
+          }
+        }
+      }
+    },
+    "Preview · Data contoh": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview · Data contoh"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview · Sample data"
+          }
+        }
+      }
+    },
+    "Saat login": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saat login"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "At login"
+          }
+        }
+      }
+    },
+    "Selamat datang di Nida": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selamat datang di Nida"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welcome to Nida"
+          }
+        }
+      }
+    },
+    "Simpan": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simpan"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        }
+      }
+    },
+    "Sisa waktu": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sisa waktu"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time remaining"
+          }
+        }
+      }
+    },
+    "Sisa waktu menuju sholat berikutnya": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sisa waktu menuju sholat berikutnya"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time until the next prayer"
+          }
+        }
+      }
+    },
+    "Status": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Status"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Status"
+          }
+        }
+      }
+    },
+    "Status belum dikenali": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Status belum dikenali"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unknown status"
+          }
+        }
+      }
+    },
+    "Suara": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suara"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sound"
+          }
+        }
+      }
+    },
+    "Suara pendek saat pengingat muncul": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suara pendek saat pengingat muncul"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play a short sound with reminders"
+          }
+        }
+      }
+    },
+    "Suara pengingat belum bisa diputar. Coba lagi atau matikan suara.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suara pengingat belum bisa diputar. Coba lagi atau matikan suara."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The reminder sound could not play. Try again or turn sound off."
+          }
+        }
+      }
+    },
+    "Suara sistem Glass · Default mati. Mengikuti volume dan keluaran audio Mac.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suara sistem Glass · Default mati. Mengikuti volume dan keluaran audio Mac."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glass system sound · Off by default. Uses your Mac’s volume and audio output."
+          }
+        }
+      }
+    },
+    "Subuh": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subuh"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fajr"
+          }
+        }
+      }
+    },
+    "Sudah lewat": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sudah lewat"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elapsed"
+          }
+        }
+      }
+    },
+    "Tentang Nida": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tentang Nida"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "About Nida"
+          }
+        }
+      }
+    },
+    "Terbuka": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terbuka"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expanded"
+          }
+        }
+      }
+    },
+    "Terjadi kesalahan. %@": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terjadi kesalahan. %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An error occurred. %@"
+          }
+        }
+      }
+    },
+    "Terlalu dekat dengan waktu sholat berikutnya.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terlalu dekat dengan waktu sholat berikutnya."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Too close to the next prayer."
+          }
+        }
+      }
+    },
+    "Tertutup": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tertutup"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Collapsed"
+          }
+        }
+      }
+    },
+    "Tidak dapat menghubungi layanan jadwal. Periksa koneksi internet.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tidak dapat menghubungi layanan jadwal. Periksa koneksi internet."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cannot reach the schedule service. Check your internet connection."
+          }
+        }
+      }
+    },
+    "Tutup": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tutup"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
+          }
+        }
+      }
+    },
+    "Tutup jadwal": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tutup jadwal"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close schedule"
+          }
+        }
+      }
+    },
+    "Tutup jadwal · Escape": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tutup jadwal · Escape"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close schedule · Escape"
+          }
+        }
+      }
+    },
+    "Tutup notch": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tutup notch"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close notch"
+          }
+        }
+      }
+    },
+    "Tutup pengingat ini": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tutup pengingat ini"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close this reminder"
+          }
+        }
+      }
+    },
+    "Versi": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versi"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version"
+          }
+        }
+      }
+    },
+    "Waktu": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waktu"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time"
+          }
+        }
+      }
+    },
+    "Waktunya %@": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waktunya %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time for %@"
+          }
+        }
+      }
+    },
+    "Waktunya ambil jeda.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waktunya ambil jeda."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time for a pause."
+          }
+        }
+      }
+    },
+    "Wilayah ini belum cocok dengan daftar jadwal Indonesia. Pilih kota atau kabupaten manual.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wilayah ini belum cocok dengan daftar jadwal Indonesia. Pilih kota atau kabupaten manual."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This area does not match the Indonesian schedule catalog. Choose a city or regency manually."
+          }
+        }
+      }
+    },
+    "Yuk, sholat dulu": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yuk, sholat dulu"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Take a moment to pray"
+          }
+        }
+      }
+    },
+    "Zona waktu": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zona waktu"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time zone"
+          }
+        }
+      }
+    },
+    "Zona waktu wilayah ini belum dikenali. Pilih wilayah lain.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zona waktu wilayah ini belum dikenali. Pilih wilayah lain."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This area’s time zone is not recognized. Choose another area."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}
