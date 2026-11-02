@@ -16,7 +16,11 @@ This document defines the current design, not the revision history. The owner ac
 | Primary text | Warm off-white, approximately #F6F6F2 | Headlines, prayer times and active labels |
 | Supporting text | Warm off-white, approximately #E6E6DE | Metadata, countdowns, source and disclosures |
 | Next-prayer accent | Native macOS control accent | Notch selection dot; menu selected icon and 13% accent fill |
-| Selected prayer | 8% white fill | Quiet emphasis within the schedule |
+| Selected notch prayer | 8% white fill | Quiet emphasis within the horizontal schedule |
+| Menu schedule group | 12% black fill; 7% white outline | Contains the five menu rows |
+| Menu selected prayer | 13% system-accent fill | Pairs selection with its accent-colored icon |
+| Divider | 12% white | Inset menu footer separator |
+| Opaque glass fallback | Neutral gray-green, approximately #575952 | Preserves legibility when transparency is reduced |
 | Primary reminder action | Solid off-white capsule, dark text | Makes the explicit five-minute snooze easy to find |
 | Secondary notch action | 10% white capsule | Supports dismissal and utility controls |
 | Settings accent | Native system accent | Follows the user's macOS accent-color choice |
@@ -47,18 +51,22 @@ Reserve the selected screen's actual camera lane between equal-width header wing
 
 ## Typography and iconography
 
-Use the system font and SF Symbols. Names use proportional type; prayer times and countdowns use monospaced digits. Align headline names and times on their first baseline. Keep metadata and disclosures at least 11 pt.
+Use the system font and SF Symbols. Names use proportional type; prayer times and countdowns use monospaced digits. Align headline names and times on their first baseline. Keep metadata and disclosures at least 11 pt; smaller SF Symbols are decorative companions to text.
 
 | Role | Size / weight |
 | --- | --- |
 | Notch prayer name | 26 pt semibold |
 | Notch headline time | 32 pt regular |
-| City, state caption and date | 11 pt medium |
+| Notch city, state caption and date | 11 pt medium |
 | Supporting message and countdown | 12 pt regular |
 | Schedule cell name | 11 pt regular; selected semibold |
 | Schedule cell time | 14 pt medium; selected semibold |
 | Reminder action | 12 pt medium |
 | Source, error and preview disclosure | 11 pt regular |
+| Menu city / date | 12 pt medium / 11 pt regular |
+| Menu prayer name / headline time | 22 pt semibold / 30 pt regular |
+| Menu row label and time | 13 pt regular; selected semibold |
+| Menu caption / countdown | 11 pt medium / 11 pt regular |
 
 A moon identifies reminders; a calendar identifies the schedule. Symbols in the camera wings sit directly on the black surface. Avoid decorative icon circles or a separate branding bar.
 
@@ -99,6 +107,26 @@ Display location names separately from provider schedule identity: use concise l
 Reduce Transparency or Increase Contrast gives the notch a solid black surface. Increase Contrast raises its lower-edge opacity to 50%, outlines selected cells/buttons and keeps elapsed prayer text in the primary color. Menu/Settings glass falls back to an opaque neutral surface; secondary capsules also retain an opaque fallback.
 
 Keep native keyboard focus, labels and help for icon actions. Group reminder caption/name/time/message for VoiceOver; expose countdown label/value and selected/elapsed schedule state. Product copy follows Indonesian or English; city names and 24-hour times remain domain data. Keep preview disclosures explicit and explain real personal follow-ups separately from mosque schedules.
+
+## Shared tokens and ownership
+
+`NidaStyle` contains only values referenced by the current Swift views and geometry. Component-specific values remain beside their layout; a documented dimension does not require a separate global token.
+
+| Swift token | Current role |
+| --- | --- |
+| `surface` | Dark foreground for prominent off-white actions |
+| `text`, `secondaryText` | Primary and supporting warm-neutral foregrounds |
+| `accent` | Dynamic `NSColor.controlAccentColor`, independent of local view tint overrides |
+| `hairline` | Menu divider |
+| `opaqueGlass` | Accessible opaque backing and secondary control fallback |
+| `notchHorizontalInset` | Shared 38 pt camera-header/body inset and wing-fit calculation |
+| `groupGap` | 12 pt gap between follow-up actions |
+| `iconControlSize` | 28 pt utility targets and camera-wing fit threshold |
+| `controlHeight` | 34 pt expanded menu preview actions |
+| `rowRadius` | 14 pt menu selection corners |
+| `scheduleStatusHeight` | 52 pt geometry fallback allowance for schedule status; not visible bottom padding |
+
+Do not reintroduce unused palette levels (`chrome`, `raised`) or obsolete generic spacing (`panelInset`, `sectionGap`). The fitted notch content remains authoritative over legacy geometry height allowances. Keep the menu's component spacing separate from camera geometry.
 
 ## Implementation references
 

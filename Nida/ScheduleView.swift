@@ -124,12 +124,10 @@ struct ScheduleView: View {
                             .background {
                                 RoundedRectangle(cornerRadius: isNotch ? 12 : NidaStyle.rowRadius)
                                     .fill(selected ? (isNotch ? Color.white.opacity(0.08) : NidaStyle.accent.opacity(0.13)) : .clear)
-                                    .padding(.horizontal, 0)
                             }
                             .overlay {
                                 RoundedRectangle(cornerRadius: isNotch ? 12 : NidaStyle.rowRadius)
                                     .strokeBorder(selected && contrast == .increased ? NidaStyle.text : .clear, lineWidth: 1)
-                                    .padding(.horizontal, 0)
                             }
                             .overlay(alignment: isNotch ? .bottom : .trailing) {
                                 Circle().fill(selected && isNotch ? NidaStyle.accent : .clear)

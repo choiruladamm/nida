@@ -2,6 +2,10 @@
 
 Release gate: [issue #11](https://github.com/choiruladamm/nida/issues/11), following merged PR #19. Hardware acceptance remains open.
 
+## Design-token cleanup verification — 2026-11-02
+
+After removing four unreferenced style constants and two no-op padding modifiers, `make test` passed all 89 tests in 14 suites and `make build` passed Debug. `git diff --check` passed. DESIGN.md now maps only active tokens and distinguishes menu/notch selection treatments. Logs: `/tmp/nida-cleanup-test.log` and `/tmp/nida-cleanup-build.log`. Smoke/hardware checks were not repeated for this cleanup.
+
 ## Compact menu follow-up — 2026-11-02
 
 Product commit `2323856` passed `make test` (89 tests in 14 suites) and `make build` (Debug) after the owner finalized the menu iteration. Logs: `/tmp/nida-menu-final-test.log` and `/tmp/nida-menu-final-build.log`. `git diff --check` passed. Smoke and the broader hardware matrix were not rerun; the earlier smoke evidence below belongs to the preceding notch revision. No release artifact was produced.
