@@ -52,6 +52,35 @@ import os
         }
     }
 
+    @Test func displayDurationsValidatePersistAndSelectTheCorrectStage() throws {
+        let (defaults, suite) = try isolatedDefaults()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let preferences = ReminderPreferences(defaults: defaults)
+        #expect(preferences.displaySeconds(for: .prayer) == 10)
+        #expect(preferences.displaySeconds(for: .followUp) == 20)
+        #expect(preferences.displaySeconds(for: .schedule) == nil)
+        #expect(preferences.displaySeconds(for: .collapsed) == nil)
+        for seconds in stride(from: 5.0, through: 60, by: 5) {
+            preferences.setDisplaySeconds(seconds, for: .prayer)
+            preferences.setDisplaySeconds(65 - seconds, for: .followUp)
+            let restored = ReminderPreferences(defaults: defaults)
+            #expect(restored.entryDisplaySeconds == seconds)
+            #expect(restored.followUpDisplaySeconds == 65 - seconds)
+        }
+        for seconds in [0, 4, 7, 61, 10.5, Double.infinity, Double.nan] {
+            preferences.setDisplaySeconds(seconds, for: .prayer)
+            #expect(preferences.entryDisplaySeconds == 60)
+        }
+        for key in ["entryDisplaySeconds", "followUpDisplaySeconds"] {
+            for value: Any in [0, 61, 7, 5.5, true, "5"] {
+                defaults.set(value, forKey: key)
+                let restored = ReminderPreferences(defaults: defaults)
+                #expect(restored.displaySeconds(for: key == "entryDisplaySeconds" ? .prayer : .followUp)
+                    == (key == "entryDisplaySeconds" ? 10 : 20))
+            }
+        }
+    }
+
     @Test func systemSoundIsAvailableWithoutPlayingIt() {
         #expect(NSSound(named: NSSound.Name("Glass")) != nil)
     }

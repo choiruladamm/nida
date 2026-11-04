@@ -14,13 +14,7 @@ enum PreviewState: String, CaseIterable {
         }
     }
 
-    var autoDismissSeconds: Double? {
-        switch self {
-        case .prayer: 7
-        case .followUp: 18
-        default: nil
-        }
-    }
+    var isReminder: Bool { self == .prayer || self == .followUp }
 }
 
 struct NotchGeometry: Equatable {
@@ -39,7 +33,7 @@ struct NotchGeometry: Equatable {
     func size(for state: PreviewState, scheduleStatusHeight: CGFloat = 0) -> CGSize {
         switch state {
         case .collapsed: CGSize(width: cameraWidth > 0 ? cameraWidth : 164, height: cameraHeight + 8)
-        case .prayer: CGSize(width: 368, height: expandedHeaderHeight(panelWidth: 368) + 112)
+        case .prayer: CGSize(width: 368, height: expandedHeaderHeight(panelWidth: 368) + 154)
         case .followUp: CGSize(width: 400, height: expandedHeaderHeight(panelWidth: 400) + 170)
         case .schedule: CGSize(width: 384, height: expandedHeaderHeight(panelWidth: 384) + 364 + scheduleStatusHeight)
         }

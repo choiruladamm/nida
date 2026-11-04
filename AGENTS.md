@@ -23,7 +23,7 @@ Native macOS prayer reminder: SwiftUI content, AppKit notch panel, menu bar acce
 ## Verification and delivery
 
 - Run `make test` for logic/geometry changes and `make build` for compile checks. Add focused regression coverage for changed behavior.
-- For panel changes, run `make smoke` with the normal app stopped. Use the menu bar's **Keluar** to quit before smoke; `make run` builds, force-closes running Nida instances, and opens the new build.
+- For panel changes, run `make smoke` after tests finish; it force-closes running Nida instances (including test hosts) before building and cycling previews. `make run` builds, force-closes running instances, and opens the new build.
 - Review actual glass, fit, motion, and input on hardware. Passing tests or app-view raster caches do not prove visual quality. Record untested fullscreen, accessibility, and display scenarios honestly.
 - Keep technical docs, issues, and Conventional Commit messages in English. Product copy follows the selected app language (Indonesian or English). Link the relevant issue and update evidence without closing incomplete acceptance checks.
 - Before handing back each task, update the active GitHub issue and parent #1 with current progress, PR/commit/release links, verification evidence, and remaining checks. After merges, reconcile implementation checkboxes and the execution summary. Mark hardware acceptance passed only when observed; a closed issue or merged PR alone is not proof.

@@ -8,6 +8,8 @@ import Observation
 final class ReminderPreferences {
     private let defaults: UserDefaults
     private(set) var delayMinutes: Int
+    private(set) var entryDisplaySeconds: Double
+    private(set) var followUpDisplaySeconds: Double
     var language: AppLanguage {
         didSet { defaults.set(language.rawValue, forKey: "appLanguage") }
     }
@@ -19,6 +21,8 @@ final class ReminderPreferences {
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
+        entryDisplaySeconds = Self.storedDisplaySeconds(defaults, key: "entryDisplaySeconds", fallback: 10)
+        followUpDisplaySeconds = Self.storedDisplaySeconds(defaults, key: "followUpDisplaySeconds", fallback: 20)
         language = AppLanguage(rawValue: defaults.string(forKey: "appLanguage") ?? "") ?? .indonesian
         let saved = defaults.object(forKey: "followUpDelayMinutes")
         let minutes = defaults.integer(forKey: "followUpDelayMinutes")
@@ -32,6 +36,35 @@ final class ReminderPreferences {
             delayError = "Jeda tersimpan tidak valid. Sementara memakai 10 menit; pilih jeda baru untuk menyimpan."
         }
         soundEnabled = defaults.bool(forKey: "reminderSoundEnabled")
+    }
+
+    private static func validDisplaySeconds(_ seconds: Double) -> Bool {
+        seconds.isFinite && (5...60).contains(seconds) && seconds.truncatingRemainder(dividingBy: 5) == 0
+    }
+
+    private static func storedDisplaySeconds(_ defaults: UserDefaults, key: String, fallback: Double) -> Double {
+        guard let number = defaults.object(forKey: key) as? NSNumber,
+              CFGetTypeID(number) != CFBooleanGetTypeID(), validDisplaySeconds(number.doubleValue) else { return fallback }
+        return number.doubleValue
+    }
+
+    func setDisplaySeconds(_ seconds: Double, for state: PreviewState) {
+        guard state.isReminder, Self.validDisplaySeconds(seconds) else { return }
+        if state == .prayer {
+            entryDisplaySeconds = seconds
+            defaults.set(seconds, forKey: "entryDisplaySeconds")
+        } else {
+            followUpDisplaySeconds = seconds
+            defaults.set(seconds, forKey: "followUpDisplaySeconds")
+        }
+    }
+
+    func displaySeconds(for state: PreviewState) -> Double? {
+        switch state {
+        case .prayer: entryDisplaySeconds
+        case .followUp: followUpDisplaySeconds
+        default: nil
+        }
     }
 
     @discardableResult func setDelay(_ text: String) -> Bool {
@@ -105,6 +138,12 @@ struct ReminderPreferencesView: View {
 
     var body: some View {
         @Bindable var preferences = controller.preferences
+        Section("Durasi tampil") {
+            displayDurationSlider("Pengingat pertama", state: .prayer)
+            displayDurationSlider("Pengingat lanjutan", state: .followUp)
+            Text("Tetap tampil saat Anda bekerja di app lain. Berlaku mulai pengingat berikutnya; pengingat yang ditunda memakai durasi lanjutan.")
+                .font(.caption).foregroundStyle(.secondary)
+        }
         Section("Pengingat kedua") {
             LabeledContent("Jeda aktif") { Text("\(preferences.delayMinutes) menit") }
             HStack {
@@ -147,6 +186,29 @@ struct ReminderPreferencesView: View {
         }
         .onAppear { login.refresh() }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in login.refresh() }
+    }
+
+    private func displayDurationSlider(_ title: LocalizedStringKey, state: PreviewState) -> some View {
+        let seconds = controller.preferences.displaySeconds(for: state) ?? 10
+        return VStack(alignment: .leading) {
+            HStack {
+                Text(title)
+                Spacer()
+                Text("\(Int(seconds)) detik").monospacedDigit()
+            }
+            Slider(value: Binding(
+                get: { controller.preferences.displaySeconds(for: state) ?? 10 },
+                set: { controller.preferences.setDisplaySeconds($0, for: state) }
+            ), in: 5...60, step: 5) {
+                EmptyView()
+            } minimumValueLabel: {
+                Text("5 detik")
+            } maximumValueLabel: {
+                Text("60 detik")
+            }
+            .accessibilityLabel(Text(title))
+            .accessibilityValue(Text("\(Int(seconds)) detik"))
+        }
     }
 
     private func saveDelay() { _ = controller.preferences.setDelay(customDelay) }

@@ -183,12 +183,52 @@ struct NotchGeometryTests {
         #expect(!panel.canBecomeMain)
     }
 
-    @Test func onlyReminderPreviewsAutoDismiss() {
-        #expect(PreviewState.prayer.autoDismissSeconds == 7)
-        #expect(PreviewState.followUp.autoDismissSeconds == 18)
-        #expect(PreviewState.schedule.autoDismissSeconds == nil)
-        #expect(PreviewState.collapsed.autoDismissSeconds == nil)
+    @Test func remindersKeepTheirCapturedDeadlineDuringInteractionAndSettingsChanges() async throws {
+        let suite = "nida-duration-" + UUID().uuidString
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let preferences = ReminderPreferences(defaults: defaults)
+        let controller = NotchPanelController(preferences: preferences)
+        defer { controller.stop() }
+        var deliveries = 0
+        controller.onDismissReminder = { _ in deliveries += 1 }
+        for state in [PreviewState.prayer, .followUp] {
+            preferences.setDisplaySeconds(5, for: state)
+            let before = ContinuousClock.now
+            controller.show(state)
+            let deadline = try #require(controller.dismissalDeadline)
+            #expect(deadline >= before.advanced(by: .seconds(5)))
+            #expect(deadline <= ContinuousClock.now.advanced(by: .seconds(5)))
+            controller.setHovering(true)
+            controller.handleClick(inside: false)
+            controller.handleClick(inside: true)
+            controller.setHovering(false)
+            preferences.setDisplaySeconds(60, for: state)
+            if state == .followUp { controller.previewSnooze() }
+            #expect(controller.model.state == state)
+            #expect(controller.dismissalDeadline == deadline)
+            #expect(controller.model.reminder == nil)
+            try await Task.sleep(until: deadline.advanced(by: .milliseconds(100)), clock: .continuous)
+            #expect(controller.model.state == .collapsed)
+            #expect(controller.dismissalDeadline == nil)
+        }
+        #expect(deliveries == 0)
+        controller.show(.schedule)
+        #expect(controller.dismissalDeadline == nil)
+        controller.handleClick(inside: false)
+        #expect(controller.model.state == .collapsed)
     }
+
+    @Test func explicitCloseCancelsTheReminderTimeout() throws {
+        let controller = NotchPanelController()
+        defer { controller.stop() }
+        controller.show(.prayer)
+        #expect(controller.dismissalDeadline != nil)
+        controller.dismissReminder()
+        #expect(controller.model.state == .collapsed)
+        #expect(controller.dismissalDeadline == nil)
+    }
+
 }
 
 @MainActor struct ContrastTests {

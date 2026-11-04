@@ -8,7 +8,7 @@ A native macOS prayer reminder with a camera-integrated black/glass notch panel 
 
 1. Download `Nida-0.2.0-build4.zip` from [Releases](https://github.com/choiruladamm/nida/releases), extract it, and move **Nida.app** to `/Applications`. Quit any existing instance through the menu bar's power icon (**Keluar**) before replacing it.
 2. Open the installed app. It lives in the menu bar, without a Dock icon. Choose a city manually or explicitly request location and confirm the suggested city.
-3. Open today's schedule from the menu bar or the hover handle immediately below the camera. The arrow button opens the notch; Escape/outside click dismisses an interactive panel.
+3. Open today's schedule from the menu bar or the hover handle immediately below the camera. The arrow button opens the notch; Escape/outside click dismisses the schedule. Prayer reminders stay visible while you work in other apps; use Close to dismiss early. Set separate first/follow-up display durations in Settings with 5–60-second sliders.
 4. Open the gear icon (**Pengaturan**) to change city, follow-up delay (1–60 minutes; default ten), sound, or login launch. Check the running version in **Tentang Nida → Versi**. Keep the installed path stable before enabling login launch; macOS may require approval.
 5. **Coba pengingat** shows labeled **Data contoh** previews. Preview snooze does not schedule real reminders or alter delivery history.
 
@@ -26,7 +26,7 @@ Requires Xcode 26+ and a macOS 26+ SDK; no external packages. Verified on MacBoo
 make build       # Debug app, local ad-hoc signing
 make test        # Focused Swift Testing suite
 make run         # Build, force-close running instances, and open the new build
-make smoke       # Native preview/geometry/focus check; quit normal app first
+make smoke       # Force-close Nida, then native preview/geometry/focus check
 make data-smoke  # Live provider + disposable offline-cache check; internet required
 make help        # All commands, including clean, project, and doctor
 ```
@@ -50,3 +50,5 @@ Set `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in both Debug/Release app 
 - [Timing rules](docs/prayer-timing.md) · [Durable reminder delivery](docs/reminder-delivery.md)
 - [Preferences, sound, login launch](docs/reminder-preferences.md)
 - [Notch geometry and platform limits](docs/notch-prototype.md)
+
+`make smoke` force-closes running Nida instances before building and cycling Debug previews, then exits. Run it after tests finish; it also terminates a running Nida test host.

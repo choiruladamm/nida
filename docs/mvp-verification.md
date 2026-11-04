@@ -1,5 +1,15 @@
 # MVP verification and personal installation
 
+## Reminder display duration — 2026-11-04 (#26)
+
+Implemented separate automatically saved native sliders (5–60 seconds, 5-second steps; entry default 10, follow-up/snooze default 20), a fixed continuous-clock presentation deadline, outside-click persistence, and an entry Close action. Entry close preserves follow-up; schedule interaction and ledger behavior are retained. Previews use the same captured durations and remain isolated. No release/version bump is included.
+
+`make test` passed **91 tests in 14 suites**, including actual five-second timer expiry for both reminder states despite simulated clicks/hover and preference changes, explicit Close, valid/invalid persisted duration values, existing ledger/snooze regressions, and bilingual fitted content. `make smoke` passed its nested Debug build and native preview cycle: 1470 × 956 pt screen, 179 × 32 pt camera, visible non-key panel, frontmost preserved, session available. `make -n smoke` confirms the owner-requested kill precedes build/launch; run it after tests because it also terminates Nida test hosts. `git diff --check` passed. Logs: `/tmp/nida-26-test.log`, `/tmp/nida-26-smoke.log`.
+
+An earlier test run also reported 91 passing tests and completed successfully after slow Xcode runtime-diagnostic symbolication. A redundant isolated build attempt failed before tests with `No space left on device`; its generated `build/issue-26` directory was removed. The completed rerun and smoke above are the current evidence.
+
+Pending hardware acceptance: actual slider/keyboard/VoiceOver interaction and persistence across app relaunch; multitasking/typing and repeated outside clicks during real entry/follow-up/snooze; Close fit/glass/motion on real backgrounds; fullscreen/Spaces, external displays/scaling, and lifecycle scenarios. Controller-level simulated clicks and fitting-size checks do not establish visual or cross-app acceptance. #26 remains open.
+
 Release gate: [issue #11](https://github.com/choiruladamm/nida/issues/11), following merged PR #19. Hardware acceptance remains open.
 
 ## Notch motion follow-up verification — 2026-11-02
