@@ -6,6 +6,10 @@ Issue: #8. `ReminderDelivery` bridges the existing pure timeline, atomic local l
 
 Prayer-time and personal follow-up panels follow [DESIGN.md](../DESIGN.md). The shared headline shows prayer name and original prayer-start time in explicit 24-hour `HH:mm` in the selected city’s time zone, independently of app language and system hour-cycle preferences; the follow-up subtitle describes elapsed time or snooze. Entry Close is a plain × in the camera header; follow-up Close is a secondary capsule and the explicit five-minute snooze is primary, and preview/personal-reminder disclosures remain visible. Both panels fit content and use the same camera wings, lower glass and rounded silhouette as today's schedule. This presentation change does not alter ledger identity, event timing or snooze semantics.
 
+## Development isolation (#34)
+
+Debug uses Nida Dev (`dev.choiruladam.nida.dev`) with an independent sandbox, settings, cache and ledger. Default launches restore schedules without starting ReminderDelivery. `make run DEV_REMINDERS=1` deliberately enables real delivery for that launch only; plain make run resets to preview-only. Stable (`dev.choiruladam.nida`) is unchanged. Dev has no login-launch control and no collapsed hover/click handling that competes with Stable; use its hammer menu for schedule/preview access. Real delivery opt-in can produce two reminders when both variants are enabled. See [workflow](dev-stable.md).
+
 ## Delivery contract
 
 - Entry at the validated prayer instant; personal follow-up at the configured delay (`followUpDelayMinutes`, validated 1–60, default 10). Native preference controls are provided by #9. Started occurrences preserve their existing pending follow-up when the setting changes.

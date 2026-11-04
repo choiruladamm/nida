@@ -245,6 +245,34 @@ struct NotchGeometryTests {
         }
     }
 
+    @Test func variantPolicyMatchesBundleAndSandbox() throws {
+        let identifier = try #require(Bundle.main.bundleIdentifier)
+        #expect(identifier == (AppVariant.isDevelopment ? "dev.choiruladam.nida.dev" : "dev.choiruladam.nida"))
+        #expect(AppVariant.name == (AppVariant.isDevelopment ? "Nida Dev" : "Nida"))
+        #expect(AppVariant.allowsAutomaticDelivery(arguments: []) == !AppVariant.isDevelopment)
+        #expect(AppVariant.allowsAutomaticDelivery(arguments: ["--review-menu"]) == !AppVariant.isDevelopment)
+        #expect(AppVariant.allowsAutomaticDelivery(arguments: ["--enable-development-reminders"]))
+        #expect(AppVariant.allowsAutomaticDelivery(arguments: []) == !AppVariant.isDevelopment)
+        let support = URL.applicationSupportDirectory
+        #expect(support.path.contains("/Containers/\(identifier)/"))
+        #expect(ReminderLedgerFile().url.path.hasPrefix(support.path + "/"))
+        #expect(PrayerCache().directory.path.hasPrefix(support.path + "/"))
+        let key = "variant-test-" + UUID().uuidString
+        defer { UserDefaults.standard.removeObject(forKey: key) }
+        UserDefaults.standard.set(true, forKey: key)
+        #expect(UserDefaults.standard.persistentDomain(forName: identifier)?[key] as? Bool == true)
+    }
+
+    @Test func developmentHoverDoesNotCompeteWithStable() async throws {
+        guard AppVariant.isDevelopment else { return }
+        let controller = NotchPanelController()
+        defer { controller.stop() }
+        controller.show(.collapsed)
+        controller.setHovering(true)
+        try await Task.sleep(for: .milliseconds(300))
+        #expect(controller.model.state == .collapsed)
+    }
+
     @Test func explicitCloseCancelsTheReminderTimeout() throws {
         let controller = NotchPanelController()
         defer { controller.stop() }

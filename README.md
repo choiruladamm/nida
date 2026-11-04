@@ -23,17 +23,21 @@ Current source includes the owner-accepted three-panel [notch redesign](DESIGN.m
 Requires Xcode 26+ and a macOS 26+ SDK; no external packages. Verified on MacBook Air M4, macOS 27.0.1, Xcode 27.0, Swift 6.4. Open `Nida.xcodeproj` with the **Nida** scheme, or use:
 
 ```sh
-make build       # Debug app, local ad-hoc signing
+make build       # Nida Dev (Debug), local ad-hoc signing
 make test        # Focused Swift Testing suite
-make run         # Build, force-close running instances, and open the new build
-make smoke       # Force-close Nida, then native preview/geometry/focus check
+make run         # Build/restart only Nida Dev; daily Stable stays running
+make smoke       # Restart only Dev, then native preview/geometry/focus check
 make data-smoke  # Live provider + disposable offline-cache check; internet required
 make help        # All commands, including clean, project, and doctor
 ```
 
 Release: `make build CONFIGURATION=Release`; output: `build/Build/Products/Release/Nida.app`. Override derived data with `BUILD_DIR=build/check` or test destination with `DESTINATION='platform=macOS,arch=arm64'`. Smoke does not simulate user input or prove hardware acceptance.
 
-Debug-only review modes: `--review-menu`, `--review-settings`, `--review-notch`, `--review-follow-up`, and `--review-refresh-error`. Stop the normal app first. These use production views without real reminder delivery; menu/Settings use review hosts. Screen capture requires OS permission and an unlocked session.
+Debug output: `build/Build/Products/Debug/Nida Dev.app` (module name remains `Nida` for tests). Debug has bundle ID `dev.choiruladam.nida.dev`, a hammer menu-bar symbol and visible Dev labels. It uses its own sandbox/settings/cache/ledger, defaults to preview-only, and has no login-launch control. Use the Dev menu to open previews/schedules; its collapsed panel passes through clicks and does not hover-open over Stable.
+
+For deliberate real-delivery testing only: `make run DEV_REMINDERS=1`. This enables Dev delivery for that launch; the next plain `make run` returns to preview-only. Both apps may deliver if Stable is also running. No Stable settings or records are copied. See [Dev/Stable workflow](docs/dev-stable.md).
+
+Debug-only review modes: `--review-menu`, `--review-settings`, `--review-notch`, `--review-follow-up`, and `--review-refresh-error`. Stop only the current Dev instance first. These use production views without real reminder delivery; menu/Settings use review hosts. Screen capture requires OS permission and an unlocked session.
 
 ## Versioning
 
@@ -51,4 +55,4 @@ Set `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in both Debug/Release app 
 - [Preferences, sound, login launch](docs/reminder-preferences.md)
 - [Notch geometry and platform limits](docs/notch-prototype.md)
 
-`make smoke` force-closes running Nida instances before building and cycling Debug previews, then exits. Run it after tests finish; it also terminates a running Nida test host.
+`make smoke` force-closes only Nida Dev before building and cycling Debug previews, then exits. Run it after tests finish; it also terminates the Dev test host. Explicit `make run CONFIGURATION=Release` restarts the Stable variant and is not the daily development command. Building Release alone does not replace `/Applications/Nida.app`. CI, promotion/rollback, app icon and DMG packaging are later steps in #34.

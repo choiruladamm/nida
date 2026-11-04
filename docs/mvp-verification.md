@@ -1,5 +1,17 @@
 # MVP verification and personal installation
 
+## Dev/Stable isolation — 2026-11-04 (#34, first slice)
+
+Stable was bootstrapped from accepted main `da36ec9` as Release at `/Applications/Nida.app`, retaining its bundle ID and data; previous installed app backed up in ignored local build output. Candidate/install signature, identity and binary hash were checked. Local receipt: `build/stable-baseline.json`. No public release, new version or data migration is claimed.
+
+Debug now builds Nida Dev (`dev.choiruladam.nida.dev`, executable Nida Dev, Swift module Nida). It has localized mode labels, a hammer menu symbol, no login control, preview-only delivery unless explicitly opted in for one launch, and a passive collapsed notch so Stable owns hover/clicks. make run/smoke target Dev by default; explicit Release run targets Stable.
+
+Verification: **94 tests in 14 suites**, Debug and Release builds, codesign/metadata assertions for both variants, make dry-run assertions (including smoke with CONFIGURATION=Release), and three native Dev smoke cycles passed. Smoke observed Dev's own sandbox Application Support path, automaticDelivery=false, a visible non-key panel/frontmost preserved, and collapsedIgnoresMouseEvents=true on the 1470 × 956 pt screen / 179 × 32 camera. Repeated Dev runs/smoke left Stable PID 81810 unchanged; final state was exactly one Stable process at Applications and one Nida Dev process from Debug output. Dev's default launch created no delivery ledger.
+
+Stable ledger hash remained identical throughout. An initial raw preferences plist hash varied, so that comparison did not establish value preservation; a fresh decoded preference snapshot before another smoke/relaunch cycle matched every value afterward. Installed Stable binary continued to match the accepted baseline hash. No Stable preferences or data were intentionally edited or copied. These observations prove only the recorded interval and do not substitute for permissions, login, real delivery or visual acceptance.
+
+Logs: `/tmp/nida-34-stable-build.log`, `/tmp/nida-34-dev-build.log`, `/tmp/nida-34-test.log`, `/tmp/nida-34-release-build.log`, `/tmp/nida-34-smoke-1.log`, `/tmp/nida-34-smoke-2.log`, `/tmp/nida-34-smoke-final.log`. Full workflow/paths/limitations: [dev-stable.md](dev-stable.md). `git diff --check` passed. CI/rulesets, final icons/DMG and promotion/rollback are later #34 stages. Explicit Dev real-delivery mode, actual permissions/login/logout, VoiceOver and concurrent notch visual/fullscreen/display acceptance remain pending.
+
 ## Reminder 24-hour clock correction — 2026-11-04 (#26)
 
 Owner reported afternoon reminder times rendered in 12-hour format. Reproduction: the old localized `.hour(.twoDigits(amPM: .omitted)).minute(.twoDigits)` renders 14:56 UTC as `02:56` with `en_US`; omitting AM/PM does not force a 24-hour cycle. Reminder headlines now use Apple's explicit verbatim zero-based 24-hour format with two-digit minutes, Gregorian calendar and the selected city’s time zone. This applies to entry/follow-up/snooze; the large time remains the original prayer-start time rather than current time.
