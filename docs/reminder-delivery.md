@@ -4,7 +4,7 @@ Issue: #8. `ReminderDelivery` bridges the existing pure timeline, atomic local l
 
 ## Accepted panel presentation
 
-Prayer-time and personal follow-up panels follow [DESIGN.md](../DESIGN.md). The shared headline shows prayer name and original prayer-start time; the follow-up subtitle describes elapsed time or snooze. Close is secondary, the explicit five-minute snooze is primary, and preview/personal-reminder disclosures remain visible. Both panels fit content and use the same camera wings, lower glass and rounded silhouette as today's schedule. This presentation change does not alter ledger identity, event timing or snooze semantics.
+Prayer-time and personal follow-up panels follow [DESIGN.md](../DESIGN.md). The shared headline shows prayer name and original prayer-start time; the follow-up subtitle describes elapsed time or snooze. Entry Close is a plain × in the camera header; follow-up Close is a secondary capsule and the explicit five-minute snooze is primary, and preview/personal-reminder disclosures remain visible. Both panels fit content and use the same camera wings, lower glass and rounded silhouette as today's schedule. This presentation change does not alter ledger identity, event timing or snooze semantics.
 
 ## Delivery contract
 

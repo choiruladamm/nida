@@ -128,6 +128,15 @@ struct NotchView: View {
                             .day().month(.abbreviated)))
                             .font(.system(size: 11, weight: .medium))
                             .foregroundStyle(NidaStyle.secondaryText)
+                    } else if model.state == .prayer {
+                        Button { controller.dismissReminder() } label: {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 11, weight: .semibold))
+                                .frame(width: 28, height: 28)
+                        }
+                        .buttonStyle(.plain)
+                        .help("Tutup pengingat ini")
+                        .accessibilityLabel("Tutup pengingat ini")
                     } else {
                         Button { controller.show(.schedule, interactive: true) } label: {
                             Image(systemName: "calendar")
@@ -174,15 +183,15 @@ struct NotchView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .combine)
-            HStack(spacing: NidaStyle.groupGap) {
-                Button { controller.dismissReminder() } label: {
-                    Text("Tutup")
-                        .padding(.horizontal, 16)
-                        .frame(minHeight: 30)
-                }
-                .buttonStyle(NidaButtonStyle(flat: true))
-                .help("Tutup pengingat ini")
-                if model.state == .followUp {
+            if model.state == .followUp {
+                HStack(spacing: NidaStyle.groupGap) {
+                    Button { controller.dismissReminder() } label: {
+                        Text("Tutup")
+                            .padding(.horizontal, 16)
+                            .frame(minHeight: 30)
+                    }
+                    .buttonStyle(NidaButtonStyle(flat: true))
+                    .help("Tutup pengingat ini")
                     Button { controller.snoozeReminder() } label: {
                         Label("Ingatkan 5 menit lagi", systemImage: "clock.arrow.circlepath")
                             .frame(maxWidth: .infinity, minHeight: 30)
@@ -190,10 +199,10 @@ struct NotchView: View {
                     .buttonStyle(NidaButtonStyle(prominent: true))
                     .help("Ingatkan satu kali lagi setelah 5 menit")
                 }
+                .controlSize(.regular)
+                .buttonBorderShape(.capsule)
+                .font(.system(size: 12, weight: .medium))
             }
-            .controlSize(.regular)
-            .buttonBorderShape(.capsule)
-            .font(.system(size: 12, weight: .medium))
             Text((model.notice ?? (model.reminder == nil ? LocalizedStringResource("Preview · Data contoh") : LocalizedStringResource("Pengingat pribadi · Bukan jadwal iqomah masjid"))).localized(in: locale))
                 .font(.system(size: 11))
                 .foregroundStyle(NidaStyle.secondaryText)

@@ -74,7 +74,7 @@ A moon identifies reminders; a calendar identifies the schedule. Symbols in the 
 
 ### Prayer time
 
-Moon in the left wing; a calendar button in the right wing opens the live schedule. Below: quiet stage caption, prayer name on the left and prayer-start time on the right, then a short pause message and a secondary Close capsule. A visible sample-data disclosure distinguishes previews from real delivery.
+Moon in the left wing; a plain × Close button with a 28 pt target in the right wing. Below: quiet stage caption, prayer name on the left and prayer-start time on the right, then a short pause message. Keep dismissal in the header so it adds no extra body row. The live schedule remains available through the menu bar and collapsed-notch hover. A visible sample-data disclosure distinguishes previews from real delivery.
 
 ### Follow-up
 

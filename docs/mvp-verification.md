@@ -1,5 +1,11 @@
 # MVP verification and personal installation
 
+## Entry reminder Close refinement — 2026-11-04 (#26)
+
+Owner rejected the new entry Close capsule from a screenshot: the extra action row made the first reminder too tall. Entry now places a plain × in the right camera wing (28 pt target, localized help/accessibility label), replacing its calendar shortcut; schedule access remains in the menu bar and collapsed-notch hover. Removed the entry action row and restored its compact fallback geometry. Follow-up retains its Close/snooze row. Timer and delivery behavior are unchanged.
+
+91 tests in 14 suites passed, including existing bilingual content-fit and timeout coverage. `make smoke` passed its nested Debug build and native cycle (1470 × 956 pt screen, 179 × 32 camera, visible/non-key, frontmost preserved, session available); `git diff --check` passed. Logs: `/tmp/nida-26-design-test.log`, `/tmp/nida-26-design-smoke.log`. Owner visual acceptance of this revision and keyboard/VoiceOver/fullscreen checks remain pending.
+
 ## Reminder display duration — 2026-11-04 (#26)
 
 Implemented separate automatically saved native sliders (5–60 seconds, 5-second steps; entry default 10, follow-up/snooze default 20), a fixed continuous-clock presentation deadline, outside-click persistence, and an entry Close action. Entry close preserves follow-up; schedule interaction and ledger behavior are retained. Previews use the same captured durations and remain isolated. No release/version bump is included.

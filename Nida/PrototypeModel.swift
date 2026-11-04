@@ -33,7 +33,7 @@ struct NotchGeometry: Equatable {
     func size(for state: PreviewState, scheduleStatusHeight: CGFloat = 0) -> CGSize {
         switch state {
         case .collapsed: CGSize(width: cameraWidth > 0 ? cameraWidth : 164, height: cameraHeight + 8)
-        case .prayer: CGSize(width: 368, height: expandedHeaderHeight(panelWidth: 368) + 154)
+        case .prayer: CGSize(width: 368, height: expandedHeaderHeight(panelWidth: 368) + 112)
         case .followUp: CGSize(width: 400, height: expandedHeaderHeight(panelWidth: 400) + 170)
         case .schedule: CGSize(width: 384, height: expandedHeaderHeight(panelWidth: 384) + 364 + scheduleStatusHeight)
         }
