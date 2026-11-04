@@ -219,6 +219,32 @@ struct NotchGeometryTests {
         #expect(controller.model.state == .collapsed)
     }
 
+    @Test(arguments: AppLanguage.allCases, [IndonesianZone.west, .central, .east])
+    func reminderTimesAlwaysUseTwentyFourHours(language: AppLanguage, zone: IndonesianZone) throws {
+        let suite = "nida-clock-" + UUID().uuidString
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let province = switch zone { case .west: "DKI JAKARTA"; case .central: "BALI"; case .east: "PAPUA" }
+        let location = PrayerLocation(city: PrayerCity(id: String(repeating: "a", count: 32), name: "Test"),
+                                      province: province, zone: zone)
+        defaults.set(try JSONEncoder().encode(location), forKey: "prayerLocation")
+        defaults.set(language.rawValue, forKey: "appLanguage")
+        let controller = NotchPanelController(schedules: PrayerDataStore(defaults: defaults),
+                                              preferences: ReminderPreferences(defaults: defaults))
+        #expect(controller.schedules.location?.zone == zone)
+        let model = PrototypeModel()
+        let view = NotchView(model: model, controller: controller)
+        for (clock, expected) in [("00:00", "00:00"), ("02:56", "02:56"), ("14:56", "14:56"), ("23:59", "23:59")] {
+            let utc = try #require(ISO8601DateFormatter().date(from: "2026-11-04T\(clock):00Z"))
+            let date = utc.addingTimeInterval(-Double(zone.timeZone.secondsFromGMT(for: utc)))
+            for stage in [PrayerEvent.Stage.entry, .followUp, .snooze(requestedAt: date)] {
+                model.reminder = PrayerEvent(id: .init(occurrence: .init(cityID: "test", dateKey: "2026-11-04", prayer: .ashar), stage: stage),
+                    prayerStartsAt: date, firesAt: date, expiresAt: date.addingTimeInterval(3600))
+                #expect(view.reminderTime == expected)
+            }
+        }
+    }
+
     @Test func explicitCloseCancelsTheReminderTimeout() throws {
         let controller = NotchPanelController()
         defer { controller.stop() }

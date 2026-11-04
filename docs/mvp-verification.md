@@ -1,5 +1,11 @@
 # MVP verification and personal installation
 
+## Reminder 24-hour clock correction — 2026-11-04 (#26)
+
+Owner reported afternoon reminder times rendered in 12-hour format. Reproduction: the old localized `.hour(.twoDigits(amPM: .omitted)).minute(.twoDigits)` renders 14:56 UTC as `02:56` with `en_US`; omitting AM/PM does not force a 24-hour cycle. Reminder headlines now use Apple's explicit verbatim zero-based 24-hour format with two-digit minutes, Gregorian calendar and the selected city’s time zone. This applies to entry/follow-up/snooze; the large time remains the original prayer-start time rather than current time.
+
+`make test` passed 92 tests in 14 suites, with regression coverage for midnight, morning, afternoon and 23:59 across WIB/WITA/WIT, both preferences for language, and all three stages. Earlier regression attempts exposed an invalid fixture and reliance on real stored location; the final test uses isolated validated city preferences. `make smoke` passed its nested Debug build and native cycle (visible non-key panel, frontmost preserved, session available, 1470 × 956 pt screen and 179 × 32 camera); `git diff --check` passed. Logs: `/tmp/nida-26-clock-test.log`, `/tmp/nida-26-clock-smoke.log`. Live real-reminder/VoiceOver/fullscreen acceptance remains pending; no release claimed.
+
 ## Entry reminder Close refinement — 2026-11-04 (#26)
 
 Owner rejected the new entry Close capsule from a screenshot: the extra action row made the first reminder too tall. Entry now places a plain × in the right camera wing (28 pt target, localized help/accessibility label), replacing its calendar shortcut; schedule access remains in the menu bar and collapsed-notch hover. Removed the entry action row and restored its compact fallback geometry. Follow-up retains its Close/snooze row. Timer and delivery behavior are unchanged.

@@ -89,11 +89,13 @@ struct NotchView: View {
         }
     }
 
-    private var reminderTime: String {
+    var reminderTime: String {
         guard let event = model.reminder else { return "15:12" }
-        return event.prayerStartsAt.formatted(Date.FormatStyle(
-            locale: locale, timeZone: controller.schedules.location?.zone.timeZone ?? .gmt)
-            .hour(.twoDigits(amPM: .omitted)).minute(.twoDigits))
+        return event.prayerStartsAt.formatted(.verbatim(
+            "\(hour: .twoDigits(clock: .twentyFourHour, hourCycle: .zeroBased)):\(minute: .twoDigits)",
+            locale: Locale(identifier: "en_US_POSIX"),
+            timeZone: controller.schedules.location?.zone.timeZone ?? .gmt,
+            calendar: Calendar(identifier: .gregorian)))
     }
 
     private var reminderSubtitle: LocalizedStringResource {
