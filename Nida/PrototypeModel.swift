@@ -14,13 +14,7 @@ enum PreviewState: String, CaseIterable {
         }
     }
 
-    var autoDismissSeconds: Double? {
-        switch self {
-        case .prayer: 7
-        case .followUp: 18
-        default: nil
-        }
-    }
+    var isReminder: Bool { self == .prayer || self == .followUp }
 }
 
 struct NotchGeometry: Equatable {

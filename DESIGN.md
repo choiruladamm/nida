@@ -74,7 +74,7 @@ A moon identifies reminders; a calendar identifies the schedule. Symbols in the 
 
 ### Prayer time
 
-Moon in the left wing; a calendar button in the right wing opens the live schedule. Below: quiet stage caption, prayer name on the left and prayer-start time on the right, then a short pause message. A visible sample-data disclosure distinguishes previews from real delivery.
+Moon in the left wing; a plain × Close button with a 28 pt target in the right wing. Below: quiet stage caption, prayer name on the left and prayer-start time on the right, then a short pause message. Keep dismissal in the header so it adds no extra body row. The live schedule remains available through the menu bar and collapsed-notch hover. A visible sample-data disclosure distinguishes previews from real delivery.
 
 ### Follow-up
 
@@ -90,7 +90,7 @@ The footer puts source/time zone on the left and refresh/Settings controls on th
 
 Hovering over the collapsed notch for 180 ms opens the schedule without taking keyboard focus. A schedule opened by hover closes 250 ms after pointer exit. Clicking inside keeps it open and enables keyboard interaction; Escape or an outside click dismisses it. Menu-initiated schedules also stay open until dismissed. Opening Settings closes the originating menu/notch surface first.
 
-Automatic prayer reminders do not take typing focus. Prayer time dismisses after seven seconds, follow-up after eighteen; hover pauses dismissal and keyboard activity renews it. Preview actions remain isolated from the delivery ledger.
+Automatic prayer reminders do not take typing focus. Prayer time uses a persisted display duration (default 10 seconds); follow-up and snooze share a separate duration (default 20 seconds). Each presentation captures one continuous deadline. Hover, panel keyboard activity, and inside/outside clicks do not pause, renew, or dismiss a reminder. Outside input passes through to the active app. Both stages have an explicit Close action; Escape dismisses only when the panel has keyboard focus. Entry Close preserves its pending follow-up. Lifecycle hiding, expiry, newer reminders, and explicit navigation/actions can end a presentation early. Preview actions remain isolated from the delivery ledger.
 
 Panel expansion uses a spring with 0.4 second response and 0.82 damping; collapse uses a smooth 0.24 second animation. Content reveals with a 0.18 second fade after 0.06 seconds and hides with a 0.1 second fade. Keep the surface mounted and fade it to transparent while collapsed, so its boundary can interpolate rather than being replaced. Cache measured expanded content heights per presentation state for subsequent shell transitions; the first opening uses natural height until measured. Reduce Motion removes the explicit panel animation and uses an identity content transition. The local `NotchMotion` helper owns these timings. Keep text stable and avoid decorative stagger, perpetual motion or press scaling. Shared capsule controls use 82% opacity when pressed and 45% when disabled.
 
@@ -98,7 +98,7 @@ Panel expansion uses a spring with 0.4 second response and 0.82 damping; collaps
 
 The menu is 340 pt wide with 16 pt horizontal insets. Its open hero keeps the next-prayer caption and countdown on one line above a 22/30 pt prayer/time headline. Five 29 pt rows sit in a rounded 20 pt group with 4 pt internal padding, prayer-specific SF Symbols and a system-accent selected row. Attribution sits below the group. The inset footer combines preview disclosure with refresh, Settings and Quit; expanded preview actions follow beneath. Footer padding is 6 pt above and 16 pt below. Schedule content uses 10 pt top and 6 pt bottom padding, with 8–10 pt group gaps. Do not apply the notch's camera inset or horizontal strip to this surface. Avoid redundant last-prayer context beneath the hero.
 
-Settings uses a native grouped Form, native window controls and default Form spacing. Controls follow the system accent. Titlebar backing is transparent at the top of the scroll; a 25% black backing appears after scrolling down. The city picker shares the glass backing, with a rounded search field, inset list and capsule glass actions.
+Settings exposes two automatically saved native display-duration sliders, from 5–60 seconds in 5-second steps, with current values and endpoint labels. Changes apply to subsequent reminders and previews; follow-up delay in minutes remains a separate setting. Settings uses a native grouped Form, native window controls and default Form spacing. Controls follow the system accent. Titlebar backing is transparent at the top of the scroll; a 25% black backing appears after scrolling down. The city picker shares the glass backing, with a rounded search field, inset list and capsule glass actions.
 
 Display location names separately from provider schedule identity: use concise labels such as Jakarta Selatan in UI while requests/cache retain the provider's Kota Jakarta ID. See [location behavior](docs/location-setup.md) for matching and persistence.
 

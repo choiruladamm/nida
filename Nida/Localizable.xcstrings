@@ -33,6 +33,22 @@
         }
       }
     },
+    "%lld detik": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld detik"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld seconds"
+          }
+        }
+      }
+    },
     "%lld hari tersimpan untuk offline.": {
       "localizations": {
         "id": {
@@ -129,6 +145,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "15:12 · Time for a pause"
+          }
+        }
+      }
+    },
+    "5 detik": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 detik"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 seconds"
+          }
+        }
+      }
+    },
+    "60 detik": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "60 detik"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "60 seconds"
           }
         }
       }
@@ -545,6 +593,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Invalid schedule data. Try refreshing again."
+          }
+        }
+      }
+    },
+    "Durasi tampil": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Durasi tampil"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Display duration"
           }
         }
       }
@@ -1301,6 +1365,38 @@
         }
       }
     },
+    "Pengingat lanjutan": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pengingat lanjutan"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Follow-up reminder"
+          }
+        }
+      }
+    },
+    "Pengingat pertama": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pengingat pertama"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "First reminder"
+          }
+        }
+      }
+    },
     "Pengingat pribadi": {
       "localizations": {
         "id": {
@@ -1569,6 +1665,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "At login"
+          }
+        }
+      }
+    },
+    "Saatnya ambil jeda": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saatnya ambil jeda"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time for a pause"
           }
         }
       }
@@ -1845,6 +1957,22 @@
         }
       }
     },
+    "Tetap tampil saat Anda bekerja di app lain. Berlaku mulai pengingat berikutnya; pengingat yang ditunda memakai durasi lanjutan.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tetap tampil saat Anda bekerja di app lain. Berlaku mulai pengingat berikutnya; pengingat yang ditunda memakai durasi lanjutan."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stays visible while you work in other apps. Applies from the next reminder; snoozed reminders use the follow-up duration."
+          }
+        }
+      }
+    },
     "Tidak dapat menghubungi layanan jadwal. Periksa koneksi internet.": {
       "localizations": {
         "id": {
@@ -2065,22 +2193,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "This area’s time zone is not recognized. Choose another area."
-          }
-        }
-      }
-    },
-    "Saatnya ambil jeda": {
-      "localizations": {
-        "id": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Saatnya ambil jeda"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Time for a pause"
           }
         }
       }

@@ -21,7 +21,8 @@ run: build ## Build, force-close running Nida instances, and open the new build.
 	@pkill -KILL -x Nida || [ $$? -eq 1 ]
 	open -n "$(APP)"
 
-smoke: ## Build Debug and cycle native preview states, then exit.
+smoke: ## Build Debug, force-close running Nida instances, cycle previews, then exit.
+	@pkill -KILL -x Nida || [ $$? -eq 1 ]
 	$(MAKE) build CONFIGURATION=Debug
 	"$(BUILD_DIR)/Build/Products/Debug/Nida.app/Contents/MacOS/Nida" --smoke-test
 

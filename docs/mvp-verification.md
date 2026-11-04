@@ -1,5 +1,27 @@
 # MVP verification and personal installation
 
+## Reminder 24-hour clock correction — 2026-11-04 (#26)
+
+Owner reported afternoon reminder times rendered in 12-hour format. Reproduction: the old localized `.hour(.twoDigits(amPM: .omitted)).minute(.twoDigits)` renders 14:56 UTC as `02:56` with `en_US`; omitting AM/PM does not force a 24-hour cycle. Reminder headlines now use Apple's explicit verbatim zero-based 24-hour format with two-digit minutes, Gregorian calendar and the selected city’s time zone. This applies to entry/follow-up/snooze; the large time remains the original prayer-start time rather than current time.
+
+`make test` passed 92 tests in 14 suites, with regression coverage for midnight, morning, afternoon and 23:59 across WIB/WITA/WIT, both preferences for language, and all three stages. Earlier regression attempts exposed an invalid fixture and reliance on real stored location; the final test uses isolated validated city preferences. `make smoke` passed its nested Debug build and native cycle (visible non-key panel, frontmost preserved, session available, 1470 × 956 pt screen and 179 × 32 camera); `git diff --check` passed. Logs: `/tmp/nida-26-clock-test.log`, `/tmp/nida-26-clock-smoke.log`. Live real-reminder/VoiceOver/fullscreen acceptance remains pending; no release claimed.
+
+## Entry reminder Close refinement — 2026-11-04 (#26)
+
+Owner rejected the new entry Close capsule from a screenshot: the extra action row made the first reminder too tall. Entry now places a plain × in the right camera wing (28 pt target, localized help/accessibility label), replacing its calendar shortcut; schedule access remains in the menu bar and collapsed-notch hover. Removed the entry action row and restored its compact fallback geometry. Follow-up retains its Close/snooze row. Timer and delivery behavior are unchanged.
+
+91 tests in 14 suites passed, including existing bilingual content-fit and timeout coverage. `make smoke` passed its nested Debug build and native cycle (1470 × 956 pt screen, 179 × 32 camera, visible/non-key, frontmost preserved, session available); `git diff --check` passed. Logs: `/tmp/nida-26-design-test.log`, `/tmp/nida-26-design-smoke.log`. Owner visual acceptance of this revision and keyboard/VoiceOver/fullscreen checks remain pending.
+
+## Reminder display duration — 2026-11-04 (#26)
+
+Implemented separate automatically saved native sliders (5–60 seconds, 5-second steps; entry default 10, follow-up/snooze default 20), a fixed continuous-clock presentation deadline, outside-click persistence, and an entry Close action. Entry close preserves follow-up; schedule interaction and ledger behavior are retained. Previews use the same captured durations and remain isolated. No release/version bump is included.
+
+`make test` passed **91 tests in 14 suites**, including actual five-second timer expiry for both reminder states despite simulated clicks/hover and preference changes, explicit Close, valid/invalid persisted duration values, existing ledger/snooze regressions, and bilingual fitted content. `make smoke` passed its nested Debug build and native preview cycle: 1470 × 956 pt screen, 179 × 32 pt camera, visible non-key panel, frontmost preserved, session available. `make -n smoke` confirms the owner-requested kill precedes build/launch; run it after tests because it also terminates Nida test hosts. `git diff --check` passed. Logs: `/tmp/nida-26-test.log`, `/tmp/nida-26-smoke.log`.
+
+An earlier test run also reported 91 passing tests and completed successfully after slow Xcode runtime-diagnostic symbolication. A redundant isolated build attempt failed before tests with `No space left on device`; its generated `build/issue-26` directory was removed. The completed rerun and smoke above are the current evidence.
+
+Pending hardware acceptance: actual slider/keyboard/VoiceOver interaction and persistence across app relaunch; multitasking/typing and repeated outside clicks during real entry/follow-up/snooze; Close fit/glass/motion on real backgrounds; fullscreen/Spaces, external displays/scaling, and lifecycle scenarios. Controller-level simulated clicks and fitting-size checks do not establish visual or cross-app acceptance. #26 remains open.
+
 Release gate: [issue #11](https://github.com/choiruladamm/nida/issues/11), following merged PR #19. Hardware acceptance remains open.
 
 ## Notch motion follow-up verification — 2026-11-02

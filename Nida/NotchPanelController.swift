@@ -27,6 +27,7 @@ final class NotchPanelController: NSObject {
     private var globalMonitor: Any?
     private var localMonitor: Any?
     private var dismissal: Task<Void, Never>?
+    private(set) var dismissalDeadline: ContinuousClock.Instant?
     private var hoverTransition: Task<Void, Never>?
     private var openedByHover = false
 
@@ -63,7 +64,6 @@ final class NotchPanelController: NSObject {
                         self?.dismissReminder()
                         return true
                     }
-                    self?.armDismissal()
                 }
                 self?.handlePointer(event)
                 return false
@@ -122,7 +122,6 @@ final class NotchPanelController: NSObject {
         model.isHovering = hovering
         hoverTransition?.cancel()
         if hovering {
-            dismissal?.cancel()
             guard model.state == .collapsed else { return }
             hoverTransition = Task { [weak self] in
                 do { try await Task.sleep(for: .milliseconds(180)) } catch { return }
@@ -131,7 +130,6 @@ final class NotchPanelController: NSObject {
                 self.openedByHover = true
             }
         } else {
-            armDismissal()
             guard openedByHover else { return }
             hoverTransition = Task { [weak self] in
                 do { try await Task.sleep(for: .milliseconds(250)) } catch { return }
@@ -142,16 +140,18 @@ final class NotchPanelController: NSObject {
     }
 
     func previewSnooze() {
-        dismissal?.cancel()
         model.notice = "Preview saja · Tidak ada pengingat dijadwalkan."
         // Preview actions stay isolated from the delivery ledger.
     }
 
     private func armDismissal() {
         dismissal?.cancel()
-        guard !model.isHovering, let seconds = model.state.autoDismissSeconds else { return }
+        dismissalDeadline = nil
+        guard let seconds = preferences.displaySeconds(for: model.state) else { return }
+        let deadline = ContinuousClock.now.advanced(by: .seconds(seconds))
+        dismissalDeadline = deadline
         dismissal = Task { [weak self] in
-            do { try await Task.sleep(for: .seconds(seconds)) } catch { return }
+            do { try await Task.sleep(until: deadline, clock: .continuous) } catch { return }
             guard let self else { return }
             self.dismissReminder()
         }
@@ -166,14 +166,19 @@ final class NotchPanelController: NSObject {
             setHovering(frame.contains(NSEvent.mouseLocation))
         }
         if event.type == .leftMouseDown || event.type == .rightMouseDown {
-            if !model.geometry.interactiveFrame(for: model.state, scheduleStatusHeight: scheduleStatusHeight, contentHeight: model.expandedHeight).contains(NSEvent.mouseLocation) {
-                dismissReminder()
-            } else if model.state != .collapsed {
-                openedByHover = false
-                hoverTransition?.cancel()
-                panel?.allowsKeyboardFocus = true
-                panel?.makeKey()
-            }
+            handleClick(inside: model.geometry.interactiveFrame(for: model.state,
+                scheduleStatusHeight: scheduleStatusHeight, contentHeight: model.expandedHeight).contains(NSEvent.mouseLocation))
+        }
+    }
+
+    func handleClick(inside: Bool) {
+        if !inside {
+            if !model.state.isReminder { dismissReminder() }
+        } else if model.state != .collapsed {
+            openedByHover = false
+            hoverTransition?.cancel()
+            panel?.allowsKeyboardFocus = true
+            panel?.makeKey()
         }
     }
 
@@ -196,6 +201,7 @@ final class NotchPanelController: NSObject {
     }
 
     func stop() {
+        dismissalDeadline = nil
         hoverTransition?.cancel()
         dismissal?.cancel()
         if let globalMonitor { NSEvent.removeMonitor(globalMonitor) }

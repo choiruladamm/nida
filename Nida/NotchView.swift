@@ -89,11 +89,13 @@ struct NotchView: View {
         }
     }
 
-    private var reminderTime: String {
+    var reminderTime: String {
         guard let event = model.reminder else { return "15:12" }
-        return event.prayerStartsAt.formatted(Date.FormatStyle(
-            locale: locale, timeZone: controller.schedules.location?.zone.timeZone ?? .gmt)
-            .hour(.twoDigits(amPM: .omitted)).minute(.twoDigits))
+        return event.prayerStartsAt.formatted(.verbatim(
+            "\(hour: .twoDigits(clock: .twentyFourHour, hourCycle: .zeroBased)):\(minute: .twoDigits)",
+            locale: Locale(identifier: "en_US_POSIX"),
+            timeZone: controller.schedules.location?.zone.timeZone ?? .gmt,
+            calendar: Calendar(identifier: .gregorian)))
     }
 
     private var reminderSubtitle: LocalizedStringResource {
@@ -128,6 +130,15 @@ struct NotchView: View {
                             .day().month(.abbreviated)))
                             .font(.system(size: 11, weight: .medium))
                             .foregroundStyle(NidaStyle.secondaryText)
+                    } else if model.state == .prayer {
+                        Button { controller.dismissReminder() } label: {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 11, weight: .semibold))
+                                .frame(width: 28, height: 28)
+                        }
+                        .buttonStyle(.plain)
+                        .help("Tutup pengingat ini")
+                        .accessibilityLabel("Tutup pengingat ini")
                     } else {
                         Button { controller.show(.schedule, interactive: true) } label: {
                             Image(systemName: "calendar")
