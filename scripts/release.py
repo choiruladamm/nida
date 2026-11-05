@@ -118,8 +118,9 @@ def login_record():
 def restore_login(target, before):
     info = plistlib.loads((target / 'Contents/Info.plist').read_bytes())
     if str(info.get('NidaReleaseMaintenance')) != '1':
-        if before['enabled']:
-            raise RuntimeError('Previous app restored; re-enable login from its Settings if necessary')
+        after = login_record()
+        if after['enabled'] != before['enabled'] or (before['enabled'] and after['url'] != str(target)):
+            raise RuntimeError('Legacy app login record needs repair from its Settings')
         return
     flag = '--restore-login-enabled' if before['enabled'] else '--login-status'
     report = json.loads(command(target / 'Contents/MacOS/Nida', flag, timeout=30))
