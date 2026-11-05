@@ -57,6 +57,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let environment = ProcessInfo.processInfo.environment
         guard environment["XCTestConfigurationFilePath"] == nil,
               environment["XCTestBundlePath"] == nil else { return }
+        let arguments = ProcessInfo.processInfo.arguments
+        if arguments.contains("--login-status") || arguments.contains("--restore-login-enabled") {
+            guard !AppVariant.isDevelopment, Bundle.main.bundleURL.path == "/Applications/Nida.app" else {
+                exit(EXIT_FAILURE)
+            }
+            Task { @MainActor in
+                let login = LoginLaunch()
+                if arguments.contains("--restore-login-enabled") { await login.restoreEnabledRegistration() }
+                let report: [String: Any] = ["status": login.statusName, "hasError": login.error != nil]
+                if let data = try? JSONSerialization.data(withJSONObject: report) {
+                    FileHandle.standardOutput.write(data)
+                    FileHandle.standardOutput.write(Data("\n".utf8))
+                }
+                exit(login.error == nil ? EXIT_SUCCESS : EXIT_FAILURE)
+            }
+            return
+        }
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("--data-smoke") {
             Task {
