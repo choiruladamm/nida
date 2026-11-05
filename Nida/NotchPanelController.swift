@@ -122,7 +122,7 @@ final class NotchPanelController: NSObject {
         model.isHovering = hovering
         hoverTransition?.cancel()
         if hovering {
-            guard model.state == .collapsed else { return }
+            guard model.state == .collapsed, !AppVariant.isDevelopment else { return }
             hoverTransition = Task { [weak self] in
                 do { try await Task.sleep(for: .milliseconds(180)) } catch { return }
                 guard let self, self.model.isHovering, self.model.state == .collapsed else { return }
@@ -190,7 +190,8 @@ final class NotchPanelController: NSObject {
 
     private func updatePointerPassthrough() {
         let rect = model.geometry.interactiveFrame(for: model.state, scheduleStatusHeight: scheduleStatusHeight, contentHeight: model.expandedHeight)
-        panel?.ignoresMouseEvents = !rect.contains(NSEvent.mouseLocation)
+        panel?.ignoresMouseEvents = (AppVariant.isDevelopment && model.state == .collapsed)
+            || !rect.contains(NSEvent.mouseLocation)
     }
 
     @objc private func reposition() {
@@ -222,7 +223,7 @@ final class NotchPanelController: NSObject {
         Task { @MainActor in
             try? await Task.sleep(for: .seconds(1))
             let report = """
-            Nida smoke: screen=\(model.geometry.screenFrame), camera=\(model.geometry.cameraWidth)x\(model.geometry.cameraHeight), panelVisible=\(panel?.isVisible == true), preservedFrontmost=\(frontmost == NSWorkspace.shared.frontmostApplication?.processIdentifier), panelIsKey=\(panel?.isKeyWindow == true), deliverySessionAvailable=\(ReminderDelivery.sessionAllowsDelivery(CGSessionCopyCurrentDictionary() as? [String: Any], suspended: false))
+            Nida smoke: bundle=\(Bundle.main.bundleIdentifier ?? "unknown"), support=\(URL.applicationSupportDirectory.path), automaticDelivery=\(AppVariant.allowsAutomaticDelivery(arguments: ProcessInfo.processInfo.arguments)), screen=\(model.geometry.screenFrame), camera=\(model.geometry.cameraWidth)x\(model.geometry.cameraHeight), panelVisible=\(panel?.isVisible == true), preservedFrontmost=\(frontmost == NSWorkspace.shared.frontmostApplication?.processIdentifier), panelIsKey=\(panel?.isKeyWindow == true), deliverySessionAvailable=\(ReminderDelivery.sessionAllowsDelivery(CGSessionCopyCurrentDictionary() as? [String: Any], suspended: false))
             """
             print(report)
             show(.followUp)
@@ -230,6 +231,7 @@ final class NotchPanelController: NSObject {
             show(.schedule)
             try? await Task.sleep(for: .seconds(1))
             show(.collapsed)
+            print("Nida smoke: collapsedIgnoresMouseEvents=\(panel?.ignoresMouseEvents == true)")
             NSApplication.shared.terminate(nil)
         }
     }

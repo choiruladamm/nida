@@ -3,7 +3,16 @@
 BUILD_DIR ?= build
 CONFIGURATION ?= Debug
 DESTINATION ?= platform=macOS,arch=$(shell uname -m)
-APP := $(BUILD_DIR)/Build/Products/$(CONFIGURATION)/Nida.app
+ifeq ($(CONFIGURATION),Debug)
+PRODUCT := Nida Dev
+else ifeq ($(CONFIGURATION),Release)
+PRODUCT := Nida
+else
+$(error Unsupported CONFIGURATION: $(CONFIGURATION))
+endif
+APP := $(BUILD_DIR)/Build/Products/$(CONFIGURATION)/$(PRODUCT).app
+DEV_REMINDERS ?= 0
+RUN_ARGS := $(if $(filter 1,$(DEV_REMINDERS)),--enable-development-reminders,)
 XCODEBUILD := xcodebuild -project Nida.xcodeproj -scheme Nida -configuration "$(CONFIGURATION)" -destination "$(DESTINATION)" -derivedDataPath "$(BUILD_DIR)"
 
 .PHONY: help build test run smoke data-smoke clean project doctor
@@ -17,18 +26,18 @@ build: ## Build a locally signed app.
 test: ## Run the focused Swift Testing suite.
 	$(XCODEBUILD) test CODE_SIGN_IDENTITY=-
 
-run: build ## Build, force-close running Nida instances, and open the new build.
-	@pkill -KILL -x Nida || [ $$? -eq 1 ]
-	open -n "$(APP)"
+run: build ## Build and restart only the selected variant (Debug: Nida Dev).
+	@pkill -KILL -x "$(PRODUCT)" || [ $$? -eq 1 ]
+	open -n "$(APP)" --args $(RUN_ARGS)
 
-smoke: ## Build Debug, force-close running Nida instances, cycle previews, then exit.
-	@pkill -KILL -x Nida || [ $$? -eq 1 ]
+smoke: ## Restart only Nida Dev, build Debug, cycle previews, then exit.
+	@pkill -KILL -x "Nida Dev" || [ $$? -eq 1 ]
 	$(MAKE) build CONFIGURATION=Debug
-	"$(BUILD_DIR)/Build/Products/Debug/Nida.app/Contents/MacOS/Nida" --smoke-test
+	"$(BUILD_DIR)/Build/Products/Debug/Nida Dev.app/Contents/MacOS/Nida Dev" --smoke-test
 
 data-smoke: ## Check live API and offline cache in a temporary directory (uses internet).
 	$(MAKE) build CONFIGURATION=Debug
-	"$(BUILD_DIR)/Build/Products/Debug/Nida.app/Contents/MacOS/Nida" --data-smoke
+	"$(BUILD_DIR)/Build/Products/Debug/Nida Dev.app/Contents/MacOS/Nida Dev" --data-smoke
 
 clean: ## Clean this project's build products using Xcode.
 	$(XCODEBUILD) clean

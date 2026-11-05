@@ -1,12 +1,32 @@
 import SwiftUI
 import Darwin
 
+enum AppVariant {
+    #if DEBUG
+    static let isDevelopment = true
+    #else
+    static let isDevelopment = false
+    #endif
+
+    static var name: String { isDevelopment ? "Nida Dev" : "Nida" }
+
+    static func allowsAutomaticDelivery(arguments: [String]) -> Bool {
+        !isDevelopment || arguments.contains("--enable-development-reminders")
+    }
+
+    static var developmentNotice: LocalizedStringResource {
+        allowsAutomaticDelivery(arguments: ProcessInfo.processInfo.arguments)
+            ? "Nida Dev · Pengingat otomatis aktif."
+            : "Nida Dev · Preview saja. Pengingat otomatis nonaktif."
+    }
+}
+
 @main
 struct NidaApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
 
     var body: some Scene {
-        MenuBarExtra("Nida", systemImage: "moon.stars") {
+        MenuBarExtra(AppVariant.name, systemImage: AppVariant.isDevelopment ? "hammer" : "moon.stars") {
             MenuContent(controller: delegate.controller)
                 .appLanguage(delegate.controller.preferences)
         }
@@ -84,7 +104,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
         #endif
-        delivery.start()
+        if AppVariant.allowsAutomaticDelivery(arguments: ProcessInfo.processInfo.arguments) {
+            delivery.start()
+        } else {
+            Task { await schedules.restoreAndRefresh() }
+        }
         if !schedules.onboardingComplete { showLocationSetup() }
     }
 
@@ -92,7 +116,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func showReviewWindow(_ host: NSView, titled: Bool) {
         let window = NSWindow(contentRect: NSRect(origin: .zero, size: host.fittingSize),
             styleMask: titled ? [.titled, .closable] : [.borderless], backing: .buffered, defer: false)
-        window.title = "Nida · Design review"
+        window.title = AppVariant.name + " · Design review"
         if titled {
             window.titlebarAppearsTransparent = true
             window.titleVisibility = .hidden
@@ -137,6 +161,11 @@ struct MenuContent: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            #if DEBUG
+            Text(AppVariant.developmentNotice.localized(in: controller.preferences.language.locale))
+                .font(.caption).foregroundStyle(.secondary)
+                .padding(.horizontal, 16).padding(.top, 10)
+            #endif
             ScheduleView(store: controller.schedules, onOpenNotch: { preview(.schedule) })
                 .fixedSize(horizontal: false, vertical: true)
             NidaStyle.hairline.frame(height: 0.5).padding(.horizontal, 16)
@@ -230,10 +259,15 @@ struct NidaSettings: View {
                     }
                 }
             }
-            Section("Nida") {
+            Section(AppVariant.name) {
                 Text("Ambil jeda, kembali tenang.").font(.headline)
+                #if DEBUG
+                Text(AppVariant.developmentNotice.localized(in: locale))
+                    .foregroundStyle(.secondary)
+                #else
                 Text("Jadwal asli tersedia di menu bar dan notch. Pengingat otomatis aktif saat Nida berjalan dan Mac terjaga. Tombol coba pengingat memakai data contoh.")
                     .foregroundStyle(.secondary)
+                #endif
             }
             ReminderPreferencesView(controller: controller)
             PrayerDataSettings(store: schedules)
@@ -247,7 +281,13 @@ struct NidaSettings: View {
             Section("Tentang Nida") {
                 LabeledContent("Versi", value: "\(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—") (\(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "—"))")
                 LabeledContent("Minimum macOS", value: "26.0")
-                LabeledContent("Pengingat") { Text("Aktif · Jeda \(controller.preferences.delayMinutes) menit") }
+                LabeledContent("Pengingat") {
+                    #if DEBUG
+                    Text(AppVariant.developmentNotice.localized(in: locale))
+                    #else
+                    Text("Aktif · Jeda \(controller.preferences.delayMinutes) menit")
+                    #endif
+                }
                 Text("Preview tunda hanya menampilkan konfirmasi; tidak menjadwalkan pengingat.")
                     .font(.callout).foregroundStyle(.secondary)
             }

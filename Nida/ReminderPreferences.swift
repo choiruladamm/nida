@@ -171,6 +171,10 @@ struct ReminderPreferencesView: View {
                 .font(.caption).foregroundStyle(.secondary)
         }
         Section("Saat login") {
+            #if DEBUG
+            Text("Nida Dev tidak dijalankan saat login. Gunakan Nida di Applications untuk pengingat harian.")
+                .font(.caption).foregroundStyle(.secondary)
+            #else
             Toggle("Buka Nida saat login", isOn: Binding(get: { login.isRegistered }, set: { enabled in
                 Task { await login.setEnabled(enabled) }
             }))
@@ -183,6 +187,7 @@ struct ReminderPreferencesView: View {
             }
             Text("Pengingat hanya berjalan saat Nida terbuka dan Mac terjaga. Simpan app di lokasi tetap sebelum mengaktifkan login otomatis.")
                 .font(.caption).foregroundStyle(.secondary)
+            #endif
         }
         .onAppear { login.refresh() }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in login.refresh() }

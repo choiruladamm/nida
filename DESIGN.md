@@ -96,6 +96,8 @@ Panel expansion uses a spring with 0.4 second response and 0.82 damping; collaps
 
 ## Menu and Settings
 
+Debug builds identify as Nida Dev with a hammer menu-bar symbol and a visible localized delivery-mode notice in menu/Settings. Dev omits login controls. Its collapsed notch is passive so daily Stable owns hover/click access; open Dev schedules/previews through its menu. Stable retains its existing visual/interaction contract.
+
 The menu is 340 pt wide with 16 pt horizontal insets. Its open hero keeps the next-prayer caption and countdown on one line above a 22/30 pt prayer/time headline. Five 29 pt rows sit in a rounded 20 pt group with 4 pt internal padding, prayer-specific SF Symbols and a system-accent selected row. Attribution sits below the group. The inset footer combines preview disclosure with refresh, Settings and Quit; expanded preview actions follow beneath. Footer padding is 6 pt above and 16 pt below. Schedule content uses 10 pt top and 6 pt bottom padding, with 8–10 pt group gaps. Do not apply the notch's camera inset or horizontal strip to this surface. Avoid redundant last-prayer context beneath the hero.
 
 Settings exposes two automatically saved native display-duration sliders, from 5–60 seconds in 5-second steps, with current values and endpoint labels. Changes apply to subsequent reminders and previews; follow-up delay in minutes remains a separate setting. Settings uses a native grouped Form, native window controls and default Form spacing. Controls follow the system accent. Titlebar backing is transparent at the top of the scroll; a 25% black backing appears after scrolling down. The city picker shares the glass backing, with a rounded search field, inset list and capsule glass actions.

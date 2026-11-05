@@ -2196,6 +2196,54 @@
           }
         }
       }
+    },
+    "Nida Dev · Pengingat otomatis aktif.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nida Dev · Pengingat otomatis aktif."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nida Dev · Automatic reminders enabled."
+          }
+        }
+      }
+    },
+    "Nida Dev · Preview saja. Pengingat otomatis nonaktif.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nida Dev · Preview saja. Pengingat otomatis nonaktif."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nida Dev · Preview only. Automatic reminders disabled."
+          }
+        }
+      }
+    },
+    "Nida Dev tidak dijalankan saat login. Gunakan Nida di Applications untuk pengingat harian.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nida Dev tidak dijalankan saat login. Gunakan Nida di Applications untuk pengingat harian."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nida Dev does not launch at login. Use Nida in Applications for daily reminders."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
