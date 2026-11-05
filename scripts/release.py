@@ -99,6 +99,7 @@ def candidate(sha, state):
 
 
 def login_record():
+    # shortcut: parse macOS 26/27 sfltool text; revisit if its format changes.
     dump = command('sfltool', 'dumpbtm')
     match = re.search(r'Records for UID ' + str(os.getuid()) + r' :.*?(?=Records for UID|\Z)', dump, re.S)
     if not match:
@@ -123,7 +124,7 @@ def restore_login(target, before):
     flag = '--restore-login-enabled' if before['enabled'] else '--login-status'
     report = json.loads(command(target / 'Contents/MacOS/Nida', flag, timeout=30))
     after = login_record()
-    if report['hasError'] or after['enabled'] != before['enabled']:
+    if report['hasError'] or after['enabled'] != before['enabled'] or (report['status'] == 'enabled') != before['enabled']:
         raise RuntimeError('Login registration was not preserved; check System Settings')
     if before['enabled'] and (report['status'] != 'enabled' or after['url'] != str(target)):
         raise RuntimeError('Login item does not point to the installed app')

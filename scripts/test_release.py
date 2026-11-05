@@ -16,6 +16,7 @@ class ReleaseTests(unittest.TestCase):
         self.state.mkdir()
         self.target = self.app('installed/Nida.app', 'old')
         self.new = self.app('candidate/Nida.app', 'new')
+        self.read_restore = release.restore_login
         self.read_login = release.login_record
         for name, value in [('verify_app', {}), ('stable_pids', [123]), ('stop_stable', None),
                             ('launch_stable', None), ('restore_login', None),
@@ -130,6 +131,15 @@ class ReleaseTests(unittest.TestCase):
         root = release.REPO / 'Nida/Assets.xcassets'
         self.assertNotEqual((root / 'AppIcon.appiconset/icon_512x512@2x.png').read_bytes(),
                             (root / 'AppIconDev.appiconset/icon_512x512@2x.png').read_bytes())
+
+    def test_login_native_status_must_agree_with_recorded_intent(self):
+        (self.target / 'Contents/Info.plist').write_bytes(plistlib.dumps({'NidaReleaseMaintenance': '1'}))
+        self.login_record.return_value = {'enabled': False, 'url': str(self.target)}
+        with patch.object(release, 'command', return_value=json.dumps({'status': 'enabled', 'hasError': False})):
+            with self.assertRaises(RuntimeError):
+                self.read_restore(self.target, {'enabled': False})
+        with patch.object(release, 'command', return_value=json.dumps({'status': 'notRegistered', 'hasError': False})):
+            self.read_restore(self.target, {'enabled': False})
 
     def test_ci_requires_latest_success_for_exact_main_sha(self):
         for conclusion in [None, 'failure', 'cancelled']:
