@@ -141,6 +141,18 @@ class ReleaseTests(unittest.TestCase):
         with patch.object(release, 'command', return_value=json.dumps({'status': 'notRegistered', 'hasError': False})):
             self.read_restore(self.target, {'enabled': False})
 
+    def test_legacy_rollback_preserves_valid_os_login_record_without_native_helper(self):
+        (self.target / 'Contents/Info.plist').write_bytes(plistlib.dumps({'CFBundleVersion': '4'}))
+        self.login_record.return_value = {'enabled': True, 'url': str(self.target)}
+        with patch.object(release, 'command') as native:
+            self.read_restore(self.target, {'enabled': True})
+            native.assert_not_called()
+        self.login_record.return_value = {'enabled': True, 'url': '/old/Debug/Nida.app'}
+        with self.assertRaises(RuntimeError):
+            self.read_restore(self.target, {'enabled': True})
+        self.login_record.return_value = {'enabled': False, 'url': None}
+        self.read_restore(self.target, {'enabled': False})
+
     def test_ci_requires_latest_success_for_exact_main_sha(self):
         for conclusion in [None, 'failure', 'cancelled']:
             response = {'workflow_runs': [{'head_sha': 'abc', 'head_branch': 'main', 'run_number': 1, 'conclusion': 'success'},
