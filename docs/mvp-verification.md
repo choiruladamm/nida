@@ -1,5 +1,17 @@
 # MVP verification and personal installation
 
+## Personal release workflow — 2026-11-05 (#34, remaining implementation)
+
+Implementation adds one hosted PR/main CI job (standard xcode-27 preview runner, explicit Xcode 27.0), native moon/DEV icon assets, immutable committed-source Release candidates, read-only mounted DMG verification, and CI-gated explicit promote/rollback. Personal candidate version is 0.2.0 (5); no public release/notarization or automatic installation on merge.
+
+Local evidence: **95 Swift tests in 14 suites**, **16 Python release tests**, Debug/Release builds, signatures/sandbox/icon/custom provenance checks and Dev native smoke pass. Failure fixtures cover bad/corrupt candidates, copy/rename/registration/startup failures, retained recovery copies, rollback swapping one previous binary, stale/pending/failed CI, dirty checkout, process-operation locking and icon dimensions. These fixture tests never change the real installed app/login items.
+
+A full make dmg run tested/built committed source, produced the UDZO image, attached it read-only, verified app signature/source/tree hash plus Applications shortcut, detached it, and wrote a matching SHA-256 sidecar in NidaReleases/packages. macOS 27 emits deprecation notices for hdiutil; it remains in use for the macOS 26-compatible local workflow. The exact artifact/source SHA is recorded in #34. Product icon appearance and manual Finder drag-install remain owner acceptance checks.
+
+Main branch protection was configured with strict required GitHub Actions verify, PRs, no force-push/deletion and administrator enforcement. Mandatory external approvals are zero for solo-owner PR acceptance. Hosted check results are recorded separately in #34; policy configuration alone is not a passing CI run. A real make promote attempt on current main failed closed because exact-main CI was missing; installed Stable remained PID 4737 at Applications. No unmerged candidate was installed, and no real rollback/login registration mutation or reboot/logout was performed in this task. Real promotion/rollback must follow merge and successful main push CI.
+
+Logs: `/tmp/nida-workflow-swift-tests.log`, `/tmp/nida-release-tests.log`, `/tmp/nida-workflow-release-build.log`, `/tmp/nida-workflow-smoke.log`, `/tmp/nida-workflow-dmg.log`, `/tmp/nida-promote-gate.log`. See [release-workflow.md](release-workflow.md) for command behavior and retained-recovery/old-binary login limitations. Restart/login, OS permission, VoiceOver, fullscreen/Spaces and external-display acceptance remain pending. An earlier custom Info.plist-key attempt was corrected to an explicit merged plist before candidate verification.
+
 ## Dev/Stable isolation — 2026-11-04 (#34, first slice)
 
 Stable was bootstrapped from accepted main `da36ec9` as Release at `/Applications/Nida.app`, retaining its bundle ID and data; previous installed app backed up in ignored local build output. Candidate/install signature, identity and binary hash were checked. Local receipt: `build/stable-baseline.json`. No public release, new version or data migration is claimed.

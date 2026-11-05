@@ -39,6 +39,17 @@ For deliberate real-delivery testing only: `make run DEV_REMINDERS=1`. This enab
 
 Debug-only review modes: `--review-menu`, `--review-settings`, `--review-notch`, `--review-follow-up`, and `--review-refresh-error`. Stop only the current Dev instance first. These use production views without real reminder delivery; menu/Settings use review hosts. Screen capture requires OS permission and an unlocked session.
 
+## Personal release commands
+
+```sh
+make release-test # Installer/promotion regression tests; no real app changes
+make dmg          # Test/build committed HEAD, create and mount-verify a personal DMG
+make promote      # Install exact origin/main only after its push CI succeeds
+make rollback     # Restore the previous Stable app binary
+```
+
+Candidates, packages and the single previous app live in `~/Library/Application Support/NidaReleases`, separate from app settings and repository build output. A merge alone never installs anything. Promotion leaves Dev running and verifies the installed login-item address while preserving enabled/disabled intent. See [safety, recovery and verification limits](docs/release-workflow.md). Current personal candidates are **0.2.0 (5)**; the public download above remains build 4. Icon artwork and actual restart/login acceptance still require owner review.
+
 ## Versioning
 
 Use `major.minor.patch` plus an increasing integer build: **0.2.0 (4)**. Language selection advances the feature version; it remains a prerelease while MVP hardware acceptance is pending. `1.0.0` follows observed acceptance, not issue closure alone. After stable release, use patch for fixes, minor for features, major for incompatible changes.
@@ -55,4 +66,4 @@ Set `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in both Debug/Release app 
 - [Preferences, sound, login launch](docs/reminder-preferences.md)
 - [Notch geometry and platform limits](docs/notch-prototype.md)
 
-`make smoke` force-closes only Nida Dev before building and cycling Debug previews, then exits. Run it after tests finish; it also terminates the Dev test host. Explicit `make run CONFIGURATION=Release` restarts the Stable variant and is not the daily development command. Building Release alone does not replace `/Applications/Nida.app`. CI, promotion/rollback, app icon and DMG packaging are later steps in #34.
+`make smoke` force-closes only Nida Dev before building and cycling Debug previews, then exits. Run it after tests finish; it also terminates the Dev test host. Explicit `make run CONFIGURATION=Release` restarts the Stable variant and is not the daily development command. Building Release alone does not replace `/Applications/Nida.app`. Personal CI, icons/DMG and promotion/rollback are described in [release workflow](docs/release-workflow.md); hosted/installation/hardware acceptance is tracked in #34.

@@ -1,6 +1,6 @@
 # Personal Dev/Stable workflow
 
-Issue: [#34](https://github.com/choiruladamm/nida/issues/34); parent [#1](https://github.com/choiruladamm/nida/issues/1). This first slice isolates the apps. CI, final icons/DMG and promotion/rollback commands are still planned, not available.
+Issue: [#34](https://github.com/choiruladamm/nida/issues/34); parent [#1](https://github.com/choiruladamm/nida/issues/1). Dev/Stable isolation is merged. The personal [release workflow](release-workflow.md) defines CI, icon assets, DMG packaging and explicit promotion/rollback; actual activation/verification status is tracked in #34.
 
 ## Current variants
 
@@ -27,11 +27,11 @@ make run DEV_REMINDERS=1          # Deliberately enable real delivery for this D
 make build CONFIGURATION=Release # Build Stable candidate without installing/restarting it
 ```
 
-A subsequent plain `make run` returns Dev to preview-only; opt-in is not persisted. Enabling Dev delivery while Stable runs can intentionally produce two reminders. Dev otherwise still restores live schedules; its menu/Settings clearly label its mode. The hammer is an interim menu distinction, not the final branded app icon planned later.
+A subsequent plain `make run` returns Dev to preview-only; opt-in is not persisted. Enabling Dev delivery while Stable runs can intentionally produce two reminders. Dev otherwise still restores live schedules; its menu/Settings clearly label its mode. Stable and Dev also have separate native app icons; Dev adds a DEV badge. Artwork acceptance remains an owner check.
 
 Run smoke after tests; its exact process match terminates Dev test hosts too. It always targets Debug even if CONFIGURATION=Release is passed. `make run CONFIGURATION=Release` is an explicit Stable restart: it terminates Nida and opens the Release build from the build folder. Use ordinary make run for daily development; do not use Release run as an installation/promotion command. Manual `open -n` can create duplicate copies; use make run to relaunch Dev.
 
-Keep main plus short-lived feature/fix branches. A merge never replaces the installed app. Only accepted code should become the daily Stable candidate. No app/data migration or automatic update service is introduced here.
+Keep main plus short-lived feature/fix branches. A merge never replaces the installed app. Only accepted code should become the daily Stable candidate. No app/data migration or automatic update service is introduced here. Use make dmg for an installer, make promote for CI-passed main, and make rollback for the previous binary; see release-workflow.md for safeguards and remaining gates.
 
 ## Stable bootstrap for this task
 

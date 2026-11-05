@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Personal build 0.2.0 (5): native Stable/Dev app icons, PR/main macOS CI, verified DMG packaging and CI-gated local promotion with one previous binary for rollback. Preserve login-enabled intent and verify installed login-item paths during promotion; no public release or notarization claimed.
+
 - Refine notch shell motion with separate expansion/collapse curves, measured-height reuse and independent content fades; centralize timing and Reduce Motion handling.
 
 - Compact the glass menu into a 340 pt layout with grouped prayer icons, consolidated actions and native macOS accent highlights.

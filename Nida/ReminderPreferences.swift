@@ -116,6 +116,23 @@ final class LoginLaunch {
         }
     }
 
+    var statusName: String {
+        switch status {
+        case .enabled: "enabled"
+        case .notRegistered: "notRegistered"
+        case .requiresApproval: "requiresApproval"
+        case .notFound: "notFound"
+        @unknown default: "unknown"
+        }
+    }
+
+    // Called by local promotion only when the OS recorded the owner's enabled intent.
+    func restoreEnabledRegistration() async {
+        await setEnabled(false)
+        guard error == nil else { return }
+        await setEnabled(true)
+    }
+
     func refresh() { status = readStatus() }
 
     func setEnabled(_ enabled: Bool) async {

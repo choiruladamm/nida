@@ -120,6 +120,26 @@ import os
         #expect(!login.isUpdating)
     }
 
+    @Test func installedRegistrationRepairRefreshesEnabledServiceAndStopsOnFailure() async {
+        var status = SMAppService.Status.enabled
+        var updates: [Bool] = []
+        let login = LoginLaunch(readStatus: { status }, update: { enabled in
+            updates.append(enabled)
+            status = enabled ? .enabled : .notRegistered
+        })
+        await login.restoreEnabledRegistration()
+        #expect(updates == [false, true])
+        #expect(login.statusName == "enabled")
+        var attempts = 0
+        let failed = LoginLaunch(readStatus: { .enabled }, update: { _ in
+            attempts += 1
+            throw CocoaError(.fileWriteNoPermission)
+        })
+        await failed.restoreEnabledRegistration()
+        #expect(attempts == 1)
+        #expect(failed.error != nil)
+    }
+
     @Test func approvalIsNotReportedAsActive() async {
         var status = SMAppService.Status.notRegistered
         let login = LoginLaunch(readStatus: { status }, update: { _ in status = .requiresApproval })

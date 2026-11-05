@@ -9,7 +9,7 @@ Native macOS prayer reminder: SwiftUI content, AppKit notch panel, menu bar acce
 - Location/onboarding changes: read `docs/location-setup.md` for permission, matching, persistence, and pending hardware checks.
 - Timing/reminder calculations: read `docs/prayer-timing.md` for exact boundaries, pending-state preservation, and expiry rules.
 - Notch/window changes: read `docs/notch-prototype.md` for measured geometry and pending hardware checks.
-- Build/setup: see `README.md`; run `make help` for commands.
+- Build/setup: see `README.md`; run `make help` for commands. Packaging/promotion/rollback: read `docs/release-workflow.md`; use the tool safeguards and preserve the daily Stable process until candidate checks pass.
 
 ## Implementation
 

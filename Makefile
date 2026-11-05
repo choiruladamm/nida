@@ -13,9 +13,10 @@ endif
 APP := $(BUILD_DIR)/Build/Products/$(CONFIGURATION)/$(PRODUCT).app
 DEV_REMINDERS ?= 0
 RUN_ARGS := $(if $(filter 1,$(DEV_REMINDERS)),--enable-development-reminders,)
-XCODEBUILD := xcodebuild -project Nida.xcodeproj -scheme Nida -configuration "$(CONFIGURATION)" -destination "$(DESTINATION)" -derivedDataPath "$(BUILD_DIR)"
+SOURCE_SHA ?=
+XCODEBUILD := xcodebuild -project Nida.xcodeproj -scheme Nida -configuration "$(CONFIGURATION)" -destination "$(DESTINATION)" -derivedDataPath "$(BUILD_DIR)" $(if $(SOURCE_SHA),NIDA_SOURCE_COMMIT=$(SOURCE_SHA),)
 
-.PHONY: help build test run smoke data-smoke clean project doctor
+.PHONY: help build test run smoke data-smoke clean project doctor dmg promote rollback release-test icons
 
 help: ## Show available commands.
 	@awk 'BEGIN {FS = ":.*## "} /^[a-z][a-z-]*:.*## / {printf "  make %-10s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -49,3 +50,18 @@ doctor: ## Show macOS, Xcode, and Swift versions.
 	sw_vers
 	xcodebuild -version
 	swift --version
+
+icons: ## Regenerate native Stable/Dev app icon assets.
+	swift scripts/generate-icons.swift
+
+release-test: ## Test packaging/promotion failure paths without touching installed apps.
+	python3 -m unittest discover -s scripts -p 'test_*.py' -v
+
+dmg: ## Test/build this committed source and create a verified personal DMG.
+	python3 scripts/release.py dmg
+
+promote: ## Install exact CI-passed origin/main as Stable; keep one previous app.
+	python3 scripts/release.py promote
+
+rollback: ## Restore the previous Stable binary; preserve settings and Dev.
+	python3 scripts/release.py rollback
