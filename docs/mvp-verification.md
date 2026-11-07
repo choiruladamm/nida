@@ -1,5 +1,15 @@
 # MVP verification and personal installation
 
+## Sound presets — 2026-11-07 (#29)
+
+Glass/Tink/Ping share one persisted selection, defaulting to Glass while preserving the existing default-off toggle. Native bilingual Settings offers silent selection and explicit audition while automatic sound is off. Shared playback stops the prior sound; disabling sound stops playback. Visual previews remain silent and real delivery keeps its existing presentation/ledger path.
+
+Passed: **96 Swift tests in 14 suites**, Debug/Release builds, Dev-only native smoke and git diff --check. New tests cover missing/invalid values without writeback, persistence without unrelated preference changes, named-sound availability without audio, selected-preset routing, disabled real playback, explicit audition, repeat/replacement/stop, missing/start-failed audio and success recovery. The final test seam uses a two-method protocol adopted by NSSound; an initial subclass test double was invalid for NSSound initialization and crashed the test host before being replaced. Final full rerun passed.
+
+Smoke observed automaticDelivery=false, a 1470 × 956 pt display / 179 × 32 pt camera, visible non-key panel, preserved frontmost app and passive collapsed Dev hit behavior. Daily Stable PID 702 remained unchanged across verification. Logs: /tmp/nida-29-test.log, /tmp/nida-29-build.log, /tmp/nida-29-smoke.log, /tmp/nida-29-release.log. No Stable installation/promotion, real ledger mutation or release was performed.
+
+Pending: owner listening/preset approval, actual Settings picker/relaunch and audition interactions, mute/output routing, bilingual visual fit, keyboard/VoiceOver and real entry/follow-up/snooze audio. A review-mode launch was attempted, but the compositor capture showed another app/Space, so it supplies no Settings visual proof. Screenshot stays local and is not published. Build/test/smoke results do not complete those hardware gates.
+
 ## Personal release workflow — 2026-11-05 (#34, remaining implementation)
 
 Implementation adds one hosted PR/main CI job (standard xcode-27 preview runner, explicit Xcode 27.0), native moon/DEV icon assets, immutable committed-source Release candidates, read-only mounted DMG verification, and CI-gated explicit promote/rollback. Personal candidate version is 0.2.0 (5); no public release/notarization or automatic installation on merge.

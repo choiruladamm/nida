@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add persisted Glass/Tink/Ping reminder sounds and explicit Settings audition while automatic sound is off; prevent overlapping Nida playback and retain silent defaults.
+
 - Personal build 0.2.0 (5): native Stable/Dev app icons, PR/main macOS CI, verified DMG packaging and CI-gated local promotion with one previous binary for rollback. Preserve login-enabled intent and verify installed login-item paths during promotion; no public release or notarization claimed.
 
 - Refine notch shell motion with separate expansion/collapse curves, measured-height reuse and independent content fades; centralize timing and Reduce Motion handling.

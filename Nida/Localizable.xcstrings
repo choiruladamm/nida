@@ -1829,22 +1829,6 @@
         }
       }
     },
-    "Suara sistem Glass · Default mati. Mengikuti volume dan keluaran audio Mac.": {
-      "localizations": {
-        "id": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Suara sistem Glass · Default mati. Mengikuti volume dan keluaran audio Mac."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Glass system sound · Off by default. Uses your Mac’s volume and audio output."
-          }
-        }
-      }
-    },
     "Subuh": {
       "localizations": {
         "id": {
@@ -2241,6 +2225,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nida Dev does not launch at login. Use Nida in Applications for daily reminders."
+          }
+        }
+      }
+    },
+    "Default mati. Coba suara tetap berbunyi saat suara otomatis mati. Mengikuti volume dan keluaran audio Mac.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default mati. Coba suara tetap berbunyi saat suara otomatis mati. Mengikuti volume dan keluaran audio Mac."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off by default. Test sound plays even when automatic sound is off. Uses your Mac’s volume and audio output."
+          }
+        }
+      }
+    },
+    "Pilihan suara": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pilihan suara"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sound"
           }
         }
       }

@@ -81,25 +81,80 @@ import os
         }
     }
 
-    @Test func systemSoundIsAvailableWithoutPlayingIt() {
-        #expect(NSSound(named: NSSound.Name("Glass")) != nil)
+    @Test func systemSoundsAreAvailableWithoutPlayingThem() {
+        for preset in ReminderSound.allCases {
+            #expect(NSSound(named: NSSound.Name(preset.rawValue)) != nil)
+        }
     }
 
-    @Test func soundOffNeverCallsPlaybackAndFailureIsVisible() throws {
+    @Test func soundSelectionPersistsAndInvalidValuesRecoverWithoutWrites() throws {
         let (defaults, suite) = try isolatedDefaults()
         defer { defaults.removePersistentDomain(forName: suite) }
+        #expect(ReminderPreferences(defaults: defaults).soundPreset == .glass)
+        #expect(defaults.object(forKey: "reminderSoundPreset") == nil)
+        for invalid: Any in ["unknown", true, 42, ["Ping"]] {
+            defaults.set(invalid, forKey: "reminderSoundPreset")
+            let before = defaults.dictionaryRepresentation() as NSDictionary
+            #expect(ReminderPreferences(defaults: defaults).soundPreset == .glass)
+            #expect(defaults.dictionaryRepresentation() as NSDictionary == before)
+        }
         let preferences = ReminderPreferences(defaults: defaults)
-        var attempts = 0
-        preferences.playSound { attempts += 1; return true }
-        #expect(attempts == 0)
         preferences.soundEnabled = true
-        preferences.playSound { attempts += 1; return false }
-        #expect(attempts == 1)
-        #expect(preferences.soundError != nil)
-        preferences.playSound { attempts += 1; return true }
-        #expect(attempts == 2)
-        #expect(preferences.soundError == nil)
+        for preset in ReminderSound.allCases {
+            let before = defaults.dictionaryRepresentation().filter { $0.key != "reminderSoundPreset" } as NSDictionary
+            preferences.soundPreset = preset
+            let restored = ReminderPreferences(defaults: defaults)
+            #expect(restored.soundPreset == preset)
+            #expect(restored.soundEnabled)
+            #expect(defaults.dictionaryRepresentation().filter { $0.key != "reminderSoundPreset" } as NSDictionary == before)
+        }
     }
+
+    @Test func soundGatingAuditionReplacementAndFailureRecovery() throws {
+        let (defaults, suite) = try isolatedDefaults()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let sound = TestSound()
+        var requested: [ReminderSound] = []
+        var available = true
+        let preferences = ReminderPreferences(defaults: defaults) { preset in
+            requested.append(preset)
+            return available ? sound : nil
+        }
+        preferences.playSound()
+        preferences.soundPreset = .tink
+        #expect(requested.isEmpty)
+        preferences.playSound(audition: true)
+        #expect(requested == [.tink])
+        #expect(!preferences.soundEnabled)
+        #expect(sound.plays == 1)
+        preferences.playSound(audition: true)
+        #expect(sound.plays == 2)
+        #expect(sound.stops == 1)
+        #expect(preferences.soundError == nil)
+        preferences.soundPreset = .ping
+        #expect(sound.plays == 2)
+        preferences.soundEnabled = true
+        preferences.playSound()
+        #expect(requested.last == .ping)
+        #expect(sound.stops == 2)
+        preferences.soundEnabled = false
+        #expect(sound.stops == 3)
+        preferences.playSound()
+        #expect(sound.plays == 3)
+        available = false
+        preferences.playSound(audition: true)
+        #expect(preferences.soundError != nil)
+        #expect(preferences.soundPreset == .ping)
+        available = true
+        sound.starts = false
+        preferences.playSound(audition: true)
+        #expect(preferences.soundError != nil)
+        sound.starts = true
+        preferences.playSound(audition: true)
+        #expect(preferences.soundError == nil)
+        #expect(!preferences.soundEnabled)
+    }
+
 }
 
 @MainActor @Suite struct LoginLaunchTests {
@@ -248,4 +303,13 @@ import os
             #expect(languageKeys[0] == languageKeys[1], "Language coverage differs in \(table)")
         }
     }
+}
+
+// Avoid emitting audio while exercising the actual playback ownership path.
+@MainActor private final class TestSound: ReminderSoundPlayback {
+    var plays = 0
+    var stops = 0
+    var starts = true
+    func play() -> Bool { plays += 1; return starts }
+    func stop() -> Bool { stops += 1; return true }
 }

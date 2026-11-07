@@ -10,9 +10,11 @@ Settings and the notch controller share this observable model. The delivery engi
 
 ## Sound source
 
-Sound defaults off and is checked only after a real event is durably recorded and presented. The app resolves the named macOS **Glass** sound through `NSSound(named:)`; there is no downloaded/bundled sound asset, full adhan, or redistributed Apple audio file. Source: the user's installed macOS named sound library (normally `/System/Library/Sounds/Glass.aiff`, provided under their macOS license; user sound-library overrides can affect named lookup). No third-party sound license is added.
+Sound defaults off. One persisted `reminderSoundPreset` choice applies to real entry, follow-up and snooze: **Glass** (default), **Tink**, or **Ping**. Existing enabled values are preserved. Missing/invalid selections resolve to Glass without rewriting stored values; Dev and Stable use their separate defaults domains.
 
-**Coba suara** explicitly auditions the sound when enabled; visual reminder previews stay silent. Muted system volume, audio output, and user system settings still apply. Missing sound or failure to start playback produces a visible Settings message; it does not block the visual reminder. Disabling the toggle prevents future playback rather than interrupting an already playing short sound.
+The native picker saves immediately without playing audio. **Coba suara / Test sound** explicitly auditions the selected sound even while automatic sound is off, without enabling it. Visual reminder previews remain silent. One retained NSSound stops before the next playback, so repeated auditions and real reminders do not layer audio. Turning the toggle off stops current playback. Changing the selection alone does not restart it.
+
+The app uses named macOS sounds through NSSound(named:), normally supplied in /System/Library/Sounds. User/library overrides can affect named lookup. No audio files are redistributed, downloaded or bundled. Playback follows Mac volume/output settings; successful start does not establish audibility. Missing sound/start failure preserves selection and shows a localized Settings message; later success clears it. Audio failure never blocks visual delivery or changes scheduling/ledger state.
 
 ## Launch at login
 

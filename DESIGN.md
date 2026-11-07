@@ -137,3 +137,7 @@ Do not reintroduce unused palette levels (`chrome`, `raised`) or obsolete generi
 - [ScheduleView.swift](Nida/ScheduleView.swift): live schedule hierarchy and per-surface layouts.
 - [PrototypeModel.swift](Nida/PrototypeModel.swift) and [NotchPanelController.swift](Nida/NotchPanelController.swift): geometry, pointer bounds and hover/focus behavior.
 - [NidaApp.swift](Nida/NidaApp.swift): menu and native Settings composition.
+
+### Sound preferences
+
+The native Sound section contains the automatic-sound toggle, a labeled Glass/Tink/Ping picker, an explicit Test sound button, and wrapping help/error text in the selected app language. Glass is the default selection; automatic sound stays off by default. Picker changes save silently. Test sound works while automatic sound is off and never enables it or opens a panel. Names retain their macOS spelling. Keyboard and VoiceOver use native labeled controls; no new motion is introduced. See [sound contract](docs/reminder-preferences.md).
