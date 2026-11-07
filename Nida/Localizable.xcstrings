@@ -2260,6 +2260,118 @@
           }
         }
       }
+    },
+    "Bedug": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedug"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedug"
+          }
+        }
+      }
+    },
+    "Bambu": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bambu"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bamboo"
+          }
+        }
+      }
+    },
+    "Petik": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Petik"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pluck"
+          }
+        }
+      }
+    },
+    "Kredit suara": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kredit suara"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sound credits"
+          }
+        }
+      }
+    },
+    "Bedug oleh redafs / Fahrul (Fortis Record), CC BY 4.0. Dipotong, diberi fade, diubah ke mono, dan diturunkan volumenya untuk Nida.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedug oleh redafs / Fahrul (Fortis Record), CC BY 4.0. Dipotong, diberi fade, diubah ke mono, dan diturunkan volumenya untuk Nida."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedug by redafs / Fahrul (Fortis Record), CC BY 4.0. Trimmed, faded, converted to mono and reduced in volume for Nida."
+          }
+        }
+      }
+    },
+    "Sumber dan lisensi Bedug": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sumber dan lisensi Bedug"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedug source and license"
+          }
+        }
+      }
+    },
+    "Bambu: gmni · Petik: railkill (CC0).": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bambu: gmni · Petik: railkill (CC0)."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bamboo: gmni · Pluck: railkill (CC0)."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -12,9 +12,24 @@ import Observation
 extension NSSound: ReminderSoundPlayback {}
 
 enum ReminderSound: String, CaseIterable {
-    case glass = "Glass"
-    case tink = "Tink"
-    case ping = "Ping"
+    case bedug
+    case bamboo
+    case pluck
+
+    var label: LocalizedStringKey {
+        switch self {
+        case .bedug: "Bedug"
+        case .bamboo: "Bambu"
+        case .pluck: "Petik"
+        }
+    }
+
+    var resourceURL: URL? { Bundle.main.url(forResource: rawValue, withExtension: "wav") }
+
+    @MainActor func load() -> NSSound? {
+        guard let resourceURL else { return nil }
+        return NSSound(contentsOf: resourceURL, byReference: false)
+    }
 }
 
 @MainActor @Observable
@@ -41,10 +56,10 @@ final class ReminderPreferences {
     private(set) var soundError: LocalizedStringResource?
 
     init(defaults: UserDefaults = .standard,
-         loadSound: @escaping (ReminderSound) -> (any ReminderSoundPlayback)? = { NSSound(named: NSSound.Name($0.rawValue)) }) {
+         loadSound: @escaping (ReminderSound) -> (any ReminderSoundPlayback)? = { $0.load() }) {
         self.defaults = defaults
         self.loadSound = loadSound
-        soundPreset = ReminderSound(rawValue: defaults.string(forKey: "reminderSoundPreset") ?? "") ?? .glass
+        soundPreset = ReminderSound(rawValue: defaults.string(forKey: "reminderSoundPreset") ?? "") ?? .bedug
         entryDisplaySeconds = Self.storedDisplaySeconds(defaults, key: "entryDisplaySeconds", fallback: 10)
         followUpDisplaySeconds = Self.storedDisplaySeconds(defaults, key: "followUpDisplaySeconds", fallback: 20)
         language = AppLanguage(rawValue: defaults.string(forKey: "appLanguage") ?? "") ?? .indonesian
@@ -211,7 +226,7 @@ struct ReminderPreferencesView: View {
             Toggle("Suara pendek saat pengingat muncul", isOn: $preferences.soundEnabled)
             Picker("Pilihan suara", selection: $preferences.soundPreset) {
                 ForEach(ReminderSound.allCases, id: \.self) { preset in
-                    Text(verbatim: preset.rawValue).tag(preset)
+                    Text(preset.label).tag(preset)
                 }
             }
             Button("Coba suara") { preferences.playSound(audition: true) }

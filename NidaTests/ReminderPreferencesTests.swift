@@ -81,21 +81,36 @@ import os
         }
     }
 
-    @Test func systemSoundsAreAvailableWithoutPlayingThem() {
+    @Test func bundledSoundsAndLicensesAreAvailableWithoutPlayingThem() {
         for preset in ReminderSound.allCases {
-            #expect(NSSound(named: NSSound.Name(preset.rawValue)) != nil)
+            #expect(preset.resourceURL != nil)
+            let sound = preset.load()
+            #expect(sound != nil)
+            #expect((sound?.duration ?? 0) > 0)
+            #expect((sound?.duration ?? 3) <= 2)
+        }
+    }
+
+    @Test func bundledSoundCreditsAreShipped() throws {
+        let url = try #require(Bundle.main.url(forResource: "SoundCredits", withExtension: "txt"))
+        let credits = try String(contentsOf: url, encoding: .utf8)
+        for name in ["redafs", "Fahrul", "gmni", "railkill", "CC BY 4.0", "CC0"] {
+            #expect(credits.contains(name))
+        }
+        for license in ["CC-BY-4.0", "CC0-1.0"] {
+            #expect(Bundle.main.url(forResource: license, withExtension: "txt") != nil)
         }
     }
 
     @Test func soundSelectionPersistsAndInvalidValuesRecoverWithoutWrites() throws {
         let (defaults, suite) = try isolatedDefaults()
         defer { defaults.removePersistentDomain(forName: suite) }
-        #expect(ReminderPreferences(defaults: defaults).soundPreset == .glass)
+        #expect(ReminderPreferences(defaults: defaults).soundPreset == .bedug)
         #expect(defaults.object(forKey: "reminderSoundPreset") == nil)
-        for invalid: Any in ["unknown", true, 42, ["Ping"]] {
+        for invalid: Any in ["Glass", "Tink", "Ping", "unknown", true, 42, ["bedug"]] {
             defaults.set(invalid, forKey: "reminderSoundPreset")
             let before = defaults.dictionaryRepresentation() as NSDictionary
-            #expect(ReminderPreferences(defaults: defaults).soundPreset == .glass)
+            #expect(ReminderPreferences(defaults: defaults).soundPreset == .bedug)
             #expect(defaults.dictionaryRepresentation() as NSDictionary == before)
         }
         let preferences = ReminderPreferences(defaults: defaults)
@@ -121,21 +136,21 @@ import os
             return available ? sound : nil
         }
         preferences.playSound()
-        preferences.soundPreset = .tink
+        preferences.soundPreset = .bamboo
         #expect(requested.isEmpty)
         preferences.playSound(audition: true)
-        #expect(requested == [.tink])
+        #expect(requested == [.bamboo])
         #expect(!preferences.soundEnabled)
         #expect(sound.plays == 1)
         preferences.playSound(audition: true)
         #expect(sound.plays == 2)
         #expect(sound.stops == 1)
         #expect(preferences.soundError == nil)
-        preferences.soundPreset = .ping
+        preferences.soundPreset = .pluck
         #expect(sound.plays == 2)
         preferences.soundEnabled = true
         preferences.playSound()
-        #expect(requested.last == .ping)
+        #expect(requested.last == .pluck)
         #expect(sound.stops == 2)
         preferences.soundEnabled = false
         #expect(sound.stops == 3)
@@ -144,7 +159,7 @@ import os
         available = false
         preferences.playSound(audition: true)
         #expect(preferences.soundError != nil)
-        #expect(preferences.soundPreset == .ping)
+        #expect(preferences.soundPreset == .pluck)
         available = true
         sound.starts = false
         preferences.playSound(audition: true)
