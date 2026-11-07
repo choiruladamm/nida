@@ -1,0 +1,59 @@
+Nida bundled sound credits
+
+Bedug: "Bedug, Beduk or Bedhug" by redafs.
+Artist: Fahrul. Recorded July 2011 at Fortis Record.
+Source: https://freesound.org/people/redafs/sounds/348004/
+Preview source: https://cdn.freesound.org/previews/348/348004_6165769-hq.mp3
+License: CC BY 4.0 https://creativecommons.org/licenses/by/4.0/
+
+Bamboo: "bamboo.wav" by gmni.
+Source: https://freesound.org/people/gmni/sounds/67046/
+Preview source: https://cdn.freesound.org/previews/67/67046_261599-hq.mp3
+License: CC0 1.0 https://creativecommons.org/publicdomain/zero/1.0/
+
+Pluck: "Kalimba Two-Notes" by railkill.
+Source: https://opengameart.org/content/kalimba-two-notes
+Original: https://opengameart.org/sites/default/files/kalimba.wav
+License: CC0 1.0 https://creativecommons.org/publicdomain/zero/1.0/
+
+Acquired 2026-11-07. Edited for Nida 2026-11-08.
+Bedug and Bamboo derive from publicly accessible lossy MP3 previews, not lossless masters.
+All clips were trimmed, faded (5 ms in / 80 ms out), mixed to mono,
+attenuated to at most 0.25 linear peak, and encoded as 44.1 kHz 16-bit PCM WAV.
+No creator endorsement is implied. Full license texts accompany this file.
+
+Reproduction: ffmpeg -i SOURCE -af 'FILTERS,volume=GAIN' -ac 1 -ar 44100 -c:a pcm_s16le ASSET.wav
+ffmpeg version 9.0.1 Copyright (c) 2000-2026 the FFmpeg developers; source and final hashes below.
+
+[
+  {
+    "asset": "bedug.wav",
+    "source": "bedug-redafs-preview.mp3",
+    "start": 10.39,
+    "duration": 1.5,
+    "gain": 0.580256335,
+    "filters": "atrim=start=10.39:duration=1.5,asetpts=PTS-STARTPTS,afade=t=in:d=0.005,afade=t=out:st=1.42:d=0.08",
+    "sourceSHA256": "e145d37c298652b8f96a3b7d5d4fa6f41991937faae5a91cef382528a768fc28",
+    "assetSHA256": "82f20f29eaba1d45b85233e94f9be3d815caf1211d424311e34e0f418948e489"
+  },
+  {
+    "asset": "bamboo.wav",
+    "source": "bamboo-gmni-preview.mp3",
+    "start": 1.59,
+    "duration": 1.1,
+    "gain": 0.667337775,
+    "filters": "atrim=start=1.59:duration=1.1,asetpts=PTS-STARTPTS,afade=t=in:d=0.005,afade=t=out:st=1.02:d=0.08",
+    "sourceSHA256": "c157e7e05cded7a707bed90d11e45c009568c55cc4817c4777de8e3488487012",
+    "assetSHA256": "7cbac63ad526fbd31eb683802d89174ca0ac629fb3687bc421c854fdf5b7b607"
+  },
+  {
+    "asset": "pluck.wav",
+    "source": "kalimba-railkill.wav",
+    "start": 0,
+    "duration": 0.917188,
+    "gain": 0.187054785,
+    "filters": "atrim=start=0:duration=0.917188,asetpts=PTS-STARTPTS,afade=t=in:d=0.005,afade=t=out:st=0.837188:d=0.08",
+    "sourceSHA256": "6ab4a504576a0ed66a0a2b7a73d6407e2c916f2ae62f5b04c77d369462cdfe25",
+    "assetSHA256": "da0b181e82c4beaf5afe747cc38ca6ffd1a58be24a58868befa502322a7a1734"
+  }
+]

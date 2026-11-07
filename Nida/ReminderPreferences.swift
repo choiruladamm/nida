@@ -4,6 +4,34 @@ import ServiceManagement
 import SwiftUI
 import Observation
 
+@MainActor protocol ReminderSoundPlayback: AnyObject {
+    @discardableResult func play() -> Bool
+    @discardableResult func stop() -> Bool
+}
+
+extension NSSound: ReminderSoundPlayback {}
+
+enum ReminderSound: String, CaseIterable {
+    case bedug
+    case bamboo
+    case pluck
+
+    var label: LocalizedStringKey {
+        switch self {
+        case .bedug: "Bedug"
+        case .bamboo: "Bambu"
+        case .pluck: "Petik"
+        }
+    }
+
+    var resourceURL: URL? { Bundle.main.url(forResource: rawValue, withExtension: "wav") }
+
+    @MainActor func load() -> NSSound? {
+        guard let resourceURL else { return nil }
+        return NSSound(contentsOf: resourceURL, byReference: false)
+    }
+}
+
 @MainActor @Observable
 final class ReminderPreferences {
     private let defaults: UserDefaults
@@ -14,13 +42,24 @@ final class ReminderPreferences {
         didSet { defaults.set(language.rawValue, forKey: "appLanguage") }
     }
     var soundEnabled: Bool {
-        didSet { defaults.set(soundEnabled, forKey: "reminderSoundEnabled") }
+        didSet {
+            defaults.set(soundEnabled, forKey: "reminderSoundEnabled")
+            if !soundEnabled { activeSound?.stop(); activeSound = nil }
+        }
     }
+    var soundPreset: ReminderSound {
+        didSet { defaults.set(soundPreset.rawValue, forKey: "reminderSoundPreset") }
+    }
+    @ObservationIgnored private var activeSound: (any ReminderSoundPlayback)?
+    @ObservationIgnored private let loadSound: (ReminderSound) -> (any ReminderSoundPlayback)?
     private(set) var delayError: LocalizedStringResource?
     private(set) var soundError: LocalizedStringResource?
 
-    init(defaults: UserDefaults = .standard) {
+    init(defaults: UserDefaults = .standard,
+         loadSound: @escaping (ReminderSound) -> (any ReminderSoundPlayback)? = { $0.load() }) {
         self.defaults = defaults
+        self.loadSound = loadSound
+        soundPreset = ReminderSound(rawValue: defaults.string(forKey: "reminderSoundPreset") ?? "") ?? .bedug
         entryDisplaySeconds = Self.storedDisplaySeconds(defaults, key: "entryDisplaySeconds", fallback: 10)
         followUpDisplaySeconds = Self.storedDisplaySeconds(defaults, key: "followUpDisplaySeconds", fallback: 20)
         language = AppLanguage(rawValue: defaults.string(forKey: "appLanguage") ?? "") ?? .indonesian
@@ -80,9 +119,12 @@ final class ReminderPreferences {
         return true
     }
 
-    func playSound(using play: () -> Bool = { NSSound(named: NSSound.Name("Glass"))?.play() ?? false }) {
-        guard soundEnabled else { return }
-        soundError = play() ? nil : LocalizedStringResource("Suara pengingat belum bisa diputar. Coba lagi atau matikan suara.")
+    func playSound(audition: Bool = false) {
+        guard audition || soundEnabled else { return }
+        activeSound?.stop()
+        activeSound = loadSound(soundPreset)
+        soundError = activeSound?.play() == true ? nil
+            : LocalizedStringResource("Suara pengingat belum bisa diputar. Coba lagi atau matikan suara.")
     }
 }
 
@@ -182,9 +224,14 @@ struct ReminderPreferencesView: View {
         .onAppear { customDelay = String(preferences.delayMinutes) }
         Section("Suara") {
             Toggle("Suara pendek saat pengingat muncul", isOn: $preferences.soundEnabled)
-            Button("Coba suara") { preferences.playSound() }.disabled(!preferences.soundEnabled)
+            Picker("Pilihan suara", selection: $preferences.soundPreset) {
+                ForEach(ReminderSound.allCases, id: \.self) { preset in
+                    Text(preset.label).tag(preset)
+                }
+            }
+            Button("Coba suara") { preferences.playSound(audition: true) }
             if let error = preferences.soundError { Text(error.localized(in: locale)).font(.callout).foregroundStyle(.secondary) }
-            Text("Suara sistem Glass · Default mati. Mengikuti volume dan keluaran audio Mac.")
+            Text("Default mati. Coba suara tetap berbunyi saat suara otomatis mati. Mengikuti volume dan keluaran audio Mac.")
                 .font(.caption).foregroundStyle(.secondary)
         }
         Section("Saat login") {

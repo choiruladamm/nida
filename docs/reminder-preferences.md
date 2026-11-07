@@ -10,9 +10,13 @@ Settings and the notch controller share this observable model. The delivery engi
 
 ## Sound source
 
-Sound defaults off and is checked only after a real event is durably recorded and presented. The app resolves the named macOS **Glass** sound through `NSSound(named:)`; there is no downloaded/bundled sound asset, full adhan, or redistributed Apple audio file. Source: the user's installed macOS named sound library (normally `/System/Library/Sounds/Glass.aiff`, provided under their macOS license; user sound-library overrides can affect named lookup). No third-party sound license is added.
+Sound defaults off. One persisted `reminderSoundPreset` applies to real entry, follow-up and snooze: **Bedug** (default), **Bambu / Bamboo**, or **Petik / Pluck**, using stable IDs `bedug`, `bamboo`, `pluck`. The existing enabled value is preserved. Missing/invalid values and the earlier unmerged Glass/Tink/Ping IDs resolve to Bedug without automatic writeback or enabling sound. Dev and Stable keep separate defaults domains.
 
-**Coba suara** explicitly auditions the sound when enabled; visual reminder previews stay silent. Muted system volume, audio output, and user system settings still apply. Missing sound or failure to start playback produces a visible Settings message; it does not block the visual reminder. Disabling the toggle prevents future playback rather than interrupting an already playing short sound.
+The picker saves immediately without audio. **Coba suara / Test sound** explicitly auditions the selection even when automatic sound is off. Visual panel previews stay silent. A single retained playback object stops before replacement; disabling sound stops current playback. Changing selection alone does not start or restart it.
+
+Final mono 44.1 kHz/16-bit WAV resources are bundled with explicit Xcode resource membership: Bedug 1.5 s, Bamboo 1.1 s, Pluck approximately 0.917 s (about 310 KB total). NSSound loads a Bundle.main URL rather than resolving a system sound name. No network request or user sound-library override affects playback. Missing/corrupt assets or failed starts preserve selection and show the localized Settings error; successful playback clears it. Audio never blocks visual delivery or alters event/ledger state.
+
+Bedug is adapted from redafs/Fahrul (Fortis Record), CC BY 4.0. Bamboo is gmni's CC0 windchime recording; Pluck is railkill's CC0 two-note kalimba. Bedug/Bamboo use lossy public previews, not lossless originals. `Nida/Resources/Sounds/SoundCredits.txt` records source URLs, exact edits, gains and SHA-256 hashes; full license texts ship with both variants. About Nida includes a bilingual credit acknowledgment and Bedug source/license link. Peak attenuation and tiny edge fades prevent technical clipping/cut clicks; perceived quality and repeated-use comfort remain owner checks, not inferred from waveform inspection.
 
 ## Launch at login
 

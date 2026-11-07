@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Personal build 0.2.0 (6): bundle short Bedug/Bamboo/Pluck reminder sounds with source credits/licenses and persisted selection and explicit Settings audition while automatic sound is off; prevent overlapping Nida playback and retain silent defaults. Bedug/Bamboo are edited from lossy public previews; owner listening acceptance remains pending.
+
 - Personal build 0.2.0 (5): native Stable/Dev app icons, PR/main macOS CI, verified DMG packaging and CI-gated local promotion with one previous binary for rollback. Preserve login-enabled intent and verify installed login-item paths during promotion; no public release or notarization claimed.
 
 - Refine notch shell motion with separate expansion/collapse curves, measured-height reuse and independent content fades; centralize timing and Reduce Motion handling.
