@@ -298,6 +298,12 @@ struct NidaSettings: View {
             Section("Tentang Nida") {
                 LabeledContent("Versi", value: "\(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—") (\(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "—"))")
                 LabeledContent("Minimum macOS", value: "26.0")
+                DisclosureGroup("Kredit suara") {
+                    Text("Bedug oleh redafs / Fahrul (Fortis Record), CC BY 4.0. Dipotong, diberi fade, diubah ke mono, dan diturunkan volumenya untuk Nida.")
+                    Link("Sumber dan lisensi Bedug", destination: URL(string: "https://freesound.org/people/redafs/sounds/348004/")!)
+                    Text("Bambu: gmni · Petik: railkill (CC0).")
+                }
+                .font(.caption)
                 LabeledContent("Pengingat") {
                     #if DEBUG
                     Text(AppVariant.developmentNotice.localized(in: locale))

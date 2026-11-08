@@ -1829,22 +1829,6 @@
         }
       }
     },
-    "Suara sistem Glass · Default mati. Mengikuti volume dan keluaran audio Mac.": {
-      "localizations": {
-        "id": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Suara sistem Glass · Default mati. Mengikuti volume dan keluaran audio Mac."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Glass system sound · Off by default. Uses your Mac’s volume and audio output."
-          }
-        }
-      }
-    },
     "Subuh": {
       "localizations": {
         "id": {
@@ -2241,6 +2225,150 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nida Dev does not launch at login. Use Nida in Applications for daily reminders."
+          }
+        }
+      }
+    },
+    "Default mati. Coba suara tetap berbunyi saat suara otomatis mati. Mengikuti volume dan keluaran audio Mac.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default mati. Coba suara tetap berbunyi saat suara otomatis mati. Mengikuti volume dan keluaran audio Mac."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off by default. Test sound plays even when automatic sound is off. Uses your Mac’s volume and audio output."
+          }
+        }
+      }
+    },
+    "Pilihan suara": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pilihan suara"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sound"
+          }
+        }
+      }
+    },
+    "Bedug": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedug"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedug"
+          }
+        }
+      }
+    },
+    "Bambu": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bambu"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bamboo"
+          }
+        }
+      }
+    },
+    "Petik": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Petik"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pluck"
+          }
+        }
+      }
+    },
+    "Kredit suara": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kredit suara"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sound credits"
+          }
+        }
+      }
+    },
+    "Bedug oleh redafs / Fahrul (Fortis Record), CC BY 4.0. Dipotong, diberi fade, diubah ke mono, dan diturunkan volumenya untuk Nida.": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedug oleh redafs / Fahrul (Fortis Record), CC BY 4.0. Dipotong, diberi fade, diubah ke mono, dan diturunkan volumenya untuk Nida."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedug by redafs / Fahrul (Fortis Record), CC BY 4.0. Trimmed, faded, converted to mono and reduced in volume for Nida."
+          }
+        }
+      }
+    },
+    "Sumber dan lisensi Bedug": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sumber dan lisensi Bedug"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedug source and license"
+          }
+        }
+      }
+    },
+    "Bambu: gmni · Petik: railkill (CC0).": {
+      "localizations": {
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bambu: gmni · Petik: railkill (CC0)."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bamboo: gmni · Pluck: railkill (CC0)."
           }
         }
       }

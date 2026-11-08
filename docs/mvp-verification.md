@@ -1,5 +1,27 @@
 # MVP verification and personal installation
 
+## Bundled sound revision — 2026-11-08 (#29)
+
+Owner rejected the system sounds and authorized the revised bundled direction. Build **0.2.0 (6)** replaces named lookup with bundle-loaded Bedug (1.5 s), Bamboo (1.1 s) and Pluck (0.917 s). Stable IDs are bedug/bamboo/pluck; old Dev/system IDs safely fall back to Bedug without enabling sound or changing stored values during initialization. Settings audition and single-active playback are retained; About adds id/en acknowledgments and source/license access.
+
+The three mono 44.1 kHz/16-bit WAVs total **310,572 bytes**. All are non-silent, under two seconds, peak below 0.251 full scale and have near-zero edges. These offline signal checks establish file properties, not perceptual loudness or musical suitability. Bedug/Bamboo derive from public lossy MP3 previews; Pluck uses the original CC0 WAV. Exact excerpts, fade/gain recipes, source/final SHA-256 and license/creator records ship in SoundCredits.txt alongside full CC BY 4.0/CC0 texts. Explicit Xcode resource references place all six files into both Debug and Release.
+
+Debug/Release builds, source-to-bundle byte equality for all audio/credit/license files, Release codesign verification, build-number metadata and diff checks passed. The final full make test completed successfully with **97 tests in 14 suites** and command exit 0, including real bundle sound loading without playing, duration limits, credits/license presence and legacy-ID fallback. This run used a command-only DEBUG_INFORMATION_FORMAT=dwarf-with-dsym override through XCODEBUILD; runtime checking remained enabled and repo configuration was not changed. The normal DWARF run stalled in XCTest runtime-warning symbolication after passing all cases (sample captured XCTest → CoreSymbolication → object-file open). Complete dSYM generation resolved the observed completion stall. An earlier overlapping build/smoke attempt also invalidated its test command result; neither attempt is counted as a successful default make test. Logs and the sample remain local; this is a toolchain/symbolication workaround, not an audio-code change.
+
+Final Dev-only make smoke exited 0 after the passing test command: automaticDelivery=false, panel visible/non-key, frontmost preserved and collapsed click-through. Its deliverySessionAvailable=false is recorded as an unavailable session, not a real-delivery pass. Stable PID 702 remained unchanged during the observed checks. No Stable installation, promotion, login mutation or real Dev delivery opt-in. Existing ledger/scheduling remains untouched. Actual listening on speakers/headphones, repeated-use comfort, mute/output, bilingual Settings/credits fit, VoiceOver and real entry/follow-up/snooze audio remain pending. Waveform-selected clips are provisional for owner review; no acoustic acceptance claimed.
+
+Logs: /tmp/nida-29-bundled-test-dsym.log (passing), /tmp/nida-29-bundled-test-final.log (stalled), /tmp/nida-29-bundled-build.log, /tmp/nida-29-bundled-smoke-final.log, /tmp/nida-29-bundled-release.log. Older system-preset verification below is historical and does not prove this revision.
+
+## Sound presets — 2026-11-07 (#29)
+
+Glass/Tink/Ping share one persisted selection, defaulting to Glass while preserving the existing default-off toggle. Native bilingual Settings offers silent selection and explicit audition while automatic sound is off. Shared playback stops the prior sound; disabling sound stops playback. Visual previews remain silent and real delivery keeps its existing presentation/ledger path.
+
+Passed: **96 Swift tests in 14 suites**, Debug/Release builds, Dev-only native smoke and git diff --check. New tests cover missing/invalid values without writeback, persistence without unrelated preference changes, named-sound availability without audio, selected-preset routing, disabled real playback, explicit audition, repeat/replacement/stop, missing/start-failed audio and success recovery. The final test seam uses a two-method protocol adopted by NSSound; an initial subclass test double was invalid for NSSound initialization and crashed the test host before being replaced. Final full rerun passed.
+
+Smoke observed automaticDelivery=false, a 1470 × 956 pt display / 179 × 32 pt camera, visible non-key panel, preserved frontmost app and passive collapsed Dev hit behavior. Daily Stable PID 702 remained unchanged across verification. Logs: /tmp/nida-29-test.log, /tmp/nida-29-build.log, /tmp/nida-29-smoke.log, /tmp/nida-29-release.log. No Stable installation/promotion, real ledger mutation or release was performed.
+
+Pending: owner listening/preset approval, actual Settings picker/relaunch and audition interactions, mute/output routing, bilingual visual fit, keyboard/VoiceOver and real entry/follow-up/snooze audio. A review-mode launch was attempted, but the compositor capture showed another app/Space, so it supplies no Settings visual proof. Screenshot stays local and is not published. Build/test/smoke results do not complete those hardware gates.
+
 ## Personal release workflow — 2026-11-05 (#34, remaining implementation)
 
 Implementation adds one hosted PR/main CI job (standard xcode-27 preview runner, explicit Xcode 27.0), native moon/DEV icon assets, immutable committed-source Release candidates, read-only mounted DMG verification, and CI-gated explicit promote/rollback. Personal candidate version is 0.2.0 (5); no public release/notarization or automatic installation on merge.
